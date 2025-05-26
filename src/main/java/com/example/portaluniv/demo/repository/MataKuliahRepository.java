@@ -1,21 +1,23 @@
 package com.example.portaluniv.demo.repository;
 
-import com.example.portaluniv.demo.entity.MataKuliah;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.util.Optional;
-import java.util.List;
+
+import com.example.portaluniv.demo.entity.MataKuliah;
 
 @Repository
 public interface MataKuliahRepository extends JpaRepository<MataKuliah, Long> {
-    Optional<MataKuliah> findByKodeMataKuliah(String kodeMataKuliah);
+    Optional<MataKuliah> findByKodeMk(String kodeMk);
     
-    @Query("SELECT mk FROM MataKuliah mk WHERE mk.namaMataKuliah LIKE %:nama%")
-    List<MataKuliah> findByNamaMataKuliahContaining(@Param("nama") String nama);
+    @Query("SELECT mk FROM MataKuliah mk WHERE mk.namaMk LIKE %:nama%")
+    List<MataKuliah> findByNamaMkContaining(@Param("nama") String nama);
     
-    List<MataKuliah> findByJurusan(String jurusan);
+    List<MataKuliah> findByProgramStudi(String programStudi);
     List<MataKuliah> findBySks(Integer sks);
-    boolean existsByKodeMataKuliah(String kodeMataKuliah);
+    boolean existsByKodeMk(String kodeMk);
 }
