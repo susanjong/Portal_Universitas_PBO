@@ -45,18 +45,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/", "/home", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().permitAll() 
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/dashboard", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .permitAll()
             );
-        
+                    
         return http.build();
     }
 }
