@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,6 +33,98 @@
             font-size: 18px;
             margin-bottom: 30px;
         }
+        .top-nav {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .nav-btn {
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .login-btn {
+            background: #3498db;
+            color: white;
+        }
+        .login-btn:hover {
+            background: #2980b9;
+        }
+        .register-btn {
+            background: #2ecc71;
+            color: white;
+        }
+        .register-btn:hover {
+            background: #27ae60;
+        }
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #495057;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .auth-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            justify-content: center;
+        }
+        .auth-btn.primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        .auth-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        .auth-btn.secondary {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        .auth-btn.secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
         .menu {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -47,6 +138,9 @@
             text-align: center;
             border: 2px solid transparent;
             transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
         .menu-item:hover {
             border-color: #3498db;
@@ -61,21 +155,55 @@
             color: #7f8c8d;
             font-size: 14px;
         }
-        .logout-btn {
+        .divider {
+            margin: 40px 0;
+            border-top: 2px solid #ecf0f1;
+            position: relative;
+        }
+        .divider::after {
+            content: 'Menu Sistem';
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #e74c3c;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 20px;
+            color: #7f8c8d;
             font-size: 14px;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .top-nav {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            .auth-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .auth-btn {
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="/logout" class="logout-btn">Logout</a>
+    <div class="top-nav">
+        <!-- Show different navigation based on authentication status -->
+        <div sec:authorize="!isAuthenticated()">
+            <a href="/login" class="nav-btn login-btn">Login</a>
+            <a href="/register" class="nav-btn register-btn">Daftar</a>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <!-- Show name and NIM -->
+            <span style="margin-right: 10px; color: #333;">Halo, <span sec:authentication="principal.fullName">User</span> (<span sec:authentication="name">NIM</span>)!</span>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </div>
     
     <div class="container">
         <h1>🎓 Portal Universitas</h1>
@@ -84,36 +212,56 @@
             Selamat Datang di Portal Universitas!
         </div>
         
+        <!-- Show user info if authenticated -->
+        <div sec:authorize="isAuthenticated()" class="user-info">
+            <!-- Show name, NIM, and role -->
+            <strong>Selamat datang, <span sec:authentication="principal.fullName">User</span>!</strong><br>
+            <small>NIM: <span sec:authentication="name">NIM</span></small><br>
+            <small>Role: <span th:text="${#strings.substringAfter(#authentication.principal.authorities[0].authority, 'ROLE_')}">ROLE</span></small>
+        </div>
+        
+        <!-- Show auth buttons only if not authenticated -->
+        <div sec:authorize="!isAuthenticated()" class="auth-buttons">
+            <a href="/login" class="auth-btn primary">
+                🔐 Masuk ke Akun
+            </a>
+            <a href="/register" class="auth-btn secondary">
+                📝 Daftar Baru
+            </a>
+        </div>
+        
+        <div class="divider"></div>
+        
         <div class="menu">
-            <div class="menu-item">
+            <a href="/mahasiswa" class="menu-item">
                 <h3>👨‍🎓 Mahasiswa</h3>
                 <p>Kelola data mahasiswa dan informasi akademik</p>
-            </div>
+            </a>
             
-            <div class="menu-item">
+            <a href="/dosen" class="menu-item">
                 <h3>👨‍🏫 Dosen</h3>
                 <p>Manajemen data dosen dan pengajar</p>
-            </div>
+            </a>
             
-            <div class="menu-item">
+            <a href="/matakuliah" class="menu-item">
                 <h3>📚 Mata Kuliah</h3>
                 <p>Daftar mata kuliah dan kurikulum</p>
-            </div>
+            </a>
             
-            <div class="menu-item">
+            <a href="/kelas" class="menu-item">
                 <h3>🏫 Kelas</h3>
                 <p>Jadwal kelas dan ruangan</p>
-            </div>
+            </a>
             
-            <div class="menu-item">
+            <a href="/enrollment" class="menu-item">
                 <h3>📝 Enrollment</h3>
                 <p>Pendaftaran dan enrolling mahasiswa</p>
-            </div>
+            </a>
             
-            <div class="menu-item">
+            <a href="/users" class="menu-item">
                 <h3>👤 Users</h3>
                 <p>Manajemen pengguna sistem</p>
-            </div>
+            </a>
         </div>
         
         <div style="text-align: center; margin-top: 40px; color: #7f8c8d;">
