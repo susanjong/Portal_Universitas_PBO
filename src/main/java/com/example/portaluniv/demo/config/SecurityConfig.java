@@ -44,8 +44,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Disable CSRF for development
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/", "/home", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll() // If using H2 for testing
-                .anyRequest().permitAll() // Allow all for development - change in production
+                .anyRequest().permitAll() 
             )
             .formLogin(form -> form
                 .loginPage("/login")
@@ -57,9 +56,6 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/")
                 .permitAll()
             );
-            
-        // For H2 Console (if needed)
-        http.headers(headers -> headers.frameOptions().disable());
         
         return http.build();
     }
