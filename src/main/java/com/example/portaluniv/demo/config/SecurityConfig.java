@@ -29,6 +29,12 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable for development
             .authorizeHttpRequests(authz -> authz
+
+                .requestMatchers("/", "/home", "/css/**", "/js/**", "/images/**").permitAll()
+                .anyRequest().permitAll() 
+            );
+                    
+=======
                 .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -49,6 +55,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .userDetailsService(customUserDetailsService);
+
         return http.build();
     }
 }
