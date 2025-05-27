@@ -1,118 +1,316 @@
 <!DOCTYPE html>
-<html lang="id">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
-    <title>Sign In</title>
+    <title>Login - Portal Universitas</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-image: url('/images/backgroundsign.jpg');
-            background-size: cover;
-            font-family: 'Lato';
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .container {
+       body {
+          font-family: 'Lato';
+          background: url('/images/backgroundsign.jpg') no-repeat center center fixed;
+          background-size: cover;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+
+        .login-container {
             background: white;
-            border-radius: 10px;
-            padding: 50px;
-            width: 400px;
-
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .form-card {
-            display: flex;
-            flex-direction: column;
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
         }
 
-       h2 {
-            color: #1B470C;
-            margin-top: -20px;
-            margin-bottom: -3px;
-            font-weight: 800;
-            font-style: italic;
-            font-size: 30px;
-        }
-
-
-        p {
+        .login-header {
+            text-align: center;
             margin-bottom: 40px;
-            text-align: left;
-            color: #848080;
         }
 
-        label {
-            color: black;
-            padding-left: 7px;
-        }
-
-        label[for="password"] {
-            margin-top: 5px;
-            display: block;
-            color: black;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
+        .login-header h1 {
+            color: #333;
+            font-size: 28px;
             margin-bottom: 10px;
-            margin-left: -5px;
-            border: 1px solid #ccc;
-            border-radius: 100px;
-    }
+            font-weight: 600;
+        }
 
-        .submit-btn {
+        .login-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
             width: 100%;
-            padding: 10px;
-            background-color: #1B470C;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border:none;
-            border-radius: 100px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 30%;
-            margin-bottom: 5px;
-            font-size: 15px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
 
-        .submit-btn:hover {
-            background-color: #45a049;
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        a {
-    color: #4CAF50;
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .form-links {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .form-links a {
+            color: #667eea;
             text-decoration: none;
-            margin-top: 2px; /* Space above the link */
-            margin-right: 10px;
-            }
+            font-size: 14px;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
 
-        a:hover {
+        .form-links a:hover {
+            color: #764ba2;
             text-decoration: underline;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e1e5e9;
+            z-index: 1;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .register-link p {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .register-btn {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .register-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-help {
+            background: #e8f4f8;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #0c5460;
+        }
+
+        .login-help ul {
+            margin: 8px 0 0 20px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+            
+            .login-header h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="form-card">
-        <h2>Sign In</h2>
-        <p>Hi, selamat datang kembali!</p>
-        <form action="#" method="post">
-            <label for="identifier">NIP/NIM/Email</label>
-            <input type="text" id="identifier" name="identifier" required>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🎓 Portal Universitas</h1>
+            <p>Selamat datang kembali! Silakan masuk ke akun Anda.</p>
+        </div>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+        <!-- Login Help -->
+        <div class="login-help">
+            <strong>Cara Login:</strong>
+            <ul>
+                <li><strong>Mahasiswa:</strong> Gunakan NIM sebagai username</li>
+                <li><strong>Dosen:</strong> Gunakan NIDN sebagai username</li>
+                <li><strong>Admin:</strong> Gunakan username yang didaftarkan</li>
+            </ul>
+        </div>
 
-            <a href="#" style="float:right;">Lupa password?</a>
+        <!-- Success Message -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        
+        <!-- Error Message -->
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
-            <button type="submit" class="submit-btn">Lanjutkan</button>
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" 
+                       placeholder="NIM (mahasiswa) / NIDN (dosen) / Username (admin)" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" 
+                       placeholder="Masukkan password Anda" required>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember" name="remember-me">
+                <label for="remember">Ingat saya</label>
+            </div>
+
+            <button type="submit" class="login-btn">
+                Masuk
+            </button>
         </form>
-        <p>Tidak punya akun Portal? <a href="#" style="text-decoration: underline;">Buat akun</a></p>
+
+        <div class="form-links">
+            <a href="/forgot-password">Lupa Password?</a>
+        </div>
+
+        <div class="divider">
+            <span>atau</span>
+        </div>
+
+        <div class="register-link">
+            <p>Belum memiliki akun?</p>
+            <a href="/register" class="register-btn">Daftar Sekarang</a>
+        </div>
     </div>
-</div>
 </body>
 </html>

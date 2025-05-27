@@ -26,41 +26,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
-                .requestMatchers("/resources/**").permitAll()
-                .requestMatchers("/webjars/**").permitAll()
-                
-                .requestMatchers("*.css", "*.js", "*.png", "*.jpg", 
-                               "*.jpeg", "*.gif", "*.ico", "*.woff", 
-                               "*.woff2", "*.ttf").permitAll()
-                
-                .requestMatchers("/static/*.css", "/static/*.js", "/static/*.png").permitAll()
-                .requestMatchers("/css/*.css", "/js/*.js", "/images/*").permitAll()     
-                .requestMatchers("/", "/home", "/register", "/login").permitAll()
-                .anyRequest().authenticated() 
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/home", true)
-                .failureUrl("/login?error=true")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout=true")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .permitAll()
-            )
-            .userDetailsService(customUserDetailsService);
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+      .csrf(csrf -> csrf.disable())
+      .authorizeHttpRequests(authz -> authz
+          // allow everything under /css/, /js/, /images/
+          .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+          
+          // public pages
+          .requestMatchers("/", "/home", "/register", "/login").permitAll()
+          
+          // all other endpoints require authentication
+          .anyRequest().authenticated()
+      )
+      // your login/logout config (if any) goes here
+      .formLogin(form -> form
+          .loginPage("/login")
+          .permitAll()
+      )
+      .logout(logout -> logout
+          .permitAll()
+      )
+      .userDetailsService(customUserDetailsService);
 
-        return http.build();
-    }
+    return http.build();
+}
 }
