@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
 import com.example.portaluniv.demo.service.CustomUserDetailsService;
 
 @Configuration
@@ -27,16 +28,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Disable for development
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-
-                .requestMatchers("/", "/home", "/css/**", "/js/**", "/images/**").permitAll()
-                .anyRequest().permitAll() 
-            );
-                    
-=======
-                .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
+                .requestMatchers("/resources/**").permitAll()
+                .requestMatchers("/webjars/**").permitAll()
+                
+                .requestMatchers("*.css", "*.js", "*.png", "*.jpg", 
+                               "*.jpeg", "*.gif", "*.ico", "*.woff", 
+                               "*.woff2", "*.ttf").permitAll()
+                
+                .requestMatchers("/static/*.css", "/static/*.js", "/static/*.png").permitAll()
+                .requestMatchers("/css/*.css", "/js/*.js", "/images/*").permitAll()     
+                .requestMatchers("/", "/home", "/register", "/login").permitAll()
+                .anyRequest().authenticated() 
             )
             .formLogin(form -> form
                 .loginPage("/login")

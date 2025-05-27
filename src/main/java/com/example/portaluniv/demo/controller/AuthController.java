@@ -1,21 +1,25 @@
 package com.example.portaluniv.demo.controller;
 
-import com.example.portaluniv.demo.dto.RegistrationForm;
-import com.example.portaluniv.demo.entity.Dosen;
-import com.example.portaluniv.demo.entity.Mahasiswa;
-import com.example.portaluniv.demo.entity.User;
-import com.example.portaluniv.demo.service.UserService;
-import com.example.portaluniv.demo.service.DosenService;
-import com.example.portaluniv.demo.service.MahasiswaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.validation.Valid;
+import com.example.portaluniv.demo.dto.RegistrationForm;
+import com.example.portaluniv.demo.entity.Dosen;
+import com.example.portaluniv.demo.entity.Mahasiswa;
+import com.example.portaluniv.demo.entity.User;
+import com.example.portaluniv.demo.service.DosenService;
+import com.example.portaluniv.demo.service.MahasiswaService;
+import com.example.portaluniv.demo.service.UserService;
+
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -28,7 +32,7 @@ public class AuthController {
     
     @Autowired
     private MahasiswaService mahasiswaService;
-
+    
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "error", required = false) String error,
                           @RequestParam(value = "logout", required = false) String logout,

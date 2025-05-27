@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal USU - Universitas Sumatera Utara</title>
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
     <div class="container">
@@ -17,24 +17,24 @@
                 
                 <div class="portal-section">
                     <div class="logo-container">
-                        <img src="/src/main/resources/images/Logo_USU.png" class="logo">
+                        <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
                         <h2>PORTAL USU</h2>
                     </div>
                     
                     <p class="description">
-                        Dengan <strong><em>PORTAL USU</strong></em> kamu dapat mengakses banyak sistem yang tersedia pada Universitas Sumatera hanya dengan satu akun
+                        Dengan <strong><em>PORTAL USU</em></strong> kamu dapat mengakses banyak sistem yang tersedia pada Universitas Sumatera Utara hanya dengan satu akun
                     </p>
                 </div>
                 
                 <div class="buttons">
-                    <a href="SignIn.html"><button class="btn-masuk">MASUK</button></a>
-                    <a href="SignIn.html"><button class="btn-daftar">DAFTAR</button></a>
+                    <a th:href="@{/login}"><button class="btn-masuk">MASUK</button></a>
+                    <a th:href="@{/register}"><button class="btn-daftar">DAFTAR</button></a>
                 </div>
             </div>
         </div>
         
         <div class="background-image">
-            <img src="/src/main/resources/images/Homepage.png">
+            <img th:src="@{/images/Homepage.png}" alt="Homepage Background">
         </div>
     </div>
 </body>
