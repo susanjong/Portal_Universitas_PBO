@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Portal Universitas</title>
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+
         * {
             margin: 0;
             padding: 0;
@@ -24,10 +27,9 @@
         .login-container {
             background: white;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 600px;
+            height: 110%;
             position: relative;
             overflow: hidden;
         }
@@ -39,7 +41,6 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
         }
 
         .login-header {
@@ -62,14 +63,16 @@
         .form-group {
             margin-bottom: 25px;
             position: relative;
+            font-family: 'Lato';
         }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
             color: #333;
-            font-weight: 500;
+            font-weight: bold;
             font-size: 14px;
+            
         }
 
         .form-group input {
@@ -84,7 +87,7 @@
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #81edae;
             background: white;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
@@ -96,10 +99,10 @@
         .login-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1B470C;
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 100px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -107,26 +110,17 @@
             margin-bottom: 20px;
         }
 
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
         .form-links {
-            text-align: center;
-            margin-top: 25px;
+            text-align: right;
+            margin-top: 2px;
         }
 
         .form-links a {
-            color: #667eea;
+            color: #42832C;
             text-decoration: none;
-            font-size: 14px;
-            margin: 0 10px;
+            font-size: 15px;
             transition: color 0.3s ease;
+
         }
 
         .form-links a:hover {
@@ -136,7 +130,7 @@
 
         .divider {
             text-align: center;
-            margin: 25px 0;
+            margin-top: 10px;
             position: relative;
             color: #999;
             font-size: 14px;
@@ -176,18 +170,18 @@
         }
 
         .register-btn {
-            color: #667eea;
+            color: black;
             text-decoration: none;
             font-weight: 600;
             padding: 10px 20px;
-            border: 2px solid #667eea;
+            border: 2px solid #1B470C;
             border-radius: 8px;
             display: inline-block;
             transition: all 0.3s ease;
         }
 
         .register-btn:hover {
-            background: #667eea;
+            background: #1B470C;
             color: white;
         }
 
@@ -228,7 +222,7 @@
         }
 
         .login-help {
-            background: #e8f4f8;
+            background: #67d779ac;
             border: 1px solid #bee5eb;
             border-radius: 8px;
             padding: 15px;
@@ -278,7 +272,7 @@
 
         <form th:action="@{/login}" method="post">
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username">NIP/NIM/Email</label>
                 <input type="text" id="username" name="username" 
                        placeholder="NIM (mahasiswa) / NIDN (dosen) / Username (admin)" required>
             </div>
