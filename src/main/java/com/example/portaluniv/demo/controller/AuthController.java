@@ -18,7 +18,7 @@ import com.example.portaluniv.demo.service.DosenService;
 import com.example.portaluniv.demo.service.MahasiswaService;
 import com.example.portaluniv.demo.service.UserService;
 
-import jakarta.servlet.http.HttpSession;
+
 import jakarta.validation.Valid;
 
 @Controller
@@ -198,15 +198,4 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/home")
-    public String home(Model model, HttpSession session) {
-        // Check if user is authenticated
-        Object principal = session.getAttribute("user");
-        if (principal != null) {
-            model.addAttribute("message", "Selamat datang kembali!");
-        } else {
-            model.addAttribute("message", "Selamat Datang di Portal Universitas!");
-        }
-        return "home";
-    }
 }

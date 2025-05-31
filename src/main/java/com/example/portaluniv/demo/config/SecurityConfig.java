@@ -42,11 +42,15 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
       // your login/logout config (if any) goes here
       .formLogin(form -> form
           .loginPage("/login")
-          .permitAll()
+                .defaultSuccessUrl("/dsmahasiswa", true)  // Redirect to dashboard after successful login
+                .failureUrl("/login?error=true")        // Redirect to login with error on failure
+                .permitAll()
       )
+
       .logout(logout -> logout
-          .permitAll()
-      )
+                .logoutSuccessUrl("/home")              // Redirect to home after logout
+                .permitAll()
+        )
       .userDetailsService(customUserDetailsService);
 
     return http.build();
