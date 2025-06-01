@@ -258,7 +258,7 @@
 </head>
 <body>
     <div class="header">
-        <img src="/src/main/resources/static/images/Logo_USU.png" alt="Logo USU" class="logo">
+        <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
         <div class="header-title">PORTAL USU</div>
     </div>
 
@@ -272,7 +272,7 @@
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/Admin_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
