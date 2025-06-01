@@ -31,4 +31,22 @@ public class DashboardController {
         
         return "dsmahasiswa";
     }
+
+    @GetMapping("/Admin_beranda")
+    public String adminDashboard(Model model) {
+        // Get the current authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            
+            // Add user information to the model
+            model.addAttribute("username", userDetails.getUsername());
+            model.addAttribute("fullName", userDetails.getFullName());
+            model.addAttribute("authorities", userDetails.getAuthorities());
+            model.addAttribute("userRole", "ADMIN");
+        }
+        
+        return "Admin_beranda"; // ini akan cari Admin_beranda.html di templates/
+    }
 }
