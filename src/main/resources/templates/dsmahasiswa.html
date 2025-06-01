@@ -852,7 +852,6 @@
                 width: 95%;
             }
         }
-
     </style>
 </head>
 
@@ -1177,15 +1176,13 @@
                 loadDaftarKelas();
             } else if (menuText === 'Kelas Tersimpan') {
                 mainContent.innerHTML = `
-                   <h2>Daftar Kelas yang Tersimpan</h2>    
-        
-        <div class="table-container">
-            <button class="add-btn" onclick="openAddModal()">+ Tambah Kelas</button>
-            
-            <div class="table-wrapper">
-                <table id="classTable">
-                    <thead>
-                        <tr>
+                   <h2>Daftar Kelas yang Tersimpan</h2> 
+
+                   <div class="class-table">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
                             <th>No</th>
                             <th>Kode</th>
                             <th>Mata Kuliah</th>
@@ -1211,330 +1208,171 @@
         </div>
     </div>
 
-    <!-- Modal untuk menambah kelas -->
-    <div id="addModal" class="modal">
-        <div class="modal-content">
-            <h2>Tambah Kelas Baru</h2>
-            <form id="addClassForm">
-                <div class="form-group">
-                    <label for="kode">Kode Mata Kuliah:</label>
-                    <input type="text" id="kode" name="kode" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="mataKuliah">Mata Kuliah:</label>
-                    <input type="text" id="mataKuliah" name="mataKuliah" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="semester">Semester:</label>
-                    <select id="semester" name="semester" required>
-                        <option value="">Pilih Semester</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="kelas">Kelas:</label>
-                    <input type="text" id="kelas" name="kelas" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="sks">SKS:</label>
-                    <select id="sks" name="sks" required>
-                        <option value="">Pilih SKS</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="ruangan">Ruangan:</label>
-                    <input type="text" id="ruangan" name="ruangan" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="waktu_mulai">Waktu Mulai:</label>
-                    <input type="time" id="waktu_mulai" name="waktu_mulai" required>
-                    </div>
-
-                     <div class="form-group">
-                    <label for="waktu_selesai">Waktu Selesai:</label>
-                    <input type="time" id="waktu_selesai" name="waktu_selesai" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dosen">Dosen:</label>
-                    <input type="text" id="dosen" name="dosen" required>
-                </div>
-                
-                <div class="form-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Batal</button>
-                    <button type="submit" class="btn btn-primary">Tambah</button>
-                </div>
-            </form>
-        </div>
+    
     </div>
                 `;
             } else {
                 loadBeranda();
             }
         }
+ // Untuk menyimpan data kelas
+        let kelasData = [];
+        let nextId = 1;
 
-      // Untuk menyimpan data kelas disidebar kelas tersimpan 
-let kelasData = [];
-let nextId = 1;
-
-// Fungsi untuk membuka modal tambah kelas
-function openAddModal() {
-    const modal = document.getElementById('addModal');
-    modal.style.display = 'block';
-    
-    // Reset form
-    document.getElementById('addClassForm').reset();
-}
-
-// Fungsi untuk menutup modal tambah kelas
-function closeAddModal() {
-    const modal = document.getElementById('addModal');
-    modal.style.display = 'none';
-}
-
-// Event listener untuk form submit
-document.addEventListener('DOMContentLoaded', function() {
-    // Event listener untuk form tambah kelas
-    document.addEventListener('submit', function(e) {
-        if (e.target && e.target.id === 'addClassForm') {
-            e.preventDefault();
-            addNewClass();
+        // Fungsi untuk load halaman Kelas Tersimpan
+        function loadKelasTersimpan() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <h2>Daftar Kelas yang Terdaftar</h2>    
+                
+                <div class="table-container">
+                    <div class="table-wrapper">
+                        <table id="classTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode</th>
+                                    <th>Mata Kuliah</th>
+                                    <th>Semester</th>
+                                    <th>Kelas</th>
+                                    <th>SKS</th>
+                                    <th>Ruangan</th>
+                                    <th>Jadwal</th>
+                                    <th>Dosen</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="classTableBody">
+                                <!-- Data akan diisi dengan JavaScript -->
+                            </tbody>
+                        </table>
+                        
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <h3>Belum ada kelas yang terdaftar</h3>
+                            <p>Silakan tambahkan kelas baru</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Update tabel setelah HTML dimuat
+            setTimeout(() => {
+                updateClassTable();
+            }, 10);
         }
-    });
-    
-    // Event listener untuk menutup modal ketika klik di luar modal
-    document.addEventListener('click', function(e) {
-        const modal = document.getElementById('addModal');
-        if (e.target === modal) {
-            closeAddModal();
+
+        // Fungsi untuk mengecek duplikasi kode
+        function isDuplicateCode(kode) {
+            return kelasData.some(kelas => kelas.kode.toLowerCase() === kode.toLowerCase());
         }
-    });
-    
-    // Event listener untuk tombol ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeAddModal();
-        }
-    });
-    
-    // Inisialisasi tabel saat halaman dimuat
-    updateClassTable();
-});
 
-// Fungsi untuk menambah kelas baru
-function addNewClass() {
-    const form = document.getElementById('addClassForm');
-    const formData = new FormData(form);
-    
-    // Validasi form
-    if (!validateForm(formData)) {
-        return;
-    }
-    
-    // Buat objek kelas baru dengan ID unik
-    const newKelas = {
-        id: nextId++,
-        kode: formData.get('kode'),
-        mataKuliah: formData.get('mataKuliah'),
-        semester: formData.get('semester'),
-        kelas: formData.get('kelas'),
-        sks: formData.get('sks'),
-        ruangan: formData.get('ruangan'),
-        waktu_mulai: formData.get('waktu_mulai'),
-        waktu_selesai: formData.get('waktu_selesai'),
-        dosen: formData.get('dosen')
-    };
-    
-    // Cek duplikasi kode mata kuliah
-    if (isDuplicateCode(newKelas.kode)) {
-        alert('Kode mata kuliah sudah ada! Silakan gunakan kode yang berbeda.');
-        return;
-    }
-    
-    // Tambahkan ke array
-    kelasData.push(newKelas);
-    
-    // Update tampilan tabel
-    updateClassTable();
-    
-    // Tutup modal
-    closeAddModal();
-    
-    // Tampilkan pesan sukses
-    showSuccessMessage('Kelas berhasil ditambahkan!');
-}
-
-// Fungsi validasi form
-function validateForm(formData) {
-    const requiredFields = ['kode', 'mataKuliah', 'semester', 'kelas', 'sks', 'ruangan', 'waktu_mulai', 'waktu_selesai', 'dosen'];
-    
-    for (let field of requiredFields) {
-        const value = formData.get(field);
-        if (!value || value.trim() === '') {
-            alert(`Field ${field} harus diisi!`);
-            return false;
-        }
-    }
-
-    // Validasi waktu selesai > waktu mulai
-    const mulai = formData.get('waktu_mulai');
-    const selesai = formData.get('waktu_selesai');
-    if (mulai && selesai && mulai >= selesai) {
-        alert('Waktu selesai harus lebih besar dari waktu mulai!');
-        return false;
-    }
-
-    return true;
-}
-
-// Fungsi untuk mengecek duplikasi kode
-function isDuplicateCode(kode) {
-    return kelasData.some(kelas => kelas.kode.toLowerCase() === kode.toLowerCase());
-}
-
-// Fungsi untuk update tabel
-function updateClassTable() {
-    const tableBody = document.getElementById('classTableBody');
-    const emptyState = document.getElementById('emptyState');
-    
-    if (!tableBody) {
-        console.error('Element classTableBody tidak ditemukan');
-        return;
-    }
-    
-    // Clear tabel
-    tableBody.innerHTML = '';
-    
-    if (kelasData.length === 0) {
-        // Tampilkan empty state jika ada
-        if (emptyState) {
-            emptyState.style.display = 'block';
-        }
-        // Sembunyikan tabel jika ada wrapper
-        const tableWrapper = document.querySelector('.table-wrapper table');
-        if (tableWrapper) {
-            tableWrapper.style.display = 'none';
-        }
-    } else {
-        // Sembunyikan empty state
-        if (emptyState) {
-            emptyState.style.display = 'none';
-        }
-        // Tampilkan tabel
-        const tableWrapper = document.querySelector('.table-wrapper table');
-        if (tableWrapper) {
-            tableWrapper.style.display = 'table';
-        }
-        
-        // Populate tabel
-        kelasData.forEach((kelas, index) => {
-            const row = createTableRow(kelas, index);
-            tableBody.appendChild(row);
-        });
-    }
-}
-
-// Fungsi untuk membuat baris tabel
-function createTableRow(kelas, index) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${kelas.kode}</td>
-        <td>${kelas.mataKuliah}</td>
-        <td>${kelas.semester}</td>
-        <td>${kelas.kelas}</td>
-        <td>${kelas.sks}</td>
-        <td>${kelas.ruangan}</td>
-        <td>${kelas.waktu_mulai}</td>
-        <td>${kelas.waktu_selesai}</td>
-        <td>${kelas.dosen}</td>
-        <td>
-            <button onclick="editKelas(${index})" class="btn-edit">Edit</button>
-            <button onclick="deleteKelas(${index})" class="btn-delete">Hapus</button>
-        </td>
-    `;
-    return row;
-}
-
-// Fungsi untuk menghapus kelas
-function deleteKelas(index) {
-    if (confirm('Apakah Anda yakin ingin menghapus kelas ini?')) {
-        kelasData.splice(index, 1);
-        updateClassTable();
-        showSuccessMessage('Kelas berhasil dihapus!');
-    }
-}
-
-// Fungsi untuk edit kelas
-function editKelas(index) {
-    const kelas = kelasData[index];
-    if (kelas) {
-        // Untuk saat ini, kita bisa menggunakan prompt sederhana
-        // Atau bisa dikembangkan dengan modal edit yang terpisah
-        alert(`Fitur edit untuk kelas ${kelas.mataKuliah} akan segera hadir!`);
-    }
-}
-
-// Fungsi untuk menampilkan pesan sukses
-function showSuccessMessage(message) {
-    // Buat elemen notifikasi
-    const notification = document.createElement('div');
-    notification.className = 'success-notification';
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #4CAF50;
-        color: white;
-        padding: 15px 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        z-index: 10000;
-        font-weight: 500;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Animasi masuk
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(0)';
-    }, 10);
-    
-    // Hapus setelah 3 detik
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
+        // Fungsi untuk update tabel
+        function updateClassTable() {
+            const tableBody = document.getElementById('classTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (!tableBody) {
+                return; // Tidak ada tabel, mungkin tidak sedang di halaman Kelas Tersimpan
             }
-        }, 300);
-    }, 3000);
-}
+            
+            // Clear tabel
+            tableBody.innerHTML = '';
+            
+            if (kelasData.length === 0) {
+                // Tampilkan empty state jika ada
+                if (emptyState) {
+                    emptyState.style.display = 'block';
+                }
+                // Sembunyikan tabel
+                const table = document.getElementById('classTable');
+                if (table) {
+                    table.style.display = 'none';
+                }
+            } else {
+                // Sembunyikan empty state
+                if (emptyState) {
+                    emptyState.style.display = 'none';
+                }
+                // Tampilkan tabel
+                const table = document.getElementById('classTable');
+                if (table) {
+                    table.style.display = 'table';
+                }
+                
+                // Populate tabel
+                kelasData.forEach((kelas, index) => {
+                    const row = createTableRow(kelas, index + 1);
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+
+        // Fungsi untuk membuat baris tabel sesuai dengan struktur yang diinginkan
+        function createTableRow(kelas, no) {
+            const row = document.createElement('tr');
+            
+            // Format jadwal dari waktu_mulai dan waktu_selesai
+            const jadwal = `${kelas.waktu_mulai} - ${kelas.waktu_selesai}`;
+            
+            row.innerHTML = `
+                <td>${no}</td>
+                <td>${kelas.kode}</td>
+                <td>${kelas.mataKuliah}</td>
+                <td>${kelas.semester}</td>
+                <td>${kelas.kelas}</td>
+                <td>${kelas.sks}</td>
+                <td>${kelas.ruangan}</td>
+                <td>${jadwal}</td>
+                <td>${kelas.dosen}</td>
+                <td>
+                    <button onclick="deleteKelas(${kelasData.indexOf(kelas)})" class="btn-delete" title="Hapus">
+                        🗑️
+                    </button>
+                </td>
+            `;
+            return row;
+        }
+
+        // Fungsi untuk menghapus kelas
+        function deleteKelas(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus kelas ini?')) {
+                const deletedClass = kelasData[index];
+                kelasData.splice(index, 1);
+                updateClassTable();
+                showSuccessMessage(`Kelas ${deletedClass.kode} berhasil dihapus!`);
+            }
+        }
+
+        // Fungsi untuk menampilkan pesan sukses
+        function showSuccessMessage(message) {
+            // Buat elemen notifikasi
+            const notification = document.createElement('div');
+            notification.className = 'success-notification';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animasi masuk
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Hapus setelah 3 detik
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
 
 // CSS tambahan untuk styling (tambahkan ke CSS Anda)
         const additionalCSS = `
+
 .modal {
     display: none;
     position: fixed;
