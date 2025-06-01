@@ -70,6 +70,21 @@
             color: #333;
         }
 
+        .sidebar-item-daftar {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            color: #6E6E6E;
+        }
+
+        .sidebar-item-daftar p {
+            margin-left: 12px;
+        }
+
         .sidebar-item:hover {
             background-color: #f8f9fa;
         }
@@ -227,7 +242,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 550;
+            font-weight: 500;
             margin-top: 30px;
             transition: background-color 0.2s;
             display: flex;
@@ -249,21 +264,29 @@
 
     <div class="container">
         <div class="sidebar">
-            <a href="#" class="sidebar-item active" onclick="setActive(this)">
+            <a href="#" class="sidebar-item active" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="#" class="sidebar-item" onclick="setActive(this)">
+            <a href="/src/main/resources/templates/Admin_beranda.html" class="sidebar-item" onclick="setActiveMenu(this, 'Beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="#" class="sidebar-item" onclick="setActive(this)">
+            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="#" class="sidebar-item" onclick="setActive(this)">
+            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-tersimpan')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Tersimpan
+            </a>
+            <a href="#" class="sidebar-item-daftar" onclick="setActiveMenu(this, 'daftar-mahasiswa')">
+                <i class="fas fa-book-reader"></i>
+                <p>Daftar Mahasiswa</p>
+            </a>
+            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-dosen')">
+                <i class="fa-solid fa-user-tie"></i>
+                <p>Daftar Dosen</p>
             </a>
         </div>
 
@@ -349,21 +372,28 @@
         });
 
         // Add click handlers for sidebar navigation
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remove active class from all items
-                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-                
-                // Add active class to clicked item
-                this.classList.add('active');
-                
-                // You could add navigation logic here
-                const text = this.textContent.trim();
-                console.log('Navigating to:', text);
+        function setActiveMenu(element, menu) {
+            // Remove active class from all items
+            document.querySelectorAll('.sidebar-item, .sidebar-item-daftar').forEach(item => {
+                item.classList.remove('active');
             });
-        });
+            
+            // Add active class to clicked item
+            element.classList.add('active');
+            
+            // Handle navigation based on menu
+            switch(menu) {
+                case 'profil':
+                    // Already on beranda, just show user list
+                    document.getElementById('userListView').style.display = 'block';
+                    document.getElementById('userFormView').style.display = 'none';
+                    break;
+                default:
+                    console.log('Navigating to:', menu);
+                    // Add navigation logic for other menus here
+                    break;
+            }
+        }
 
         // Add some interactive feedback for form inputs
         document.querySelectorAll('.form-input').forEach(input => {
