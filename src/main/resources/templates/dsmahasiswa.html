@@ -960,6 +960,40 @@
     </div>
 
     <script>
+              // Fungsi untuk merender tabel
+        function renderTable() {
+            const tbody = document.getElementById('classTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (classData.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            tbody.innerHTML = classData.map((item, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td class="code-cell">${item.kode}</td>
+                    <td class="subject-cell">${item.mataKuliah}</td>
+                    <td class="semester-cell">${item.semester}</td>
+                    <td class="class-cell">${item.kelas}</td>
+                    <td class="credits-cell">${item.sks}</td>
+                    <td class="room-cell">${item.ruangan}</td>
+                    <td class="schedule-cell">${item.jadwal}</td>
+                    <td class="instructor-cell">${item.dosen}</td>
+                    <td class="action-cell">
+                        <button class="delete-btn" onclick="deleteClass(${item.id})" title="Hapus">
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        
+
         // Data untuk menyimpan mata kuliah yang terdaftar
         let registeredCourses = ['ILK3001-A'];
         let selectedCourse = null;
@@ -1138,20 +1172,718 @@
                 </div>
 
                 `;
+
             } else if (menuText === 'Daftar Kelas') {
                 loadDaftarKelas();
             } else if (menuText === 'Kelas Tersimpan') {
                 mainContent.innerHTML = `
-                    <div class="content-card">
-                        <h2>Kelas Tersimpan</h2>
-                        <p>Kelas yang telah Anda simpan akan ditampilkan di sini.</p>
+                   <h2>Daftar Kelas yang Tersimpan</h2>    
+        
+        <div class="table-container">
+            <button class="add-btn" onclick="openAddModal()">+ Tambah Kelas</button>
+            
+            <div class="table-wrapper">
+                <table id="classTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode</th>
+                            <th>Mata Kuliah</th>
+                            <th>Semester</th>
+                            <th>Kelas</th>
+                            <th>SKS</th>
+                            <th>Ruangan</th>
+                            <th>Jadwal</th>
+                            <th>Dosen</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classTableBody">
+                        <!-- Data akan diisi dengan JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <h3>Belum ada kelas yang terdaftar</h3>
+                    <p>Klik tombol "Tambah Kelas" untuk menambahkan kelas baru</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk menambah kelas -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h2>Tambah Kelas Baru</h2>
+            <form id="addClassForm">
+                <div class="form-group">
+                    <label for="kode">Kode Mata Kuliah:</label>
+                    <input type="text" id="kode" name="kode" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mataKuliah">Mata Kuliah:</label>
+                    <input type="text" id="mataKuliah" name="mataKuliah" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="semester">Semester:</label>
+                    <select id="semester" name="semester" required>
+                        <option value="">Pilih Semester</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kelas">Kelas:</label>
+                    <input type="text" id="kelas" name="kelas" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sks">SKS:</label>
+                    <select id="sks" name="sks" required>
+                        <option value="">Pilih SKS</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ruangan">Ruangan:</label>
+                    <input type="text" id="ruangan" name="ruangan" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="waktu_mulai">Waktu Mulai:</label>
+                    <input type="time" id="waktu_mulai" name="waktu_mulai" required>
                     </div>
+
+                     <div class="form-group">
+                    <label for="waktu_selesai">Waktu Selesai:</label>
+                    <input type="time" id="waktu_selesai" name="waktu_selesai" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dosen">Dosen:</label>
+                    <input type="text" id="dosen" name="dosen" required>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Batal</button>
+                    <button type="submit" class="btn btn-primary">Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
                 `;
             } else {
-                // Default beranda content
                 loadBeranda();
             }
         }
+
+      // Untuk menyimpan data kelas disidebar kelas tersimpan 
+let kelasData = [];
+let nextId = 1;
+
+// Fungsi untuk membuka modal tambah kelas
+function openAddModal() {
+    const modal = document.getElementById('addModal');
+    modal.style.display = 'block';
+    
+    // Reset form
+    document.getElementById('addClassForm').reset();
+}
+
+// Fungsi untuk menutup modal tambah kelas
+function closeAddModal() {
+    const modal = document.getElementById('addModal');
+    modal.style.display = 'none';
+}
+
+// Event listener untuk form submit
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener untuk form tambah kelas
+    document.addEventListener('submit', function(e) {
+        if (e.target && e.target.id === 'addClassForm') {
+            e.preventDefault();
+            addNewClass();
+        }
+    });
+    
+    // Event listener untuk menutup modal ketika klik di luar modal
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('addModal');
+        if (e.target === modal) {
+            closeAddModal();
+        }
+    });
+    
+    // Event listener untuk tombol ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAddModal();
+        }
+    });
+    
+    // Inisialisasi tabel saat halaman dimuat
+    updateClassTable();
+});
+
+// Fungsi untuk menambah kelas baru
+function addNewClass() {
+    const form = document.getElementById('addClassForm');
+    const formData = new FormData(form);
+    
+    // Validasi form
+    if (!validateForm(formData)) {
+        return;
+    }
+    
+    // Buat objek kelas baru dengan ID unik
+    const newKelas = {
+        id: nextId++,
+        kode: formData.get('kode'),
+        mataKuliah: formData.get('mataKuliah'),
+        semester: formData.get('semester'),
+        kelas: formData.get('kelas'),
+        sks: formData.get('sks'),
+        ruangan: formData.get('ruangan'),
+        waktu_mulai: formData.get('waktu_mulai'),
+        waktu_selesai: formData.get('waktu_selesai'),
+        dosen: formData.get('dosen')
+    };
+    
+    // Cek duplikasi kode mata kuliah
+    if (isDuplicateCode(newKelas.kode)) {
+        alert('Kode mata kuliah sudah ada! Silakan gunakan kode yang berbeda.');
+        return;
+    }
+    
+    // Tambahkan ke array
+    kelasData.push(newKelas);
+    
+    // Update tampilan tabel
+    updateClassTable();
+    
+    // Tutup modal
+    closeAddModal();
+    
+    // Tampilkan pesan sukses
+    showSuccessMessage('Kelas berhasil ditambahkan!');
+}
+
+// Fungsi validasi form
+function validateForm(formData) {
+    const requiredFields = ['kode', 'mataKuliah', 'semester', 'kelas', 'sks', 'ruangan', 'waktu_mulai', 'waktu_selesai', 'dosen'];
+    
+    for (let field of requiredFields) {
+        const value = formData.get(field);
+        if (!value || value.trim() === '') {
+            alert(`Field ${field} harus diisi!`);
+            return false;
+        }
+    }
+
+    // Validasi waktu selesai > waktu mulai
+    const mulai = formData.get('waktu_mulai');
+    const selesai = formData.get('waktu_selesai');
+    if (mulai && selesai && mulai >= selesai) {
+        alert('Waktu selesai harus lebih besar dari waktu mulai!');
+        return false;
+    }
+
+    return true;
+}
+
+// Fungsi untuk mengecek duplikasi kode
+function isDuplicateCode(kode) {
+    return kelasData.some(kelas => kelas.kode.toLowerCase() === kode.toLowerCase());
+}
+
+// Fungsi untuk update tabel
+function updateClassTable() {
+    const tableBody = document.getElementById('classTableBody');
+    const emptyState = document.getElementById('emptyState');
+    
+    if (!tableBody) {
+        console.error('Element classTableBody tidak ditemukan');
+        return;
+    }
+    
+    // Clear tabel
+    tableBody.innerHTML = '';
+    
+    if (kelasData.length === 0) {
+        // Tampilkan empty state jika ada
+        if (emptyState) {
+            emptyState.style.display = 'block';
+        }
+        // Sembunyikan tabel jika ada wrapper
+        const tableWrapper = document.querySelector('.table-wrapper table');
+        if (tableWrapper) {
+            tableWrapper.style.display = 'none';
+        }
+    } else {
+        // Sembunyikan empty state
+        if (emptyState) {
+            emptyState.style.display = 'none';
+        }
+        // Tampilkan tabel
+        const tableWrapper = document.querySelector('.table-wrapper table');
+        if (tableWrapper) {
+            tableWrapper.style.display = 'table';
+        }
+        
+        // Populate tabel
+        kelasData.forEach((kelas, index) => {
+            const row = createTableRow(kelas, index);
+            tableBody.appendChild(row);
+        });
+    }
+}
+
+// Fungsi untuk membuat baris tabel
+function createTableRow(kelas, index) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${kelas.kode}</td>
+        <td>${kelas.mataKuliah}</td>
+        <td>${kelas.semester}</td>
+        <td>${kelas.kelas}</td>
+        <td>${kelas.sks}</td>
+        <td>${kelas.ruangan}</td>
+        <td>${kelas.waktu_mulai}</td>
+        <td>${kelas.waktu_selesai}</td>
+        <td>${kelas.dosen}</td>
+        <td>
+            <button onclick="editKelas(${index})" class="btn-edit">Edit</button>
+            <button onclick="deleteKelas(${index})" class="btn-delete">Hapus</button>
+        </td>
+    `;
+    return row;
+}
+
+// Fungsi untuk menghapus kelas
+function deleteKelas(index) {
+    if (confirm('Apakah Anda yakin ingin menghapus kelas ini?')) {
+        kelasData.splice(index, 1);
+        updateClassTable();
+        showSuccessMessage('Kelas berhasil dihapus!');
+    }
+}
+
+// Fungsi untuk edit kelas
+function editKelas(index) {
+    const kelas = kelasData[index];
+    if (kelas) {
+        // Untuk saat ini, kita bisa menggunakan prompt sederhana
+        // Atau bisa dikembangkan dengan modal edit yang terpisah
+        alert(`Fitur edit untuk kelas ${kelas.mataKuliah} akan segera hadir!`);
+    }
+}
+
+// Fungsi untuk menampilkan pesan sukses
+function showSuccessMessage(message) {
+    // Buat elemen notifikasi
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 10000;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animasi masuk
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Hapus setelah 3 detik
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// CSS tambahan untuk styling (tambahkan ke CSS Anda)
+        const additionalCSS = `
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 5% auto;
+    padding: 30px;
+    border: none;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+    }
+    to { 
+        opacity: 1; 
+    }
+}
+
+@keyframes slideDown {
+    from { 
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    display: block !important;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    text-align: left !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #CEECC2;
+    box-shadow: 0 0 0 3px rgba(206, 236, 194, 0.3);
+}
+
+.form-group input:hover,
+.form-group select:hover {
+    border-color: #CEECC2;
+}
+
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    align-items: center;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 100px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Action buttons (Edit & Delete) - smaller and more compact */
+.btn-edit,
+.btn-delete {
+    padding: 8px 16px;
+    font-size: 12px;
+    min-width: 70px;
+    margin: 0 3px;
+}
+
+/* Button group for action buttons */
+.btn-group {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+}
+
+
+.btn-primary {
+    background-color: #42832C;
+    color: #ffffff;
+    border: 2px solid #42832C;
+}
+
+.btn-primary:hover {
+    background-color: #2d5a1f;
+    border-color: #2d5a1f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(66, 131, 44, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(66, 131, 44, 0.3);
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+    border: 2px solid #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+    border-color: #545b62;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+/* Edit Button (Green) */
+.btn-edit {
+    background-color: #42832C;
+    color: #ffffff;
+    border: 2px solid #42832C;
+}
+
+.btn-edit:hover {
+    background-color: #2d5a1f;
+    border-color: #2d5a1f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(66, 131, 44, 0.3);
+}
+
+.btn-edit:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(66, 131, 44, 0.3);
+}
+
+/* Delete Button (Red) */
+.btn-delete {
+    background-color: #dc3545;
+    color: #ffffff;
+    border: 2px solid #dc3545;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-delete:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+.modal-content h2 {
+    margin: 0 0 25px 0 !important;
+    padding: 0 !important;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    text-align: left !important;
+    line-height: 1.2;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.form-group label.required::after {
+    content: ' *';
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.form-group input.invalid,
+.form-group select.invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-group input.valid,
+.form-group select.valid {
+    border-color: #42832C;
+    box-shadow: 0 0 0 3px rgba(66, 131, 44, 0.1);
+}
+
+.form-group input::placeholder {
+    color: black;
+    opacity: 0.8;
+    font-style: italic;
+}
+
+
+.modal label,
+.modal-content label,
+#addModal label,
+.form-group label {
+    text-align: left !important;
+    display: block !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+}
+
+.modal h2,
+.modal-content h2,
+#addModal h2 {
+    text-align: left !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+}
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 20px;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-row .form-group {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 5% auto;
+        padding: 15px;
+    }
+    
+    .modal-content h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: 10px 12px;
+        font-size: 16px; 
+    }
+}
+        `;
+
+    function addCustomCSS() {
+        const style = document.createElement('style');
+        style.textContent = additionalCSS;
+        document.head.appendChild(style);
+    }
+
+// Panggil fungsi CSS ketika halaman dimuat
+document.addEventListener('DOMContentLoaded', addCustomCSS);
+
+// Fungsi untuk inisialisasi ketika menu "Kelas Tersimpan" diklik
+function initializeClassPage() {
+    // Pastikan event listener terpasang
+    updateClassTable();
+}
 
         function loadBeranda() {
             const mainContent = document.querySelector('.main-content');
@@ -1194,7 +1926,9 @@
                                     <th>Kelas</th>
                                     <th>SKS</th>
                                     <th>Ruangan</th>
-                                    <th>Jadwal</th>
+                                   <th>Waktu Mulai</th>
+                                <th>Waktu Selesai</th>
+
                                     <th>Dosen</th>
                                 </tr>
                             </thead>
