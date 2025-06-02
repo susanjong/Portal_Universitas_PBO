@@ -25,12 +25,12 @@ public class KelasService {
         return kelasRepository.findById(id);
     }
     
-    public Optional<Kelas> findByKode(String kode) {
-        return kelasRepository.findByKode(kode);
+    public List<Kelas> findByKodeMataKuliah(String kodeMk) {
+        return kelasRepository.findByMataKuliahKodeMk(kodeMk);
     }
     
-    public Optional<Kelas> findByKodeAndKelas(String kode, String kelas) {
-        return kelasRepository.findByKodeAndKelas(kode, kelas);
+    public Optional<Kelas> findByKodeMataKuliahAndKelas(String kodeMk, String kelas) {
+        return kelasRepository.findByMataKuliahKodeMkAndKelas(kodeMk, kelas);
     }
     
     public List<Kelas> findByMataKuliahId(Long mataKuliahId) {
@@ -54,15 +54,15 @@ public class KelasService {
     }
     
     public List<Kelas> findByProdi(String prodi) {
-        return kelasRepository.findByProdi(prodi);
+        return kelasRepository.findByMataKuliahProgramStudi(prodi);
     }
     
     public List<Kelas> findBySemester(int semester) {
-        return kelasRepository.findBySemester(semester);
+        return kelasRepository.findByMataKuliahSemester(semester);
     }
     
     public List<Kelas> findByProdiAndSemester(String prodi, int semester) {
-        return kelasRepository.findByProdiAndSemester(prodi, semester);
+        return kelasRepository.findByMataKuliahProgramStudiAndMataKuliahSemester(prodi, semester);
     }
     
     public Kelas save(Kelas kelas) {
@@ -73,7 +73,7 @@ public class KelasService {
         kelasRepository.deleteById(id);
     }
     
-    public boolean existsByKode(String kode) {
-        return kelasRepository.existsByKode(kode);
+    public boolean existsByKodeMataKuliah(String kodeMk) {
+        return kelasRepository.existsByMataKuliahKodeMk(kodeMk);
     }
 }
