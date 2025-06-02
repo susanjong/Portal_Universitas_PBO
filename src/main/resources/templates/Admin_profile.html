@@ -293,6 +293,9 @@
         <div class="main-content">
             <h2 class="form-title">Data Pribadi Admin</h2>
             
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
             <div class="info-row">
                 <div class="info-item">
                     <span class="info-label">NAMA</span>
@@ -316,20 +319,18 @@
             </div>
 
             <!-- Password Section - Editable -->
-            <form id="adminForm" class="password-section">
+            <form th:action="@{/Admin_profile/updatePassword}" method="post" class="password-section">
                 <div class="password-group">
                     <label class="form-label">PASSWORD</label>
                     <div class="password-input-container">
-                        <input type="password" class="form-input" id="password">
-                        <button type="button" class="password-toggle" onclick="togglePassword('password')"></button>
+                        <input type="password" class="form-input" name="password" required>
                     </div>
                 </div>
 
                 <div class="password-group">
                     <label class="form-label">KONFIRMASI PASSWORD</label>
                     <div class="password-input-container">
-                        <input type="password" class="form-input" id="confirmPassword">
-                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')"></button>
+                        <input type="password" class="form-input" name="confirmPassword" required>
                     </div>
                 </div>
 
