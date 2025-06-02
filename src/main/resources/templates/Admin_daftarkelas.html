@@ -706,15 +706,16 @@
         }
 
         // Filter functionality
-        function filterClasses() {
+       function filterClasses() {
             const codeFilter = document.getElementById('codeFilter').value.toLowerCase();
             const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
             const classFilter = document.getElementById('classFilter').value;
 
             const filteredClasses = classes.filter(cls => {
-                const codeMatch = cls.code.toLowerCase().includes(codeFilter);
-                const nameMatch = cls.name.toLowerCase().includes(nameFilter);
-                const classMatch = classFilter === '' || cls.section === classFilter;
+                // Fix property names sesuai API response
+                const codeMatch = cls.mataKuliah?.kodeMk?.toLowerCase().includes(codeFilter) || false;
+                const nameMatch = cls.mataKuliah?.namaMk?.toLowerCase().includes(nameFilter) || false;
+                const classMatch = classFilter === '' || cls.kelas === classFilter;
 
                 return codeMatch && nameMatch && classMatch;
             });
@@ -722,49 +723,49 @@
             renderClassTable(filteredClasses);
         }
 
-function renderClassTable(classList = classes) {
-    const tbody = document.getElementById('classTableBody');
-    tbody.innerHTML = '';
+        function renderClassTable(classList = classes) {
+            const tbody = document.getElementById('classTableBody');
+            tbody.innerHTML = '';
 
-    if (classList.length === 0) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td colspan="12" style="text-align: center; padding: 20px; color: #666;">
-                Tidak ada data kelas yang ditemukan
-            </td>
-        `;
-        tbody.appendChild(row);
-        return;
-    }
+            if (classList.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="12" style="text-align: center; padding: 20px; color: #666;">
+                        Tidak ada data kelas yang ditemukan
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
 
-    classList.forEach((cls, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${cls.mataKuliah?.kodeMk || '-'}</td>
-            <td>${cls.mataKuliah?.namaMk || '-'}</td>
-            <td>${cls.mataKuliah?.programStudi || '-'}</td>
-            <td>${cls.mataKuliah?.semester || '-'}</td>
-            <td>${cls.kelas || '-'}</td>
-            <td>${cls.mataKuliah?.sks || '-'}</td>
-            <td>${cls.ruangan || '-'}</td>
-            <td>${cls.jadwal || '-'}</td>
-            <td>${cls.dosen?.name || 'Belum ditentukan'}</td>
-            <td>${cls.kuota || 0}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn edit-btn" onclick="editClass(${cls.id})" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteClass(${cls.id})" title="Hapus">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
+            classList.forEach((cls, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${cls.mataKuliah?.kodeMk || '-'}</td>
+                    <td>${cls.mataKuliah?.namaMk || '-'}</td>
+                    <td>${cls.mataKuliah?.programStudi || '-'}</td>
+                    <td>${cls.mataKuliah?.semester || '-'}</td>
+                    <td>${cls.kelas || '-'}</td>
+                    <td>${cls.mataKuliah?.sks || '-'}</td>
+                    <td>${cls.ruangan || '-'}</td>
+                    <td>${cls.jadwal || '-'}</td>
+                    <td>${cls.dosen?.name || 'Belum ditentukan'}</td>
+                    <td>${cls.kuota || 0}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit-btn" onclick="editClass(${cls.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteClass(${cls.id})" title="Hapus">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
         // Show add class form
         function showAddClassForm() {
