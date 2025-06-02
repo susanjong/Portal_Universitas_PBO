@@ -1,12 +1,14 @@
 package com.example.portaluniv.demo.service;
 
-import com.example.portaluniv.demo.entity.Kelas;
-import com.example.portaluniv.demo.repository.KelasRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
+
+import com.example.portaluniv.demo.entity.Kelas;
+import com.example.portaluniv.demo.repository.KelasRepository;
 
 @Service
 @Transactional
@@ -23,8 +25,12 @@ public class KelasService {
         return kelasRepository.findById(id);
     }
     
-    public Optional<Kelas> findByKodeKelas(String kodeKelas) {
-        return kelasRepository.findByKodeKelas(kodeKelas);
+    public Optional<Kelas> findByKode(String kode) {
+        return kelasRepository.findByKode(kode);
+    }
+    
+    public Optional<Kelas> findByKodeAndKelas(String kode, String kelas) {
+        return kelasRepository.findByKodeAndKelas(kode, kelas);
     }
     
     public List<Kelas> findByMataKuliahId(Long mataKuliahId) {
@@ -35,16 +41,28 @@ public class KelasService {
         return kelasRepository.findByDosenId(dosenId);
     }
     
-    public List<Kelas> findAvailableClasses() {
-        return kelasRepository.findAvailableClasses();
+    public List<Kelas> findByKelasContaining(String kelas) {
+        return kelasRepository.findByKelasContaining(kelas);
     }
     
-    public List<Kelas> findByFakultas(String fakultas) {
-        return kelasRepository.findByFakultas(fakultas);
+    public List<Kelas> findByJadwalContaining(String jadwal) {
+        return kelasRepository.findByJadwalContaining(jadwal);
     }
     
-    public List<Kelas> findByProgramStudi(String programStudi) {
-        return kelasRepository.findByProgramStudi(programStudi);
+    public List<Kelas> findByRuangan(String ruangan) {
+        return kelasRepository.findByRuangan(ruangan);
+    }
+    
+    public List<Kelas> findByProdi(String prodi) {
+        return kelasRepository.findByProdi(prodi);
+    }
+    
+    public List<Kelas> findBySemester(int semester) {
+        return kelasRepository.findBySemester(semester);
+    }
+    
+    public List<Kelas> findByProdiAndSemester(String prodi, int semester) {
+        return kelasRepository.findByProdiAndSemester(prodi, semester);
     }
     
     public Kelas save(Kelas kelas) {
@@ -55,7 +73,7 @@ public class KelasService {
         kelasRepository.deleteById(id);
     }
     
-    public boolean existsByKodeKelas(String kodeKelas) {
-        return kelasRepository.existsByKodeKelas(kodeKelas);
+    public boolean existsByKode(String kode) {
+        return kelasRepository.existsByKode(kode);
     }
 }
