@@ -258,27 +258,27 @@
 </head>
 <body>
     <div class="header">
-        <img src="/src/main/resources/static/images/Logo_USU.png" alt="Logo USU" class="logo">
+        <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
         <div class="header-title">PORTAL USU</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <a href="#" class="sidebar-item active" onclick="setActiveMenu(this, 'profil')">
+            <a href="/Admin_profile" class="sidebar-item active" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/src/main/resources/templates/Admin_beranda.html" class="sidebar-item" onclick="setActiveMenu(this, 'Beranda')">
+            <a href="/Admin_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/Admin_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-tersimpan')">
+            <a href="/Admin_aturkelas" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-tersimpan')">
                 <i class="fa-solid fa-clipboard-list"></i>
-                Kelas Tersimpan
+                Atur Kelas
             </a>
             <a href="#" class="sidebar-item-daftar" onclick="setActiveMenu(this, 'daftar-mahasiswa')">
                 <i class="fas fa-book-reader"></i>
@@ -296,22 +296,22 @@
             <div class="info-row">
                 <div class="info-item">
                     <span class="info-label">NAMA</span>
-                    <span class="info-value">Admin</span>
+                    <span class="info-value" th:text="${name}"></span>
                 </div>
                 <div class="info-item">
                     <span class="info-label-2">EMAIL</span>
-                    <span class="info-value">admin@gmail.com</span>
+                    <span class="info-value" th:text="${email}"></span>
                 </div>
             </div>
 
             <div class="info-row">
                 <div class="info-item">
                     <span class="info-label">USERNAME</span>
-                    <span class="info-value">admin</span>
+                    <span class="info-value" th:text="${username}"></span>
                 </div>
                 <div class="info-item-2">
                     <span class="info-label-2">PERAN</span>
-                    <span class="info-value">Admin</span>
+                    <span class="info-value" th:text="${role}"></span>
                 </div>
             </div>
 

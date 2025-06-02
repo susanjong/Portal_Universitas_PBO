@@ -445,27 +445,27 @@
 </head>
 <body>
     <div class="header">
-        <img src="/src/main/resources/static/images/Logo_USU.png" alt="Logo USU" class="logo">
+        <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
         <div class="header-title">PORTAL USU</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <a href="/src/main/resources/templates/Admin_profile.html" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
+            <a href="/Admin_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="#" class="sidebar-item active" onclick="setActiveMenu(this, 'beranda')">
+            <a href="/Admin_beranda" class="sidebar-item active" onclick="setActiveMenu(this, 'beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/Admin_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-tersimpan')">
+            <a href="/Admin_aturkelas" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-tersimpan')">
                 <i class="fa-solid fa-clipboard-list"></i>
-                Kelas Tersimpan
+                Atur Kelas
             </a>
             <a href="#" class="sidebar-item-daftar" onclick="setActiveMenu(this, 'daftar-mahasiswa')">
                 <i class="fas fa-book-reader"></i>
@@ -485,22 +485,22 @@
                 <div class="info-row">
                     <div class="info-item">
                         <span class="info-label">NAMA</span>
-                        <span class="info-value">Admin</span>
+                        <span class="info-value" th:text="${name}"></span>
                     </div>
                     <div class="info-item">
                         <span class="info-label-2">EMAIL</span>
-                        <span class="info-value">admin@gmail.com</span>
+                        <span class="info-value" th:text="${email}"></span>
                     </div>
                 </div>
 
                 <div class="info-row">
                     <div class="info-item">
                         <span class="info-label">USERNAME</span>
-                        <span class="info-value">admin</span>
+                        <span class="info-value" th:text="${username}"></span>
                     </div>
                     <div class="info-item-2">
                         <span class="info-label-2">PERAN</span>
-                        <span class="info-value">Admin</span>
+                        <span class="info-value" th:text="${role}"></span>
                     </div>
                 </div>
             </div>
@@ -527,9 +527,9 @@
                         <label class="filter-label">Peran</label>
                         <select class="filter-select" id="roleFilter">
                             <option value="">Semua Peran</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Dosen">Dosen</option>
-                            <option value="Mahasiswa">Mahasiswa</option>
+                            <option value="ADMIN">Admin</option>
+                            <option value="DOSEN">Dosen</option>
+                            <option value="MAHASISWA">Mahasiswa</option>
                         </select>
                     </div>
                 </div>
@@ -576,9 +576,9 @@
                     <label class="form-label">Peran<span class="required">*</span></label>
                     <select class="form-select" id="userRole" name="role" required>
                         <option value="">Pilih Peran</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Dosen">Dosen</option>
-                        <option value="Mahasiswa">Mahasiswa</option>
+                        <option value="ADMIN">Admin</option>
+                        <option value="DOSEN">Dosen</option>
+                        <option value="MAHASISWA">Mahasiswa</option>
                     </select>
                 </div>
 
@@ -610,23 +610,35 @@
         </div>
     </div>
 
+    <script th:inline="javascript">
+        window.usersData = /*[[${users}]]*/ [];
+    </script>
+
     <script>
         // Sample user data
-        let users = [
-            { id: 1, nim: '198802192019032016', name: 'Jenni Blekping, S.Kom', email: 'jenniblekping@gmail.com', role: 'Dosen' },
-            { id: 2, nim: '231401020', name: 'Clarissa Halim', email: 'clarissaelim17@gmail.com', role: 'Mahasiswa' },
-            { id: 3, nim: 'admin', name: 'Admin', email: 'admin@gmail.com', role: 'Admin' }
-        ];
-
+        let users = [];
         let currentEditId = null;
-        let nextId = 4;
+
+        function loadUsersFromDatabase() {
+            if (window.usersData && window.usersData.length > 0) {
+                users = window.usersData.map(user => ({
+                    id: user.id,
+                    nim: user.username,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }));
+            }
+            renderUserTable();
+        }
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            renderUserTable();
+            loadUsersFromDatabase();
             setupEventListeners();
         });
 
+        
         // Setup event listeners
         function setupEventListeners() {
             document.getElementById('nimFilter').addEventListener('input', filterUsers);
@@ -686,8 +698,8 @@
             document.getElementById('formTitle').textContent = 'Form Tambah User';
             document.getElementById('userForm').reset();
             
-            // Show password field for add
-            document.getElementById('passwordGroup').style.display = 'none';
+            document.getElementById('passwordGroup').style.display = 'block';
+            document.getElementById('userPassword').required = true;
             
             // Show form, hide list
             document.getElementById('userListView').style.display = 'none';
@@ -721,7 +733,7 @@
             e.preventDefault();
             
             const formData = {
-                nim: document.getElementById('userNim').value,
+                username: document.getElementById('userNim').value,
                 role: document.getElementById('userRole').value,
                 name: document.getElementById('userName').value,
                 email: document.getElementById('userEmail').value
@@ -732,27 +744,33 @@
                 formData.password = document.getElementById('userPassword').value;
             }
 
-            if (currentEditId) {
-                // Update existing user
-                const userIndex = users.findIndex(u => u.id === currentEditId);
-                if (userIndex !== -1) {
-                    users[userIndex] = { ...users[userIndex], ...formData };
-                    alert('User berhasil diupdate!');
-                }
-            } else {
-                // Add new user
-                const newUser = {
-                    id: nextId++,
-                    ...formData
-                };
-                users.push(newUser);
-                alert('User berhasil ditambahkan!');
-            }
+            // Kirim data ke server via fetch API
+            const url = currentEditId ? `/api/users/${currentEditId}` : '/api/users';
+            const method = currentEditId ? 'PUT' : 'POST';
 
-            // Reset and go back to list
-            cancelForm();
-            renderUserTable();
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(currentEditId ? 'User berhasil diupdate!' : 'User berhasil ditambahkan!');
+                    // Reload data from server
+                    location.reload(); // Atau buat function untuk reload data
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menyimpan data');
+            });
         }
+
 
         // Cancel form
         function cancelForm() {
@@ -768,9 +786,22 @@
         function deleteUser(id) {
             const user = users.find(u => u.id === id);
             if (user && confirm(`Apakah Anda yakin ingin menghapus user ${user.name}?`)) {
-                users = users.filter(u => u.id !== id);
-                renderUserTable();
-                alert('User berhasil dihapus');
+                fetch(`/api/users/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User berhasil dihapus');
+                        location.reload(); // Atau reload data dari server
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus data');
+                });
             }
         }
 
