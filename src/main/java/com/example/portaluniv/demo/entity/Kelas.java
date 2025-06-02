@@ -3,6 +3,8 @@ package com.example.portaluniv.demo.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,12 +36,13 @@ public class Kelas {
     @Min(value = 1, message = "Kuota must be at least 1")
     private int kuota; 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mata_kuliah_id")
     @NotNull(message = "Mata kuliah is required")
+    @JsonIgnoreProperties({"kelasSet", "password"}) // Ignore circular reference
     private MataKuliah mataKuliah;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dosen_id")
     @NotNull(message = "Dosen is required")
     private Dosen dosen; 

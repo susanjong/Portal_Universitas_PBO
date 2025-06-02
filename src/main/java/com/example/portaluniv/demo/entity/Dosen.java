@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "dosen")
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Dosen extends User {
-    
+
     @NotBlank(message = "NIDN is required")
     @Column(unique = true)
     private String nidn;
@@ -23,6 +25,7 @@ public class Dosen extends User {
     private String spesialisasi;
 
     @OneToMany(mappedBy = "dosen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore  // Tambahkan ini untuk menghindari circular reference
     private Set<Kelas> kelasSet = new HashSet<>();
 
     // Constructors
@@ -40,6 +43,9 @@ public class Dosen extends User {
         this.spesialisasi = spesialisasi;
     }
 
+    public String getNama() {
+        return this.getName(); // delegate ke parent's getName()
+    }
     // Getters and Setters
     public String getNidn() { return nidn; }
     public void setNidn(String nidn) { this.nidn = nidn; }

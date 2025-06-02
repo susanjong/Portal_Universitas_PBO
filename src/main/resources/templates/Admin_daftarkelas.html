@@ -667,44 +667,35 @@
     </div>
 
     <script>
-        // Sample class data
-        let classes = [
-            { 
-                id: 1, 
-                code: 'ILK1001', 
-                name: 'Dasar Pemrograman', 
-                prodi: 'Ilmu Komputer', 
-                semester: 1, 
-                section: 'A', 
-                sks: 3, 
-                room: 'D-102', 
-                schedule: 'Kamis, 13:50 - 16:20', 
-                lecturer: 'Dosen Belum Terdaftar', 
-                quota: 50 
-            },
-            { 
-                id: 2, 
-                code: 'ILK1001', 
-                name: 'Dasar Pemrograman', 
-                prodi: 'Ilmu Komputer', 
-                semester: 1, 
-                section: 'B', 
-                sks: 3, 
-                room: 'D-102', 
-                schedule: 'Kamis, 13:50 - 16:20', 
-                lecturer: 'Drs. Jenni Blekping, S.Kom, M.Sc', 
-                quota: 50 
-            }
-        ];
+        const API_BASE_URL = '/api/kelas';
 
+        let classes = [];
         let currentEditId = null;
-        let nextId = 3;
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            renderClassTable();
+            loadClassesFromDatabase();
             setupEventListeners();
         });
+
+        function loadClassesFromDatabase() {
+            fetch(API_BASE_URL)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Gagal memuat data kelas dari database');
+                    }
+                })
+                .then(data => {
+                    classes = data;
+                    renderClassTable();
+                })
+                .catch(error => {
+                    console.error('Error loading classes:', error);
+                    showMessage('Error koneksi ke database', 'error');
+                });
+        }
 
         // Setup event listeners
         function setupEventListeners() {
@@ -731,57 +722,55 @@
             renderClassTable(filteredClasses);
         }
 
-        // Render class table
-        function renderClassTable(classList = classes) {
-            const tbody = document.getElementById('classTableBody');
-            tbody.innerHTML = '';
+function renderClassTable(classList = classes) {
+    const tbody = document.getElementById('classTableBody');
+    tbody.innerHTML = '';
 
-            if (classList.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="12" style="text-align: center; padding: 20px; color: #666;">
-                        Tidak ada data kelas yang ditemukan
-                    </td>
-                `;
-                tbody.appendChild(row);
-                return;
-            }
+    if (classList.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td colspan="12" style="text-align: center; padding: 20px; color: #666;">
+                Tidak ada data kelas yang ditemukan
+            </td>
+        `;
+        tbody.appendChild(row);
+        return;
+    }
 
-            classList.forEach((cls, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${cls.code}</td>
-                    <td>${cls.name}</td>
-                    <td>${cls.prodi}</td>
-                    <td>${cls.semester}</td>
-                    <td>${cls.section}</td>
-                    <td>${cls.sks}</td>
-                    <td>${cls.room}</td>
-                    <td>${cls.schedule}</td>
-                    <td>${cls.lecturer}</td>
-                    <td>${cls.quota}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn edit-btn" onclick="editClass(${cls.id})" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn delete-btn" onclick="deleteClass(${cls.id})" title="Hapus">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
+    classList.forEach((cls, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${cls.mataKuliah?.kodeMk || '-'}</td>
+            <td>${cls.mataKuliah?.namaMk || '-'}</td>
+            <td>${cls.mataKuliah?.programStudi || '-'}</td>
+            <td>${cls.mataKuliah?.semester || '-'}</td>
+            <td>${cls.kelas || '-'}</td>
+            <td>${cls.mataKuliah?.sks || '-'}</td>
+            <td>${cls.ruangan || '-'}</td>
+            <td>${cls.jadwal || '-'}</td>
+            <td>${cls.dosen?.name || 'Belum ditentukan'}</td>
+            <td>${cls.kuota || 0}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn edit-btn" onclick="editClass(${cls.id})" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteClass(${cls.id})" title="Hapus">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
 
         // Show add class form
         function showAddClassForm() {
             currentEditId = null;
             document.getElementById('formTitle').textContent = 'Form Tambah Kelas Baru';
             document.getElementById('classForm').reset();
-            document.getElementById('classNipDosen').value = '';
             clearMessages();
             
             // Show form, hide list
@@ -820,9 +809,21 @@
         // Delete class
         function deleteClass(id) {
             if (confirm('Apakah Anda yakin ingin menghapus kelas ini?')) {
-                classes = classes.filter(c => c.id !== id);
-                renderClassTable();
-                showMessage('Kelas berhasil dihapus!', 'success');
+                fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        loadClassesFromDatabase(); // Reload data
+                        showMessage('Kelas berhasil dihapus!', 'success');
+                    } else {
+                        showMessage('Gagal menghapus kelas', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting class:', error);
+                    showMessage('Error saat menghapus kelas', 'error');
+                });
             }
         }
 
