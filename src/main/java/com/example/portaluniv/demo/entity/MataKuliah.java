@@ -23,8 +23,6 @@ public class MataKuliah {
     @Min(value = 1, message = "Credits must be at least 1")
     private int sks;
 
-    private String deskripsi;
-
     @NotBlank(message = "Faculty is required")
     private String fakultas;
 
@@ -39,12 +37,11 @@ public class MataKuliah {
     // Constructors
     public MataKuliah() {}
 
-    public MataKuliah(String kodeMk, String namaMk, int sks, String deskripsi, 
+    public MataKuliah(String kodeMk, String namaMk, int sks, 
                       String fakultas, String programStudi, int semester) {
         this.kodeMk = kodeMk;
         this.namaMk = namaMk;
         this.sks = sks;
-        this.deskripsi = deskripsi;
         this.fakultas = fakultas;
         this.programStudi = programStudi;
         this.semester = semester;
@@ -62,9 +59,6 @@ public class MataKuliah {
 
     public int getSks() { return sks; }
     public void setSks(int sks) { this.sks = sks; }
-
-    public String getDeskripsi() { return deskripsi; }
-    public void setDeskripsi(String deskripsi) { this.deskripsi = deskripsi; }
 
     public String getFakultas() { return fakultas; }
     public void setFakultas(String fakultas) { this.fakultas = fakultas; }
