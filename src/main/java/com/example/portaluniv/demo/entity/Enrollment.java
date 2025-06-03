@@ -16,7 +16,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "enrollment", 
+@Table(name = "enrollments", 
        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "kelas_id"}))
 public class Enrollment {
     
