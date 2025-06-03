@@ -418,7 +418,7 @@
             overflow-y: auto;
         }
 
-        .nip-input {
+        .nidn-input {
             background-color: #e9ecef;
             color: #6c757d;
         }
@@ -585,9 +585,6 @@
                         <label class="form-label">Program Studi<span class="required">*</span></label>
                         <select class="form-select" id="classProdi" name="prodi" required>
                             <option value="">Pilih Program Studi</option>
-                            <option value="Ilmu Komputer">Ilmu Komputer</option>
-                            <option value="Sistem Informasi">Sistem Informasi</option>
-                            <option value="Teknologi Informasi">Teknologi Informasi</option>
                         </select>
                     </div>
                 </div>
@@ -634,17 +631,13 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Dosen<span class="required">*</span></label>
-                        <select class="form-select" id="classLecturer" name="lecturer" required onchange="updateNipDosen()">
+                        <select class="form-select" id="classLecturer" name="lecturer" required onchange="updateNidnDosen()">
                             <option value="">Pilih Dosen</option>
-                            <option value="Dosen Belum Terdaftar" data-nip="-">Dosen Belum Terdaftar</option>
-                            <option value="Jenni Blekping, S.Kom" data-nip="198802192019032016">Jenni Blekping, S.Kom</option>
-                            <option value="Dr. Budi Santoso, M.Kom" data-nip="198501152010121001">Dr. Budi Santoso, M.Kom</option>
-                            <option value="Sari Indah, S.T., M.T." data-nip="198706032015042002">Sari Indah, S.T., M.T.</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">NIP Dosen</label>
-                        <input type="text" class="form-input nip-input" id="classNipDosen" name="nipDosen" readonly>
+                        <label class="form-label">NIDN Dosen</label>
+                        <input type="text" class="form-input nidn-input" id="classNidnDosen" name="nidnDosen" readonly>
                     </div>
                 </div>
 
@@ -769,11 +762,58 @@
             document.getElementById('classForm').reset();
             clearMessages();
 
-            populateFacultyDropdown();
+            populateAllDropdowns();
             
             // Show form, hide list
             document.getElementById('classListView').style.display = 'none';
             document.getElementById('classFormView').style.display = 'block';
+        }
+
+        function populateRuanganDropdown() {
+            const ruanganSelect = document.getElementById('classRoom');
+           
+            const uniqueRuangan = [...new Set(classes.map(cls => cls.ruangan).filter(r => r))];
+            
+            ruanganSelect.innerHTML = '<option value="">Pilih Ruangan</option>';
+            
+            uniqueRuangan.forEach(ruangan => {
+                const option = document.createElement('option');
+                option.value = ruangan;
+                option.textContent = ruangan;
+                ruanganSelect.appendChild(option);
+            });
+        }
+
+        function populateDosenDropdown() {
+            const dosenSelect = document.getElementById('classLecturer');
+            
+            // Get unique dosen dari classes data
+            const uniqueDosen = [...new Set(classes.map(cls => cls.dosen).filter(d => d && d.name))];
+            
+            dosenSelect.innerHTML = '<option value="">Pilih Dosen</option>';
+            
+            uniqueDosen.forEach(dosen => {
+                const option = document.createElement('option');
+                option.value = dosen.name;
+                option.textContent = dosen.name;
+                option.dataset.nidn = dosen.nidn || ''; 
+                dosenSelect.appendChild(option);
+            });
+        }
+
+        function populateProdiDropdown() {
+            const prodiSelect = document.getElementById('classProdi');
+            
+            const uniqueProdi = [...new Set(classes.map(cls => cls.mataKuliah?.programStudi).filter(p => p))];
+            
+            prodiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
+            
+            uniqueProdi.forEach(prodi => {
+                const option = document.createElement('option');
+                option.value = prodi;
+                option.textContent = prodi;
+                prodiSelect.appendChild(option);
+            });
         }
 
         function populateFacultyDropdown() {
@@ -790,6 +830,13 @@
             });
         }
 
+        function populateAllDropdowns() {
+            populateFacultyDropdown();
+            populateProdiDropdown();
+            populateDosenDropdown();
+            populateRuanganDropdown();
+        }
+
         // Edit class
         function editClass(id) {
             const cls = classes.find(c => c.id === id);
@@ -798,7 +845,7 @@
                 document.getElementById('formTitle').textContent = 'Form Edit Kelas';
                 clearMessages();
                 
-                populateFacultyDropdown();
+                populateAllDropdowns();
                 // Fill form with class data - updated structure
                 document.getElementById('classCode').value = cls.mataKuliah?.kodeMk || '';
                 document.getElementById('className').value = cls.mataKuliah?.namaMk || '';
@@ -811,7 +858,7 @@
                 document.getElementById('classRoom').value = cls.ruangan || '';
                 document.getElementById('classSchedule').value = cls.jadwal || '';
                 document.getElementById('classLecturer').value = cls.dosen?.name || '';
-                updateNipDosen();
+                updateNidnDosen();
                 
                 
                 // Show form, hide list
@@ -841,16 +888,16 @@
             }
         }
 
-        // Update NIP Dosen based on selected lecturer
-        function updateNipDosen() {
+
+        function updateNidnDosen() {
             const lecturerSelect = document.getElementById('classLecturer');
-            const nipInput = document.getElementById('classNipDosen');
+            const nidnInput = document.getElementById('classNidnDosen');
             const selectedOption = lecturerSelect.options[lecturerSelect.selectedIndex];
             
-            if (selectedOption && selectedOption.dataset.nip) {
-                nipInput.value = selectedOption.dataset.nip;
+            if (selectedOption && selectedOption.dataset.nidn) {
+                nidnInput.value = selectedOption.dataset.nidn;
             } else {
-                nipInput.value = '';
+                nidnInput.value = '';
             }
         }
 
@@ -885,7 +932,7 @@
 
             // Reset form
             document.getElementById('classForm').reset();
-            document.getElementById('classNipDosen').value = '';
+            document.getElementById('classNidnDosen').value = '';
             currentEditId = null;
 
             // Show list view
@@ -896,7 +943,7 @@
 
         function cancelForm() {
             document.getElementById('classForm').reset();
-            document.getElementById('classNipDosen').value = '';
+            document.getElementById('classNidnDosen').value = '';
             document.getElementById('classFormView').style.display = 'none';
             document.getElementById('classListView').style.display = 'block';
             clearMessages();
