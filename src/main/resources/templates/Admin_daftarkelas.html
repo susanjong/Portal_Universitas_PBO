@@ -579,11 +579,6 @@
                         <label class="form-label">Fakultas<span class="required">*</span></label>
                         <select class="form-select" id="classFaculty" name="faculty" required>
                             <option value="">Pilih Fakultas</option>
-                            <option value="Ilmu Komputer">Ilmu Komputer</option>
-                            <option value="Teknik">Teknik</option>
-                            <option value="Ekonomi">Ekonomi</option>
-                            <option value="Kedokteran">Kedokteran</option>
-                            <option value="Hukum">Hukum</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -773,10 +768,26 @@
             document.getElementById('formTitle').textContent = 'Form Tambah Kelas Baru';
             document.getElementById('classForm').reset();
             clearMessages();
+
+            populateFacultyDropdown();
             
             // Show form, hide list
             document.getElementById('classListView').style.display = 'none';
             document.getElementById('classFormView').style.display = 'block';
+        }
+
+        function populateFacultyDropdown() {
+            const facultySelect = document.getElementById('classFaculty');
+            const uniqueFaculties = [...new Set(classes.map(cls => cls.mataKuliah?.fakultas).filter(f => f))];
+            
+            facultySelect.innerHTML = '<option value="">Pilih Fakultas</option>';
+            
+            uniqueFaculties.forEach(faculty => {
+                const option = document.createElement('option');
+                option.value = faculty;
+                option.textContent = faculty;
+                facultySelect.appendChild(option);
+            });
         }
 
         // Edit class
@@ -787,19 +798,21 @@
                 document.getElementById('formTitle').textContent = 'Form Edit Kelas';
                 clearMessages();
                 
-                // Fill form with class data
-                document.getElementById('classCode').value = cls.code;
-                document.getElementById('className').value = cls.name;
-                document.getElementById('classSemester').value = cls.semester;
-                document.getElementById('classFaculty').value = 'Ilmu Komputer'; // Default
-                document.getElementById('classProdi').value = cls.prodi;
-                document.getElementById('classSKS').value = cls.sks;
-                document.getElementById('classQuota').value = cls.quota;
-                document.getElementById('classSection').value = cls.section;
-                document.getElementById('classRoom').value = cls.room;
-                document.getElementById('classSchedule').value = cls.schedule;
-                document.getElementById('classLecturer').value = cls.lecturer;
+                populateFacultyDropdown();
+                // Fill form with class data - updated structure
+                document.getElementById('classCode').value = cls.mataKuliah?.kodeMk || '';
+                document.getElementById('className').value = cls.mataKuliah?.namaMk || '';
+                document.getElementById('classSemester').value = cls.mataKuliah?.semester || '';
+                document.getElementById('classFaculty').value = cls.mataKuliah?.fakultas || '';
+                document.getElementById('classProdi').value = cls.mataKuliah?.programStudi || '';
+                document.getElementById('classSKS').value = cls.mataKuliah?.sks || '';
+                document.getElementById('classQuota').value = cls.kuota || '';
+                document.getElementById('classSection').value = cls.kelas || '';
+                document.getElementById('classRoom').value = cls.ruangan || '';
+                document.getElementById('classSchedule').value = cls.jadwal || '';
+                document.getElementById('classLecturer').value = cls.dosen?.name || '';
                 updateNipDosen();
+                
                 
                 // Show form, hide list
                 document.getElementById('classListView').style.display = 'none';
