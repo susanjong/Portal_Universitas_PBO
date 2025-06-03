@@ -5,10 +5,19 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.portaluniv.demo.entity.Kelas;
 import com.example.portaluniv.demo.service.KelasService;
+import com.example.portaluniv.demo.service.MataKuliahService;
 
 @RestController
 @RequestMapping("/api/kelas")
@@ -17,6 +26,9 @@ public class KelasController {
     
     @Autowired
     private KelasService kelasService;
+
+    @Autowired
+    private MataKuliahService mataKuliahService;
     
     @GetMapping
     public List<Kelas> getAllKelas() {
@@ -31,10 +43,15 @@ public class KelasController {
     }
     
     @PostMapping
-    public Kelas createKelas(@RequestBody Kelas kelas) {
-        return kelasService.save(kelas);
-    }
-    
+        public ResponseEntity<Kelas> createKelas(@RequestBody Kelas kelas) {
+            try {
+                Kelas savedKelas = kelasService.save(kelas);
+                return ResponseEntity.ok(savedKelas);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
     @PutMapping("/{id}")
     public ResponseEntity<Kelas> updateKelas(@PathVariable Long id, @RequestBody Kelas kelas) {
         Optional<Kelas> existingKelas = kelasService.findById(id);
@@ -59,7 +76,7 @@ public class KelasController {
     public List<Kelas> getKelasByKodeMataKuliah(@PathVariable String kodeMk) {
         return kelasService.findByKodeMataKuliah(kodeMk);
     }
-    
+
     @GetMapping("/prodi/{prodi}")
     public List<Kelas> getKelasByProdi(@PathVariable String prodi) {
         return kelasService.findByProdi(prodi);

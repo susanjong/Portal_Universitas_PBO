@@ -418,7 +418,7 @@
             overflow-y: auto;
         }
 
-        .nidn-input {
+        .disable-input {
             background-color: #e9ecef;
             color: #6c757d;
         }
@@ -556,43 +556,29 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nama Mata Kuliah<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="className" name="name" required>
+                        <input type="text" class="form-input disable-input" id="className" name="name" readonly>
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
+                     <div class="form-group">
                         <label class="form-label">Semester<span class="required">*</span></label>
-                        <select class="form-select" id="classSemester" name="semester" required>
-                            <option value="">Pilih Semester</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                        </select>
+                        <input type="text" class="form-input disable-input" id="classSemester" name="semester" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Fakultas<span class="required">*</span></label>
-                        <select class="form-select" id="classFaculty" name="faculty" required>
-                            <option value="">Pilih Fakultas</option>
-                        </select>
+                        <input type="text" class="form-input disable-input" id="classFaculty" name="faculty" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Program Studi<span class="required">*</span></label>
-                        <select class="form-select" id="classProdi" name="prodi" required>
-                            <option value="">Pilih Program Studi</option>
-                        </select>
+                        <input type="text" class="form-input disable-input" id="classProdi" name="prodi" readonly>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Bobot SKS<span class="required">*</span></label>
-                        <input type="number" class="form-input" id="classSKS" name="sks" min="1" max="6" required>
+                        <input type="text" class="form-input disable-input" id="classSKS" name="sks" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Kuota Mahasiswa<span class="required">*</span></label>
@@ -612,9 +598,12 @@
                         <label class="form-label">Ruangan<span class="required">*</span></label>
                         <select class="form-select" id="classRoom" name="room" required>
                             <option value="">Pilih Ruangan</option>
+                            <option value="D-102">D-101</option>
                             <option value="D-102">D-102</option>
                             <option value="D-103">D-103</option>
                             <option value="D-104">D-104</option>
+                            <option value="D-104">D-105</option>
+                            <option value="D-104">D-106</option>
                             <option value="Lab-1">Lab-1</option>
                             <option value="Lab-2">Lab-2</option>
                         </select>
@@ -632,12 +621,11 @@
                     <div class="form-group">
                         <label class="form-label">Dosen<span class="required">*</span></label>
                         <select class="form-select" id="classLecturer" name="lecturer" required onchange="updateNidnDosen()">
-                            <option value="">Pilih Dosen</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">NIDN Dosen</label>
-                        <input type="text" class="form-input nidn-input" id="classNidnDosen" name="nidnDosen" readonly>
+                        <input type="text" class="form-input disable-input" id="classNidnDosen" name="nidnDosen" readonly>
                     </div>
                 </div>
 
@@ -691,6 +679,7 @@
             document.getElementById('nameFilter').addEventListener('input', filterClasses);
             document.getElementById('classFilter').addEventListener('change', filterClasses);
             document.getElementById('classForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('classCode').addEventListener('input', fetchMataKuliahByKode);
         }
 
         // Filter functionality
@@ -762,79 +751,64 @@
             document.getElementById('classForm').reset();
             clearMessages();
 
-            populateAllDropdowns();
+            populateDosenDropdown();
             
             // Show form, hide list
             document.getElementById('classListView').style.display = 'none';
             document.getElementById('classFormView').style.display = 'block';
         }
 
-        function populateRuanganDropdown() {
-            const ruanganSelect = document.getElementById('classRoom');
-           
-            const uniqueRuangan = [...new Set(classes.map(cls => cls.ruangan).filter(r => r))];
-            
-            ruanganSelect.innerHTML = '<option value="">Pilih Ruangan</option>';
-            
-            uniqueRuangan.forEach(ruangan => {
-                const option = document.createElement('option');
-                option.value = ruangan;
-                option.textContent = ruangan;
-                ruanganSelect.appendChild(option);
-            });
-        }
 
-        function populateDosenDropdown() {
+        function populateDosenDropdown(selectedDosenName = null) {
             const dosenSelect = document.getElementById('classLecturer');
             
-            // Get unique dosen dari classes data
-            const uniqueDosen = [...new Set(classes.map(cls => cls.dosen).filter(d => d && d.name))];
-            
             dosenSelect.innerHTML = '<option value="">Pilih Dosen</option>';
-            
-            uniqueDosen.forEach(dosen => {
-                const option = document.createElement('option');
-                option.value = dosen.name;
-                option.textContent = dosen.name;
-                option.dataset.nidn = dosen.nidn || ''; 
-                dosenSelect.appendChild(option);
-            });
-        }
-
-        function populateProdiDropdown() {
-            const prodiSelect = document.getElementById('classProdi');
-            
-            const uniqueProdi = [...new Set(classes.map(cls => cls.mataKuliah?.programStudi).filter(p => p))];
-            
-            prodiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
-            
-            uniqueProdi.forEach(prodi => {
-                const option = document.createElement('option');
-                option.value = prodi;
-                option.textContent = prodi;
-                prodiSelect.appendChild(option);
-            });
-        }
-
-        function populateFacultyDropdown() {
-            const facultySelect = document.getElementById('classFaculty');
-            const uniqueFaculties = [...new Set(classes.map(cls => cls.mataKuliah?.fakultas).filter(f => f))];
-            
-            facultySelect.innerHTML = '<option value="">Pilih Fakultas</option>';
-            
-            uniqueFaculties.forEach(faculty => {
-                const option = document.createElement('option');
-                option.value = faculty;
-                option.textContent = faculty;
-                facultySelect.appendChild(option);
-            });
-        }
-
-        function populateAllDropdowns() {
-            populateFacultyDropdown();
-            populateProdiDropdown();
-            populateDosenDropdown();
-            populateRuanganDropdown();
+            // Fetch dosen dari API dosen langsung
+            fetch('/api/dosen')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Gagal memuat data dosen');
+                    }
+                })
+                .then(dosenList => {
+                    if (selectedDosenName) {
+                        dosenSelect.innerHTML = ''; // Kosongkan dulu
+                    }
+                    
+                    dosenList.forEach(dosen => {
+                        const option = document.createElement('option');
+                        option.value = dosen.name;
+                        option.textContent = dosen.name;
+                        option.dataset.dosenId = dosen.id || '';
+                        option.dataset.nidn = dosen.nidn || '';
+                        option.dataset.fakultas = dosen.fakultas || '';
+                        option.dataset.departemen = dosen.departemen || '';
+                        option.dataset.spesialisasi = dosen.spesialisasi || '';
+                        
+                        // Set selected jika ini dosen yang dipilih
+                        if (selectedDosenName && dosen.name === selectedDosenName) {
+                            option.selected = true;
+                        }
+                        
+                        dosenSelect.appendChild(option);
+                    });
+                    
+                    // Tambahkan "Pilih Dosen" di akhir jika ada selected dosen
+                    if (selectedDosenName) {
+                        const defaultOption = document.createElement('option');
+                    }
+                    
+                    // Update NIDN
+                    if (selectedDosenName) {
+                        updateNidnDosen();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading dosen:', error);
+                    dosenSelect.innerHTML = '<option value="">Error memuat dosen</option>';
+                });
         }
 
         // Edit class
@@ -845,22 +819,18 @@
                 document.getElementById('formTitle').textContent = 'Form Edit Kelas';
                 clearMessages();
                 
-                populateAllDropdowns();
-                // Fill form with class data - updated structure
                 document.getElementById('classCode').value = cls.mataKuliah?.kodeMk || '';
-                document.getElementById('className').value = cls.mataKuliah?.namaMk || '';
-                document.getElementById('classSemester').value = cls.mataKuliah?.semester || '';
-                document.getElementById('classFaculty').value = cls.mataKuliah?.fakultas || '';
-                document.getElementById('classProdi').value = cls.mataKuliah?.programStudi || '';
-                document.getElementById('classSKS').value = cls.mataKuliah?.sks || '';
                 document.getElementById('classQuota').value = cls.kuota || '';
                 document.getElementById('classSection').value = cls.kelas || '';
                 document.getElementById('classRoom').value = cls.ruangan || '';
                 document.getElementById('classSchedule').value = cls.jadwal || '';
-                document.getElementById('classLecturer').value = cls.dosen?.name || '';
-                updateNidnDosen();
+        
+                fetchMataKuliahByKode();
                 
-                
+                populateDosenDropdown(cls.dosen?.name || '');
+
+                fetchMataKuliahByKode();
+
                 // Show form, hide list
                 document.getElementById('classListView').style.display = 'none';
                 document.getElementById('classFormView').style.display = 'block';
@@ -888,6 +858,46 @@
             }
         }
 
+        function fetchMataKuliahByKode() {
+            const kodeMatKul = document.getElementById('classCode').value.trim();
+            const namaField = document.getElementById('className');
+            const semesterField = document.getElementById('classSemester');
+            const fakultasField = document.getElementById('classFaculty');
+            const prodiField = document.getElementById('classProdi');
+            const sksField = document.getElementById('classSKS');
+            
+            if (kodeMatKul) {
+                fetch(`/api/mata-kuliah/by-kode/${kodeMatKul}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Mata kuliah tidak ditemukan');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        namaField.value = data.namaMk || '';
+                        semesterField.value = data.semester || '';
+                        fakultasField.value = data.fakultas || '';
+                        prodiField.value = data.programStudi || '';
+                        sksField.value = data.sks || '';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        namaField.value = ''; 
+                        semesterField.value = '';
+                        fakultasField.value = '';
+                        prodiField.value = '';
+                        sksField.value = '';
+                    });
+            } else {
+                namaField.value = '';
+                semesterField.value = '';
+                fakultasField.value = '';
+                prodiField.value = '';
+                sksField.value = '';
+            }
+        }
+
 
         function updateNidnDosen() {
             const lecturerSelect = document.getElementById('classLecturer');
@@ -905,40 +915,50 @@
         function handleFormSubmit(event) {
             event.preventDefault();
 
-            const newClass = {
-                id: currentEditId || nextId++,
-                code: document.getElementById('classCode').value,
-                name: document.getElementById('className').value,
-                semester: parseInt(document.getElementById('classSemester').value),
-                faculty: document.getElementById('classFaculty').value,
-                prodi: document.getElementById('classProdi').value,
-                sks: parseInt(document.getElementById('classSKS').value),
-                quota: parseInt(document.getElementById('classQuota').value),
-                section: document.getElementById('classSection').value,
-                room: document.getElementById('classRoom').value,
-                schedule: document.getElementById('classSchedule').value,
-                lecturer: document.getElementById('classLecturer').value,
-            };
+            const kodeMk = document.getElementById('classCode').value;
+            const dosenName = document.getElementById('classLecturer').value;
 
-            if (currentEditId) {
-                // Edit existing class
-                classes = classes.map(cls => cls.id === currentEditId ? newClass : cls);
-                showMessage('Kelas berhasil diperbarui!', 'success');
-            } else {
-                // Add new class
-                classes.push(newClass);
-                showMessage('Kelas baru berhasil ditambahkan!', 'success');
-            }
+            // Fetch MataKuliah ID berdasarkan kode
+            Promise.all([
+                fetch(`/api/mata-kuliah/by-kode/${kodeMk}`),
+                fetch(`/api/dosen/by-name/${dosenName}`) // Atau endpoint yang sesuai
+            ])
+            .then(([mkResponse, dosenResponse]) => {
+                return Promise.all([mkResponse.json(), dosenResponse.json()]);
+            })
+            .then(([mataKuliah, dosen]) => {
+                const formData = {
+                    kelas: document.getElementById('classSection').value,
+                    kuota: parseInt(document.getElementById('classQuota').value),
+                    ruangan: document.getElementById('classRoom').value,
+                    jadwal: document.getElementById('classSchedule').value,
+                    mataKuliah: { id: mataKuliah.id }, // Hanya kirim ID
+                    dosen: { id: dosen.id } // Hanya kirim ID
+                };
 
-            // Reset form
-            document.getElementById('classForm').reset();
-            document.getElementById('classNidnDosen').value = '';
-            currentEditId = null;
+                // Submit ke API
+                const url = currentEditId ? `${API_BASE_URL}/${currentEditId}` : API_BASE_URL;
+                const method = currentEditId ? 'PUT' : 'POST';
 
-            // Show list view
-            document.getElementById('classFormView').style.display = 'none';
-            document.getElementById('classListView').style.display = 'block';
-            renderClassTable();
+                return fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+            })
+            .then(response => {
+                if (response.ok) {
+                    loadClassesFromDatabase();
+                    showMessage(currentEditId ? 'Kelas berhasil diperbarui!' : 'Kelas baru berhasil ditambahkan!', 'success');
+                    cancelForm();
+                } else {
+                    throw new Error('Gagal menyimpan data kelas');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Error: ' + error.message, 'error');
+            });
         }
 
         function cancelForm() {

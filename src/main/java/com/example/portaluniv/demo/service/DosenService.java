@@ -32,6 +32,9 @@ public class DosenService {
         return dosenRepository.findByNidn(nidn);
     }
     
+    public Optional<Dosen> findByName(String name) {
+        return dosenRepository.findByName(name);
+    }
     public Dosen save(Dosen dosen) {
         if (dosen.getPassword() != null && !dosen.getPassword().isEmpty()) {
             dosen.setPassword(passwordEncoder.encode(dosen.getPassword()));
