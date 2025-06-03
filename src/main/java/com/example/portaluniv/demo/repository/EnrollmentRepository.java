@@ -1,29 +1,33 @@
 package com.example.portaluniv.demo.repository;
 
-import com.example.portaluniv.demo.entity.Enrollment;
-import com.example.portaluniv.demo.entity.Enrollment.EnrollmentStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.portaluniv.demo.entity.Enrollment;
+
 @Repository
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
+    
+    // Find by user
     List<Enrollment> findByUserId(Long userId);
+    
+    // Find by kelas
     List<Enrollment> findByKelasId(Long kelasId);
     
+    // Find by user and kelas
     Optional<Enrollment> findByUserIdAndKelasId(Long userId, Long kelasId);
     
-    List<Enrollment> findByUserIdAndStatus(Long userId, EnrollmentStatus status);
-    List<Enrollment> findByKelasIdAndStatus(Long kelasId, EnrollmentStatus status);
-    
-    @Query("SELECT COUNT(e) FROM Enrollment e WHERE e.kelas.id = :kelasId AND e.status = 'APPROVED'")
-    Long countApprovedEnrollmentsByKelasId(@Param("kelasId") Long kelasId);
-    
+    // Check if exists
     boolean existsByUserIdAndKelasId(Long userId, Long kelasId);
     
-    @Query("SELECT e FROM Enrollment e WHERE e.status = 'PENDING'")
-    List<Enrollment> findPendingEnrollments();
+    // Count by kelas
+    long countByKelasId(Long kelasId);
+    
+    // Order by enrolled date
+    List<Enrollment> findByUserIdOrderByEnrolledAtDesc(Long userId);
+    
+    List<Enrollment> findByKelasIdOrderByEnrolledAtAsc(Long kelasId);
 }

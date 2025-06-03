@@ -1,18 +1,18 @@
 package com.example.portaluniv.demo.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.portaluniv.demo.entity.Enrollment;
-import com.example.portaluniv.demo.entity.Enrollment.EnrollmentStatus;
 import com.example.portaluniv.demo.entity.Kelas;
 import com.example.portaluniv.demo.entity.User;
 import com.example.portaluniv.demo.repository.EnrollmentRepository;
 import com.example.portaluniv.demo.repository.KelasRepository;
 import com.example.portaluniv.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -43,16 +43,17 @@ public class EnrollmentService {
         return enrollmentRepository.findByKelasId(kelasId);
     }
     
-    public List<Enrollment> findPendingEnrollments() {
-        return enrollmentRepository.findPendingEnrollments();
-    }
-    
     public Optional<Enrollment> findByUserIdAndKelasId(Long userId, Long kelasId) {
         return enrollmentRepository.findByUserIdAndKelasId(userId, kelasId);
     }
     
-    public List<Enrollment> findByUserIdAndStatus(Long userId, EnrollmentStatus status) {
-        return enrollmentRepository.findByUserIdAndStatus(userId, status);
+    public boolean isKelasAvailable(Long kelasId) {
+        Optional<Kelas> kelasOpt = kelasRepository.findById(kelasId);
+        if (kelasOpt.isEmpty()) return false;
+        
+        Kelas kelas = kelasOpt.get();
+        long enrollmentCount = enrollmentRepository.countByKelasId(kelasId);
+        return enrollmentCount < kelas.getKuota();
     }
     
     public Enrollment enroll(Long userId, Long kelasId) throws Exception {
@@ -61,62 +62,45 @@ public class EnrollmentService {
             throw new Exception("User sudah terdaftar di kelas ini");
         }
         
-        // Check class capacity
+        // Get and validate kelas
         Optional<Kelas> kelasOpt = kelasRepository.findById(kelasId);
         if (kelasOpt.isEmpty()) {
             throw new Exception("Kelas tidak ditemukan");
         }
         
         Kelas kelas = kelasOpt.get();
-        if (kelas.isFull()) {
+        
+        // Check availability
+        if (!isKelasAvailable(kelasId)) {
             throw new Exception("Kelas sudah penuh");
         }
         
-        // Get user
+        // Get and validate user
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
             throw new Exception("User tidak ditemukan");
         }
         
-        Enrollment enrollment = new Enrollment();
-        enrollment.setUser(userOpt.get());
-        enrollment.setKelas(kelas);
-        enrollment.setStatus(EnrollmentStatus.PENDING);
-        enrollment.setEnrolledAt(LocalDateTime.now());
+        // Create enrollment (PrePersist akan set enrolledAt otomatis)
+        Enrollment enrollment = new Enrollment(userOpt.get(), kelas);
         
         return enrollmentRepository.save(enrollment);
     }
     
-    public Enrollment approveEnrollment(Long enrollmentId) throws Exception {
-        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findById(enrollmentId);
+    public void unenroll(Long userId, Long kelasId) throws Exception {
+        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserIdAndKelasId(userId, kelasId);
         if (enrollmentOpt.isEmpty()) {
             throw new Exception("Enrollment tidak ditemukan");
         }
         
-        Enrollment enrollment = enrollmentOpt.get();
-        
-        // Check if class is still available
-        if (enrollment.getKelas().isFull()) {
-            throw new Exception("Kelas sudah penuh");
-        }
-        
-        enrollment.setStatus(EnrollmentStatus.APPROVED);
-        return enrollmentRepository.save(enrollment);
-    }
-    
-    public Enrollment rejectEnrollment(Long enrollmentId) throws Exception {
-        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findById(enrollmentId);
-        if (enrollmentOpt.isEmpty()) {
-            throw new Exception("Enrollment tidak ditemukan");
-        }
-        
-        Enrollment enrollment = enrollmentOpt.get();
-        enrollment.setStatus(EnrollmentStatus.REJECTED);
-        
-        return enrollmentRepository.save(enrollment);
+        enrollmentRepository.delete(enrollmentOpt.get());
     }
     
     public void deleteById(Long id) {
         enrollmentRepository.deleteById(id);
+    }
+    
+    public long getEnrollmentCount(Long kelasId) {
+        return enrollmentRepository.countByKelasId(kelasId);
     }
 }
