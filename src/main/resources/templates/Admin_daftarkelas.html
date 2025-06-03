@@ -506,6 +506,20 @@
                             <option value="D">D</option>
                         </select>
                     </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Ruangan</label>
+                        <select class="filter-select" id="roomFilter">
+                            <option value="">Semua Ruangan</option>
+                            <option value="D-101">D-101</option>
+                            <option value="D-102">D-102</option>
+                            <option value="D-103">D-103</option>
+                            <option value="D-104">D-104</option>
+                            <option value="D-105">D-105</option>
+                            <option value="D-106">D-106</option>
+                            <option value="Lab-1">Lab-1</option>
+                            <option value="Lab-2">Lab-2</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -678,6 +692,7 @@
             document.getElementById('codeFilter').addEventListener('input', filterClasses);
             document.getElementById('nameFilter').addEventListener('input', filterClasses);
             document.getElementById('classFilter').addEventListener('change', filterClasses);
+            document.getElementById('roomFilter').addEventListener('change', filterClasses);
             document.getElementById('classForm').addEventListener('submit', handleFormSubmit);
             document.getElementById('classCode').addEventListener('input', fetchMataKuliahByKode);
         }
@@ -687,14 +702,16 @@
             const codeFilter = document.getElementById('codeFilter').value.toLowerCase();
             const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
             const classFilter = document.getElementById('classFilter').value;
+            const roomFilter = document.getElementById('roomFilter').value; // Tambah filter ruangan
 
             const filteredClasses = classes.filter(cls => {
                 // Fix property names sesuai API response
                 const codeMatch = cls.mataKuliah?.kodeMk?.toLowerCase().includes(codeFilter) || false;
                 const nameMatch = cls.mataKuliah?.namaMk?.toLowerCase().includes(nameFilter) || false;
                 const classMatch = classFilter === '' || cls.kelas === classFilter;
+                const roomMatch = roomFilter === '' || cls.ruangan === roomFilter; // Filter ruangan
 
-                return codeMatch && nameMatch && classMatch;
+                return codeMatch && nameMatch && classMatch && roomMatch;
             });
 
             renderClassTable(filteredClasses);
