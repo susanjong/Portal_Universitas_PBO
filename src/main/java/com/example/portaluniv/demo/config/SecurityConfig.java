@@ -56,7 +56,7 @@ public class SecurityConfig {
                         redirectUrl = "/dsdosen";  // Sesuaikan dengan halaman dosen
                         break;
                     } else if (role.equals("ROLE_MAHASISWA")) {
-                        redirectUrl = "/dsmahasiswa";
+                        redirectUrl = "/dashboard_mahasiswa_beranda";
                         break;
                     }
                 }
