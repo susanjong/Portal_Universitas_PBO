@@ -287,21 +287,21 @@
         <div class="header-title">PORTAL USU</div>
     </div>
 
-    <div class="container">
+     <div class="container">
         <div class="sidebar">
-            <a href="/dashboard_mahasiswa_profile" class="sidebar-item active">
+            <a href="/dashboard_mahasiswa_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item">
+            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/daftar-kelas" class="sidebar-item">
+            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="/kelas-tersaftar" class="sidebar-item">
+            <a href="/dashboard_mahasiswa_kelasterdaftar" class="sidebar-item active" onclick="setActiveMenu(this, 'kelas-terdaftar')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Terdaftar
             </a>

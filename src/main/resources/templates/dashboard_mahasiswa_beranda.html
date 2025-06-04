@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
         }
 
         body {
-            font-family: 'Lato';
+            font-family: 'Lato', sans-serif;
             background-color: #f5f5f5;
         }
 
@@ -35,6 +35,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: rgba(255, 213, 0, 0.2);
         }
 
         .header-title {
@@ -47,8 +48,7 @@
 
         .container {
             display: flex;
-            min-height: calc(100vh - 54px);
-            font-family: 'Lato';
+            min-height: calc(100vh - 70px);
         }
 
         .sidebar {
@@ -64,13 +64,23 @@
             padding: 12px 20px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
             text-decoration: none;
-            color: #333;
+            color: #6E6E6E;
+            position: relative;
+            overflow: hidden;
         }
 
         .sidebar-item:hover {
-            background-color: #f8f9fa;
+            background-color: #e8f5e3;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(27, 71, 12, 0.15);
+            color: #1B470C;
+        }
+
+        .sidebar-item:hover .fa-solid {
+            color: #1B470C;
+            transform: scale(1.1);
         }
 
         .sidebar-item.active {
@@ -79,16 +89,23 @@
             font-weight: 700;
         }
 
+        .sidebar-item.active .fa-solid {
+            color: #2d5016;
+        }
+
+        .sidebar-item.active:hover {
+            transform: none;
+            background-color: #CEECC2;
+        }
+
         .sidebar-item .fa-solid {
             margin-right: 12px;
             width: 16px;
             text-align: center;
             color: #666;
+            transition: all 0.3s ease;
         }
 
-        .sidebar-item.active .fa-solid {
-            color: #2d5016;
-        }
 
         .main-content {
             flex: 1;
@@ -96,7 +113,6 @@
             overflow-y: auto;
         }
 
-        /* Data Pribadi Section - White background */
         .profile-section {
             background-color: white;
             margin: 20px;
@@ -150,57 +166,6 @@
             flex: 1;
         }
 
-        .form-input-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            min-width: 300px;
-            resize: horizontal;
-            overflow: hidden;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 8px 35px 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            background-color: white;
-            resize: horizontal;
-            min-width: 200px;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #4a7c59;
-            box-shadow: 0 0 0 2px rgba(74, 124, 89, 0.1);
-        }
-
-        .editable-field {
-            position: relative;
-            width: 100%;
-        }
-
-        .edit-icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            cursor: pointer;
-            font-size: 12px;
-            z-index: 10;
-            pointer-events: all;
-        }
-
-        .readonly-row {
-            background-color: #f9f9f9;
-            padding: 10px 0;
-            border-radius: 4px;
-        }
-
-        /* Table styles for class list */
         .table-section {
             margin-top: 0;
             margin-bottom: 0;
@@ -220,6 +185,7 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-collapse: collapse;
         }
 
         .class-table th {
@@ -254,7 +220,6 @@
             color: #2d5016;
         }
 
-        /* No data message styling */
         .no-data-row {
             background-color: #f9f9f9 !important;
         }
@@ -274,42 +239,21 @@
             margin-bottom: 10px;
         }
 
-        /* Resize handle styling */
-        .form-input-container::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            cursor: ew-resize;
-            background: linear-gradient(90deg, transparent 0%, #ddd 50%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .form-input-container:hover::after {
-            opacity: 1;
-        }
-
-        /* Custom resize handle for better UX */
-        .resize-handle {
-            position: absolute;
-            right: -5px;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            cursor: ew-resize;
-            background: transparent;
-            z-index: 5;
-        }
-
-        .resize-handle:hover {
-            background: rgba(74, 124, 89, 0.1);
-        }
-
-        /* Responsive adjustments */
+        /* Responsive design */
         @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+            
             .form-row {
                 flex-direction: column;
                 gap: 20px;
@@ -317,10 +261,7 @@
             
             .form-group {
                 min-width: 100%;
-            }
-            
-            .form-input-container {
-                min-width: 100%;
+                margin-right: 0;
             }
 
             .class-table {
@@ -345,37 +286,37 @@
 </head>
 <body>
     <div class="header">
-        <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
+        <div class="logo">
+            <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
+        </div>
         <div class="header-title">PORTAL USU</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <a href="/dashboard_mahasiswa_profile" class="sidebar-item active">
+            <a href="/dashboard_mahasiswa_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item">
+            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item active" onclick="setActiveMenu(this, 'beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/daftar-kelas" class="sidebar-item">
+            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="/kelas-tersaftar" class="sidebar-item">
+            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Terdaftar
             </a>
         </div>
 
         <div class="main-content">
-            <!-- Data Pribadi Section - White Background -->
             <div class="profile-section">
                 <h2 class="form-title">Data Pribadi Mahasiswa</h2>
                 
                 <form id="studentForm" method="post">
-                    <!-- Basic Information -->
                     <div class="form-section">
                         <div class="form-row">
                             <div class="form-group">
@@ -409,7 +350,6 @@
                 </form>
             </div>
 
-            <!-- Table Section - No Background Container -->
             <div style="margin: 0 20px 20px 20px;">
                 <div class="table-section">
                     <h2 class="table-title">Daftar Kelas yang Terdaftar</h2>
@@ -428,7 +368,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- No Data Message -->
                             <tr class="no-data-row">
                                 <td colspan="9" class="no-data-message">
                                     <i class="fa-solid fa-inbox no-data-icon"></i>
@@ -441,5 +380,57 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function setActiveMenu(element, menu) {
+            // Handle beranda toggle behavior
+            if (menu === 'beranda') {
+                // Check if beranda is already active
+                if (element.classList.contains('active')) {
+                    // If beranda is active, remove active class (deactivate)
+                    element.classList.remove('active');
+                    console.log('Beranda deactivated');
+                } else {
+                    // Remove active class from all sidebar items first
+                    document.querySelectorAll('.sidebar-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Add active class to beranda
+                    element.classList.add('active');
+                    console.log('Beranda activated');
+                }
+            } else {
+                // For other menu items, use normal behavior
+                // Remove active class from all sidebar items
+                document.querySelectorAll('.sidebar-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                element.classList.add('active');
+                
+                // Handle navigation based on menu
+                switch(menu) {
+                    case 'profil':
+                        console.log('Navigating to profile page');
+                        break;
+                    case 'daftar-kelas':
+                        console.log('Navigating to daftar kelas');
+                        break;
+                    case 'kelas-terdaftar':
+                        console.log('Navigating to kelas terdaftar');
+                        break;
+                    default:
+                        console.log('Unknown menu:', menu);
+                        break;
+                }
+            }
+        }
+
+        // Prevent form submission on enter key
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+    </script>
 </body>
 </html>
