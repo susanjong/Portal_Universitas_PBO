@@ -36,10 +36,16 @@ public class UserService {
     }
     
     public User save(User user) {
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+        // Only hash the password if it's not already hashed
+        if (user.getPassword() != null && !user.getPassword().isEmpty() && !isPasswordHashed(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         return userRepository.save(user);
+    }
+
+    // Method to check if password is already hashed (BCrypt hashes start with $2a$, $2b$, or $2y$)
+    private boolean isPasswordHashed(String password) {
+        return password != null && password.matches("^\\$2[aby]\\$.*");
     }
     
     public void deleteById(Long id) {
