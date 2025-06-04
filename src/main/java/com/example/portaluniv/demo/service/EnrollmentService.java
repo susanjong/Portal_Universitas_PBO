@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.portaluniv.demo.entity.Enrollment;
+import com.example.portaluniv.demo.entity.EnrollmentId;
 import com.example.portaluniv.demo.entity.Kelas;
 import com.example.portaluniv.demo.entity.User;
 import com.example.portaluniv.demo.repository.EnrollmentRepository;
@@ -31,7 +32,7 @@ public class EnrollmentService {
         return enrollmentRepository.findAll();
     }
     
-    public Optional<Enrollment> findById(Long id) {
+    public Optional<Enrollment> findById(EnrollmentId id) {
         return enrollmentRepository.findById(id);
     }
     
@@ -52,8 +53,7 @@ public class EnrollmentService {
         if (kelasOpt.isEmpty()) return false;
         
         Kelas kelas = kelasOpt.get();
-        long enrollmentCount = enrollmentRepository.countByKelasId(kelasId);
-        return enrollmentCount < kelas.getKuota();
+        return kelas.getKuotaTersedia() > 0;
     }
     
     public Enrollment enroll(Long userId, Long kelasId) throws Exception {
@@ -81,26 +81,37 @@ public class EnrollmentService {
             throw new Exception("User tidak ditemukan");
         }
         
-        // Create enrollment (PrePersist akan set enrolledAt otomatis)
+        // Create enrollment
         Enrollment enrollment = new Enrollment(userOpt.get(), kelas);
         
         return enrollmentRepository.save(enrollment);
     }
     
     public void unenroll(Long userId, Long kelasId) throws Exception {
-        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserIdAndKelasId(userId, kelasId);
-        if (enrollmentOpt.isEmpty()) {
+        if (!enrollmentRepository.existsByUserIdAndKelasId(userId, kelasId)) {
             throw new Exception("Enrollment tidak ditemukan");
         }
         
-        enrollmentRepository.delete(enrollmentOpt.get());
+        enrollmentRepository.deleteByUserIdAndKelasId(userId, kelasId);
     }
     
-    public void deleteById(Long id) {
+    public void deleteById(EnrollmentId id) {
         enrollmentRepository.deleteById(id);
     }
     
     public long getEnrollmentCount(Long kelasId) {
         return enrollmentRepository.countByKelasId(kelasId);
+    }
+    
+    public int getKuotaTersedia(Long kelasId) {
+        Optional<Kelas> kelasOpt = kelasRepository.findById(kelasId);
+        if (kelasOpt.isEmpty()) return 0;
+        return kelasOpt.get().getKuotaTersedia();
+    }
+    
+    public String getKuotaInfo(Long kelasId) {
+        Optional<Kelas> kelasOpt = kelasRepository.findById(kelasId);
+        if (kelasOpt.isEmpty()) return "0/0";
+        return kelasOpt.get().getKuotaInfo();
     }
 }

@@ -733,6 +733,9 @@
             }
 
             classList.forEach((cls, index) => {
+                const kuotaTersedia = cls.kuota - (cls.enrollments ? cls.enrollments.length : 0);
+                const kuotaInfo = `${kuotaTersedia}/${cls.kuota}`;
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
@@ -745,7 +748,7 @@
                     <td>${cls.ruangan || '-'}</td>
                     <td>${cls.jadwal || '-'}</td>
                     <td>${cls.dosen?.name || 'Belum ditentukan'}</td>
-                    <td>${cls.kuota || 0}</td>
+                    <td>${kuotaInfo}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="action-btn edit-btn" onclick="editClass(${cls.id})" title="Edit">

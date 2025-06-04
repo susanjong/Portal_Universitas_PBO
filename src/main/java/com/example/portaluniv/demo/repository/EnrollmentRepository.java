@@ -7,9 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.example.portaluniv.demo.entity.Enrollment;
+import com.example.portaluniv.demo.entity.EnrollmentId;
 
 @Repository
-public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
+public interface EnrollmentRepository extends JpaRepository<Enrollment, EnrollmentId> {
     
     // Find by user
     List<Enrollment> findByUserId(Long userId);
@@ -30,4 +31,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     List<Enrollment> findByUserIdOrderByEnrolledAtDesc(Long userId);
     
     List<Enrollment> findByKelasIdOrderByEnrolledAtAsc(Long kelasId);
+    
+    // Delete by composite key
+    void deleteByUserIdAndKelasId(Long userId, Long kelasId);
 }
