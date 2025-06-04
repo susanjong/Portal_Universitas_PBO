@@ -39,7 +39,7 @@ public class Kelas {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mata_kuliah_id")
     @NotNull(message = "Mata kuliah is required")
-    @JsonIgnoreProperties({"kelasSet", "password"}) // Ignore circular reference
+    @JsonIgnoreProperties({"kelasSet", "password"})
     private MataKuliah mataKuliah;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -48,6 +48,7 @@ public class Kelas {
     private Dosen dosen; 
 
     @OneToMany(mappedBy = "kelas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"kelas", "user"}) // Prevent circular reference in JSON
     private Set<Enrollment> enrollments = new HashSet<>();
 
     // Constructors
@@ -65,11 +66,15 @@ public class Kelas {
 
     // Helper methods
     public int getCurrentEnrollmentCount() {
-        return enrollments.size();
+        return enrollments != null ? enrollments.size() : 0;
     }
 
     public boolean isFull() {
         return getCurrentEnrollmentCount() >= kuota;
+    }
+
+    public boolean isAvailable() {
+        return !isFull();
     }
 
     // Derived properties from MataKuliah
@@ -85,10 +90,6 @@ public class Kelas {
         return mataKuliah != null ? mataKuliah.getSks() : 0; 
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
     public String getKodeMataKuliah() {
         return mataKuliah != null ? mataKuliah.getKodeMk() : null;
     }
@@ -96,6 +97,18 @@ public class Kelas {
     public String getKodeKelasLengkap() {
         return getKodeMataKuliah() + "-" + kelas;
     }
+
+    public int getKuotaTersedia() {
+        return kuota - getCurrentEnrollmentCount();
+    }
+
+    public String getKuotaInfo() {
+        return getKuotaTersedia() + "/" + kuota;
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getKelas() { return kelas; }
     public void setKelas(String kelas) { this.kelas = kelas; }
@@ -117,4 +130,5 @@ public class Kelas {
 
     public Set<Enrollment> getEnrollments() { return enrollments; }
     public void setEnrollments(Set<Enrollment> enrollments) { this.enrollments = enrollments; }
+
 }
