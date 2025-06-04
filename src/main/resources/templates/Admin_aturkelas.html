@@ -676,14 +676,27 @@
 
         // Handle subject code change - auto fill subject name and semester
         function handleSubjectCodeChange(event) {
-            const subjectCode = event.target.value.toUpperCase();
+            const subjectCode = event.target.value.trim();
             const subjectNameField = document.getElementById('subjectName');
             const semesterField = document.getElementById('semester');
-
-            if (subjectDatabase[subjectCode]) {
-                const subject = subjectDatabase[subjectCode];
-                subjectNameField.value = subject.name;
-                semesterField.value = subject.semester;
+            
+            if (subjectCode) {
+                fetch(`/api/mata-kuliah/by-kode/${subjectCode}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Mata kuliah tidak ditemukan');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        subjectNameField.value = data.namaMk || '';
+                        semesterField.value = data.semester || '';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        subjectNameField.value = '';
+                        semesterField.value = '';
+                    });
             } else {
                 subjectNameField.value = '';
                 semesterField.value = '';
@@ -692,12 +705,30 @@
 
         // Handle student NIM change - auto fill student name
         function handleStudentNIMChange(event) {
-            const nim = event.target.value;
+            const nim = event.target.value.trim();
             const studentNameField = document.getElementById('studentName');
-
-            if (studentDatabase[nim]) {
-                const student = studentDatabase[nim];
-                studentNameField.value = student.name;
+            
+            if (nim) {
+                fetch(`/api/users/by-nim/${nim}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Mahasiswa tidak ditemukan');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Check if user has 'mahasiswa' role
+                        if (data.role && data.role.toLowerCase() === 'mahasiswa') {
+                            studentNameField.value = data.name || data.nama || '';
+                        } else {
+                            studentNameField.value = '';
+                            showMessage('NIM tersebut bukan role mahasiswa!', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        studentNameField.value = '';
+                    });
             } else {
                 studentNameField.value = '';
             }
