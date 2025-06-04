@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda Mahasiswa</title>
+    <title>Beranda Dosen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -285,19 +285,19 @@
 
     <div class="container">
         <div class="sidebar">
-            <a href="/dashboard_mahasiswa_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
+            <a href="/dosen_dashboard_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item active" onclick="setActiveMenu(this, 'beranda')">
+            <a href="/dosen_dashboard_beranda" class="sidebar-item active" onclick="setActiveMenu(this, 'beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/dosen_dashboard_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
+            <a href="/dosen_dashboard_kelasterdaftar" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Terdaftar
             </a>
@@ -305,7 +305,7 @@
 
         <div class="main-content">
             <div class="profile-section">
-                <h2 class="form-title">Data Pribadi Mahasiswa</h2>
+                <h2 class="form-title">Data Pribadi Dosen</h2>
                 
                 <form id="studentForm" method="post">
                     <div class="form-section">
@@ -322,8 +322,8 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <span class="form-label">NIM</span>
-                                <span class="form-value">231401020</span>
+                                <span class="form-label">NIP</span>
+                                <span class="form-value">198802192019032016</span>
                             </div>
                             <div class="form-group">
                                 <span class="form-label">JURUSAN</span>

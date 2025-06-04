@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda Mahasiswa - Daftar Kelas</title>
+    <title>Daftar Kelas Dosen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -449,19 +449,19 @@
 
     <div class="container">
         <div class="sidebar">
-            <a href="/dashboard_mahasiswa_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
+            <a href="/dosen_dashboard_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
+            <a href="/dosen_dashboard_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item active" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/dosen_dashboard_daftarkelas" class="sidebar-item active" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="/kelas-tersaftar" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
+            <a href="/dosen_dashboard_kelasterdaftar" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Terdaftar
             </a>
@@ -489,27 +489,19 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label class="filter-label">Semester</label>
+                        <label class="filter-label">Dosen</label>
                         <select class="filter-select" id="semesterFilter">
-                            <option value="">Pilih Semester</option>
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                            <option value="3">Semester 3</option>
-                            <option value="4">Semester 4</option>
-                            <option value="5">Semester 5</option>
-                            <option value="6">Semester 6</option>
-                            <option value="7">Semester 7</option>
-                            <option value="8">Semester 8</option>
+                            <option value="">Pilih Nama Dosen</option>
+                            <option value="1">Drs. Jenni Blekping, S.Kom, M.sc</option>
+                            <option value="2">Dr. Ahmad Susanto, M.Kom</option>
+                            <option value="3">Prof. Siti Nurhaliza, Ph.D</option>
+                            <option value="4">Dr. Andi Pratama, M.T</option>
+                            <option value="5">Dosen Belum Terdaftar</option>
+                            <option value="6">(coming soon)</option>
                         </select>
                     </div>
                     
-                    <div class="filter-group">
-                        <label class="filter-label">Dosen</label>
-                        <div class="search-container">
-                            <input type="text" class="filter-input search-input" id="lecturerFilter" placeholder="Masukkan nama dosen">
-                            <i class="fa-solid fa-search"></i>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
 
@@ -546,7 +538,7 @@
                             <td><span class="quota-info quota-available">3/50</span></td>
                             <td>
                                 <button class="register-btn available" onclick="handleClassAction(this, 'ILK1001', 'A', 'Dasar Pemrograman')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
+                                    <i class="fa-solid fa-plus"></i> Daftar Dosen
                                 </button>
                             </td>
                         </tr>
@@ -580,7 +572,7 @@
                             <td><span class="quota-info quota-available">15/45</span></td>
                             <td>
                                 <button class="register-btn available" onclick="handleClassAction(this, 'ILK1002', 'A', 'Algoritma dan Struktur Data')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
+                                    <i class="fa-solid fa-plus"></i> Daftar Dosen
                                 </button>
                             </td>
                         </tr>
@@ -597,7 +589,7 @@
                             <td><span class="quota-info quota-available">28/40</span></td>
                             <td>
                                 <button class="register-btn available" onclick="handleClassAction(this, 'ILK1003', 'A', 'Basis Data')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
+                                    <i class="fa-solid fa-plus"></i> Daftar Dosen
                                 </button>
                             </td>
                         </tr>
@@ -614,7 +606,7 @@
                             <td><span class="quota-info quota-warning">38/40</span></td>
                             <td>
                                 <button class="register-btn available" onclick="handleClassAction(this, 'ILK1004', 'A', 'Pemrograman Web')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
+                                    <i class="fa-solid fa-plus"></i> Daftar Dosen
                                 </button>
                             </td>
                         </tr>
