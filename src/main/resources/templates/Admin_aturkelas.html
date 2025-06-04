@@ -622,118 +622,45 @@
     </div>
 
     <script>
-        // Database mata kuliah
-        const subjectDatabase = {
-            'ILK1001': {
-                name: 'Dasar Pemrograman',
-                semester: 1,
-                prodi: 'Ilmu Komputer'
-            },
-            'ILK1002': {
-                name: 'Logika Matematika',
-                semester: 1,
-                prodi: 'Ilmu Komputer'
-            },
-            'ILK2001': {
-                name: 'Struktur Data',
-                semester: 3,
-                prodi: 'Ilmu Komputer'
-            },
-            'ILK2002': {
-                name: 'Basis Data',
-                semester: 4,
-                prodi: 'Ilmu Komputer'
-            },
-            'ILK3001': {
-                name: 'Pemrograman Web',
-                semester: 5,
-                prodi: 'Ilmu Komputer'
-            }
-        };
-
-        // Database mahasiswa
-        const studentDatabase = {
-            '231401020': {
-                name: 'Clarissa Halim',
-                prodi: 'Ilmu Komputer',
-                semester: 1
-            },
-
-            '231401095': {
-                name: 'Ferarine',
-                prodi: 'Ilmu Komputer',
-                semester: 4
-            },
-            '231401014': {
-                name: 'Susan',
-                prodi: 'Ilmu Komputer',
-                semester: 3
-            },
-            '231401060': {
-                name: 'Ballerina Cappucina',
-                prodi: 'Ilmu Komputer',
-                semester: 3
-            },
-        };
-
-        // Sample student data
-        let students = [
-            { 
-                id: 1, 
-                nim: '231401020', 
-                name: 'Clarissa Halim', 
-                subjectCode: 'ILK1001', 
-                subjectName: 'Dasar Pemrograman', 
-                prodi: 'Ilmu Komputer', 
-                semester: 1, 
-                section: 'A', 
-                schedule: 'Kamis, 13:50 - 16:20', 
-                lecturer: 'Dosen Belum Terdaftar'
-            },
-            { 
-                id: 2, 
-                nim: '231401095', 
-                name: 'Ferarine', 
-                subjectCode: 'ILK1001', 
-                subjectName: 'Dasar Pemrograman', 
-                prodi: 'Ilmu Komputer', 
-                semester: 4, 
-                section: 'B', 
-                schedule: 'Kamis, 13:50 - 16:20', 
-                lecturer: 'Dosen Belum Terdaftar'
-            },
-            { 
-                id: 3, 
-                nim: '231401014', 
-                name: 'Susan', 
-                subjectCode: 'ILK1001', 
-                subjectName: 'Dasar Pemrograman', 
-                prodi: 'Ilmu Komputer', 
-                semester: 3, 
-                section: 'B', 
-                schedule: 'Kamis, 13:50 - 16:20', 
-                lecturer: 'Drs. Jenni Blekping, S.Kom, M.Sc'
-            },
-            { 
-                id: 4, 
-                nim: '231401060', 
-                name: 'Ballerina Cappucina', 
-                subjectCode: 'ILK1002', 
-                subjectName: 'Logika Matematika', 
-                prodi: 'Ilmu Komputer', 
-                semester: 3, 
-                section: 'A', 
-                schedule: 'Jumat, 08:00 - 10:30', 
-                lecturer: 'Drs. Aji Rifki S.Kom, M.Sc'
-            }
-        ];
+        let students = [];
 
         let currentEditId = null;
-        let nextId = 5;
+
+        // Load data dari database
+        function loadStudentsFromDatabase() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/enrollments', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const enrollments = JSON.parse(xhr.responseText);
+                    
+                    students = enrollments.map(function(enrollment) {
+                        return {
+                            id: enrollment.user.id,
+                            nim: enrollment.user.nim || enrollment.user.username,
+                            name: enrollment.user.name || enrollment.user.nama,
+                            subjectCode: enrollment.kelas.mataKuliah.kodeMk,
+                            subjectName: enrollment.kelas.mataKuliah.namaMk,
+                            prodi: enrollment.kelas.mataKuliah.programStudi,
+                            semester: enrollment.kelas.mataKuliah.semester,
+                            section: enrollment.kelas.kelas,
+                            schedule: enrollment.kelas.jadwal || 'Belum Dijadwalkan',
+                            lecturer: enrollment.kelas.dosen.nama || 'Dosen Belum Terdaftar'
+                        };
+                    });
+                    
+                    renderStudentTable();
+                } else if (xhr.readyState === 4) {
+                    console.error('Error loading data');
+                    showMessage('Gagal memuat data dari database', 'error');
+                }
+            };
+            xhr.send();
+        }
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            renderStudentTable();
+            loadStudentsFromDatabase();
             setupEventListeners();
         });
 
@@ -929,29 +856,6 @@
             // Default schedule and lecturer based on subject
             let schedule = 'Belum Dijadwalkan';
             let lecturer = 'Dosen Belum Terdaftar';
-
-            switch(subjectCode) {
-                case 'ILK1001':
-                    schedule = 'Kamis, 13:50 - 16:20';
-                    lecturer = section === 'A' ? 'Dosen Belum Terdaftar' : 'Drs. Jenni Blekping, S.Kom, M.Sc';
-                    break;
-                case 'ILK1002':
-                    schedule = 'Jumat, 08:00 - 10:30';
-                    lecturer = 'Drs. Aji Rifki S.Kom, M.Sc';
-                    break;
-                case 'ILK2001':
-                    schedule = 'Senin, 10:30 - 13:00';
-                    lecturer = 'Dr. Sarah Ahmad, S.Kom, M.Kom';
-                    break;
-                case 'ILK2002':
-                    schedule = 'Selasa, 13:50 - 16:20';
-                    lecturer = 'Prof. Dr. Budi Santoso, S.Kom, M.Kom';
-                    break;
-                case 'ILK3001':
-                    schedule = 'Rabu, 08:00 - 10:30';
-                    lecturer = 'Dr. Maya Sari, S.Kom, M.Kom';
-                    break;
-            }
 
             const studentData = {
                 nim: nim,
