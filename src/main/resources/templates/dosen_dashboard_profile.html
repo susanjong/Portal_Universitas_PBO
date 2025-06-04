@@ -64,9 +64,10 @@
             padding: 12px 20px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: #333;
+            position: relative;
         }
 
         .sidebar-item:hover {
@@ -89,6 +90,8 @@
         .sidebar-item.active .fa-solid {
             color: #2d5016;
         }
+
+
 
         .main-content {
             flex: 1;
@@ -121,7 +124,7 @@
             width: 100%;
         }
 
-          .form-group {
+        .form-group {
             display: flex;
             align-items: center;
             gap: 20px;
@@ -287,9 +290,9 @@
         <div class="header-title">PORTAL USU</div>
     </div>
 
-     <div class="container">
+    <div class="container">
         <div class="sidebar">
-            <a href="/dosen_dashboard_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
+            <a href="/dosen_dashboard_profile" class="sidebar-item active" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
@@ -301,7 +304,7 @@
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="/dosen_dashboard_kelasterdaftar" class="sidebar-item active" onclick="setActiveMenu(this, 'kelas-terdaftar')">
+            <a href="/dosen_dashboard_kelasterdaftar" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Terdaftar
             </a>
@@ -326,7 +329,7 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <span class="form-label">NIM</span>
+                            <span class="form-label">NIDN</span>
                             <span class="form-value"></span>
                         </div>
                         <div class="form-group">
@@ -345,8 +348,6 @@
                             <span class="form-value"></span>
                         </div>
                     </div>
-
-                    
                 </div>
 
                 <!-- Editable Fields -->
@@ -377,7 +378,7 @@
                         <div class="form-group editable-field">
                             <label class="form-label">TANGGAL LAHIR</label>
                             <div class="form-input-container">
-                                <input type="date" class="form-input" name="birthDate">
+                                <input type="date" class="form-input" name="birthDate" >
                                 <i class="fa-solid fa-pencil edit-icon"></i>
                                 <div class="resize-handle"></div>
                             </div>
@@ -433,7 +434,7 @@
                         <div class="form-group editable-field">
                             <label class="form-label">ALAMAT</label>
                             <div class="form-input-container">
-                                <input type="text" class="form-input" name="address" placeholder="Masukkan alamat lengkap">
+                                <input type="text" class="form-input" name="address"  placeholder="Masukkan alamat lengkap">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
                                 <div class="resize-handle"></div>
                             </div>
@@ -444,7 +445,7 @@
                         <div class="form-group editable-field">
                             <label class="form-label">NO. IDENTITAS</label>
                             <div class="form-input-container">
-                                <input type="text" class="form-input" name="idNumber" placeholder="Masukkan nomor KTP/identitas">
+                                <input type="text" class="form-input" name="idNumber"  placeholder="Masukkan nomor KTP/identitas">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
                                 <div class="resize-handle"></div>
                             </div>
@@ -477,8 +478,6 @@
                             </div>
                         </div>
                     </div>
-
-                    
                 </div>
 
                 <button type="submit" class="save-btn">
@@ -490,6 +489,17 @@
     </div>
 
     <script>
+        // Set active menu
+        function setActiveMenu(clickedItem, menuType) {
+            // Remove active class from all sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            clickedItem.classList.add('active');
+        }
+
         // Form submission handling
         document.getElementById('studentForm').addEventListener('submit', function(e) {
             e.preventDefault();
