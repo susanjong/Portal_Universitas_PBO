@@ -27,7 +27,7 @@ public class DashboardController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/dsmahasiswa")
+    @GetMapping("/dashboard_mahasiswa_beranda")
     public String dashboard(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
@@ -42,7 +42,28 @@ public class DashboardController {
             model.addAttribute("userRole", role);
         }
         
-        return "dsmahasiswa";
+        return "dashboard_mahasiswa_beranda";
+    }
+
+    @GetMapping("/dashboard_mahasiswa_profile")
+    public String mahasiswaProfile(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            
+            Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+            
+            if (currentUser.isPresent()) {
+                User user = currentUser.get();
+                model.addAttribute("username", user.getUsername());
+                model.addAttribute("name", user.getName());
+                model.addAttribute("email", user.getEmail());
+                model.addAttribute("role", user.getRole());
+            }
+        }
+
+        return "dashboard_mahasiswa_profile";
     }
 
     @GetMapping("/Admin_beranda")
