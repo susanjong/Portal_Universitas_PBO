@@ -53,7 +53,7 @@ public class SecurityConfig {
                         redirectUrl = "/Admin_beranda";
                         break;
                     } else if (role.equals("ROLE_DOSEN")) {
-                        redirectUrl = "/dsdosen";  // Sesuaikan dengan halaman dosen
+                        redirectUrl = "/dosen_dashboard_beranda";  // Sesuaikan dengan halaman dosen
                         break;
                     } else if (role.equals("ROLE_MAHASISWA")) {
                         redirectUrl = "/dashboard_mahasiswa_beranda";
