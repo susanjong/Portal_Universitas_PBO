@@ -478,7 +478,9 @@
         </div>
 
         <!-- Main Content for User List -->
-        <div class="main-content" id="userListView">
+        <div class="main-content" id="userListView" 
+                th:style="${(showAddForm != null and showAddForm) or (showEditForm != null and showEditForm)} ? 'display: none;' : 'display: block;'">
+            
             <div class="data-pribadi">
                 <h2 class="form-title">Data Pribadi Admin</h2>
                 
@@ -508,41 +510,49 @@
             <!-- Filter Section -->
             <div class="filter-section">
                 <h3 class="filter-title">Filter Data</h3>
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">NIM/NIDN/Username</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="nimFilter" placeholder="Cari berdasarkan NIM/NIP/Username">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
+                <form method="get" th:action="@{/Admin_beranda}">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">NIM/NIDN/Username</label>
+                            <div class="filter-input-container">
+                                <input type="text" class="filter-input" name="usernameFilter" 
+                                    th:value="${param.usernameFilter}" placeholder="Cari berdasarkan NIM/NIP/Username">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Nama Lengkap</label>
+                            <div class="filter-input-container">
+                                <input type="text" class="filter-input" name="nameFilter" 
+                                    th:value="${param.nameFilter}" placeholder="Cari berdasarkan nama">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Peran</label>
+                            <select class="filter-select" name="roleFilter" onchange="this.form.submit()">
+                                <option value="">Semua Peran</option>
+                                <option value="ADMIN" th:selected="${roleFilter == 'ADMIN'}">Admin</option>
+                                <option value="DOSEN" th:selected="${roleFilter == 'DOSEN'}">Dosen</option>
+                                <option value="MAHASISWA" th:selected="${roleFilter == 'MAHASISWA'}">Mahasiswa</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Nama Lengkap</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="nameFilter" placeholder="Cari berdasarkan nama">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Peran</label>
-                        <select class="filter-select" id="roleFilter">
-                            <option value="">Semua Peran</option>
-                            <option value="ADMIN">Admin</option>
-                            <option value="DOSEN">Dosen</option>
-                            <option value="MAHASISWA">Mahasiswa</option>
-                        </select>
-                    </div>
-                </div>
+                    <button type="submit" style="display: none;"></button>
+                </form>
             </div>
+
 
             <!-- User List Section -->
             <div class="user-list-section">
                 <div class="user-list-header">
                     <h3 class="user-list-title">Daftar User</h3>
-                    <button class="add-user-btn" onclick="showAddUserForm()">
-                        <span>+</span>
-                        Tambah User
-                    </button>
+                    <!-- Show Add Form Button -->
+                    <form method="get" th:action="@{/Admin_beranda}" style="display: inline;">
+                        <input type="hidden" name="showAddForm" value="true">
+                        <button type="submit" class="add-user-btn">
+                            <span>+</span>
+                            Tambah User
+                        </button>
+                    </form>
                 </div>
 
                 <table class="user-table">
@@ -556,95 +566,107 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="userTableBody">
+                    <tbody>
+                        <tr th:each="user, iterStat : ${users}">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${user.username}"></td>
+                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td th:text="${user.role}"></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form method="get" th:action="@{/Admin_beranda}" style="display: inline;">
+                                        <input type="hidden" name="editUserId" th:value="${user.id}">
+                                        <button type="submit" class="action-btn edit-btn" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/Admin_beranda/delete-user}" method="post" style="display: inline;"
+                                        onsubmit="return confirm('Yakin hapus user ' + '[[${user.name}]]' + '?')">
+                                        <input type="hidden" name="id" th:value="${user.id}">
+                                        <button type="submit" class="action-btn delete-btn" title="Hapus">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Form for Add/Edit User -->
-        <div class="main-content user-form-section" id="userFormView">
-            <h2 class="form-title" id="formTitle">Form Tambah User</h2>
+        <!-- Form for Add User -->
+        <div class="main-content user-form-section" id="userFormView" 
+            th:style="${(showAddForm != null and showAddForm) or (showEditForm != null and showEditForm)} ? 'display: block;' : 'display: none;'">
             
-            <form id="userForm">
+            <h2 class="form-title" th:text="${showEditForm} ? 'Form Edit User' : 'Form Tambah User'"></h2>
+            
+            <form id="userForm" method="post" 
+                th:action="${showEditForm} ? '/Admin_beranda/edit-user' : '/Admin_beranda/add-user'">
+                
+                <input type="hidden" name="id" th:value="${editUser?.id}">
+                
                 <div class="form-group">
                     <label class="form-label">NIM/NIP/Username<span class="required">*</span></label>
-                    <input type="text" class="form-input" id="userNim" name="nim" required>
+                    <input type="text" class="form-input" name="username" 
+                        th:value="${editUser?.username}" required>
                 </div>
-
+                
                 <div class="form-group">
                     <label class="form-label">Peran<span class="required">*</span></label>
-                    <select class="form-select" id="userRole" name="role" required>
+                    <select class="form-select" name="role" required>
                         <option value="">Pilih Peran</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="DOSEN">Dosen</option>
-                        <option value="MAHASISWA">Mahasiswa</option>
+                        <option value="ADMIN" th:selected="${editUser?.role?.toString() == 'ADMIN'}">Admin</option>
+                        <option value="DOSEN" th:selected="${editUser?.role?.toString() == 'DOSEN'}">Dosen</option>
+                        <option value="MAHASISWA" th:selected="${editUser?.role?.toString() == 'MAHASISWA'}">Mahasiswa</option>
                     </select>
                 </div>
-
+                
                 <div class="form-group">
                     <label class="form-label">Nama Lengkap<span class="required">*</span></label>
-                    <input type="text" class="form-input" id="userName" name="name" required>
+                    <input type="text" class="form-input" name="name" 
+                        th:value="${editUser?.name}" required>
                 </div>
-
+                
                 <div class="form-group">
                     <label class="form-label">Email<span class="required">*</span></label>
-                    <input type="email" class="form-input" id="userEmail" name="email" required>
+                    <input type="email" class="form-input" name="email" 
+                        th:value="${editUser?.email}" required>
                 </div>
-
-                <div class="form-group" id="passwordGroup">
+                
+                <div class="form-group" th:if="${showAddForm == true}">
                     <label class="form-label">Password<span class="required">*</span></label>
-                    <input type="password" class="form-input" id="userPassword" name="password">
+                    <input type="password" class="form-input" name="password" required>
                 </div>
 
+                
                 <div class="form-buttons">
                     <button type="submit" class="btn-primary">
                         <i class="fas fa-save"></i>
                         Simpan
                     </button>
-                    <button type="button" class="btn-secondary" onclick="cancelForm()">
+                    <a href="/Admin_beranda" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center;">
                         Batal
-                    </button>
+                    </a>
                 </div>
             </form>
         </div>
-    </div>
 
     <script th:inline="javascript">
-        window.usersData = /*[[${users}]]*/ [];
-    </script>
-
-    <script>
-        // Sample user data
-        let users = [];
+        
         let currentEditId = null;
+        var users = [];
 
-        function loadUsersFromDatabase() {
-            if (window.usersData && window.usersData.length > 0) {
-                users = window.usersData.map(user => ({
-                    id: user.id,
-                    nim: user.username,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role
-                }));
-            }
-            renderUserTable();
-        }
-
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            loadUsersFromDatabase();
             setupEventListeners();
         });
 
-        
         // Setup event listeners
         function setupEventListeners() {
             document.getElementById('nimFilter').addEventListener('input', filterUsers);
             document.getElementById('nameFilter').addEventListener('input', filterUsers);
             document.getElementById('roleFilter').addEventListener('change', filterUsers);
-            document.getElementById('userForm').addEventListener('submit', handleFormSubmit);
         }
 
         // Filter functionality
@@ -653,51 +675,33 @@
             const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
             const roleFilter = document.getElementById('roleFilter').value;
 
-            const filteredUsers = users.filter(user => {
-                const nimMatch = user.nim.toLowerCase().includes(nimFilter);
-                const nameMatch = user.name.toLowerCase().includes(nameFilter);
-                const roleMatch = roleFilter === '' || user.role === roleFilter;
+            const rows = document.querySelectorAll('.user-table tbody tr');
+            
+            rows.forEach(row => {
+                const username = row.cells[1].textContent.toLowerCase();
+                const name = row.cells[2].textContent.toLowerCase();
+                const role = row.cells[4].textContent;
 
-                return nimMatch && nameMatch && roleMatch;
-            });
+                const nimMatch = username.includes(nimFilter);
+                const nameMatch = name.includes(nameFilter);
+                const roleMatch = roleFilter === '' || role === roleFilter;
 
-            renderUserTable(filteredUsers);
-        }
-
-        // Render user table
-        function renderUserTable(userList = users) {
-            const tbody = document.getElementById('userTableBody');
-            tbody.innerHTML = '';
-
-            userList.forEach((user, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${user.nim}</td>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>${user.role}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn edit-btn" onclick="editUser(${user.id})" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn delete-btn" onclick="deleteUser(${user.id})" title="Hapus">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
+                if (nimMatch && nameMatch && roleMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
             });
         }
 
-        // Show add user form
         function showAddUserForm() {
             currentEditId = null;
             document.getElementById('formTitle').textContent = 'Form Tambah User';
             document.getElementById('userForm').reset();
+            document.getElementById('userForm').action = '/Admin_beranda/add-user';
+            document.getElementById('editUserId').value = '';
             
+            // Show password field for add
             document.getElementById('passwordGroup').style.display = 'block';
             document.getElementById('userPassword').required = true;
             
@@ -708,71 +712,26 @@
 
         // Edit user
         function editUser(id) {
-            const user = users.find(u => u.id === id);
-            if (user) {
-                currentEditId = id;
-                document.getElementById('formTitle').textContent = 'Form Edit User';
-                
-                // Fill form with user data
-                document.getElementById('userNim').value = user.nim;
-                document.getElementById('userRole').value = user.role;
-                document.getElementById('userName').value = user.name;
-                document.getElementById('userEmail').value = user.email;
-                
-                // Hide password field for edit
-                document.getElementById('passwordGroup').style.display = 'none';
-                
-                // Show form, hide list
-                document.getElementById('userListView').style.display = 'none';
-                document.getElementById('userFormView').style.display = 'block';
-            }
-        }
-
-        // Handle form submit
-        function handleFormSubmit(e) {
-            e.preventDefault();
+            currentEditId = id;
+            document.getElementById('formTitle').textContent = 'Form Edit User';
+            document.getElementById('userForm').action = '/Admin_beranda/edit-user';
+            document.getElementById('editUserId').value = id;
             
-            const formData = {
-                username: document.getElementById('userNim').value,
-                role: document.getElementById('userRole').value,
-                name: document.getElementById('userName').value,
-                email: document.getElementById('userEmail').value
-            };
-
-            // Only include password for new users
-            if (!currentEditId) {
-                formData.password = document.getElementById('userPassword').value;
-            }
-
-            // Kirim data ke server via fetch API
-            const url = currentEditId ? `/api/users/${currentEditId}` : '/api/users';
-            const method = currentEditId ? 'PUT' : 'POST';
-
-            fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(currentEditId ? 'User berhasil diupdate!' : 'User berhasil ditambahkan!');
-                    // Reload data from server
-                    location.reload(); // Atau buat function untuk reload data
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat menyimpan data');
-            });
+            // Fill form with user data
+            document.getElementById('userNim').value = username;
+            document.getElementById('userRole').value = role;
+            document.getElementById('userName').value = name;
+            document.getElementById('userEmail').value = email;
+            
+            // Hide password field for edit
+            document.getElementById('passwordGroup').style.display = 'none';
+            document.getElementById('userPassword').required = false;
+            
+            // Show form, hide list
+            document.getElementById('userListView').style.display = 'none';
+            document.getElementById('userFormView').style.display = 'block';
         }
 
-
-        // Cancel form
         function cancelForm() {
             document.getElementById('userForm').reset();
             currentEditId = null;
@@ -782,30 +741,6 @@
             document.getElementById('userFormView').style.display = 'none';
         }
 
-        // Delete user
-        function deleteUser(id) {
-            const user = users.find(u => u.id === id);
-            if (user && confirm(`Apakah Anda yakin ingin menghapus user ${user.name}?`)) {
-                fetch(`/api/users/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('User berhasil dihapus');
-                        location.reload(); // Atau reload data dari server
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menghapus data');
-                });
-            }
-        }
-
-        // Sidebar navigation
         function setActiveMenu(element, menu) {
             // Remove active class from all items
             document.querySelectorAll('.sidebar-item, .sidebar-item-daftar').forEach(item => {
@@ -820,7 +755,8 @@
                 case 'beranda':
                     // Already on beranda, just show user list
                     document.getElementById('userListView').style.display = 'block';
-                    document.getElementById('userFormView').style.display = 'none';
+                    document.getElementById('addUserForm').style.display = 'none';
+                    document.getElementById('editUserForm').style.display = 'none';
                     break;
                 default:
                     console.log('Navigating to:', menu);

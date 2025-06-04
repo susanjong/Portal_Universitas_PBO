@@ -628,34 +628,31 @@
 
         // Load data dari database
         function loadStudentsFromDatabase() {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', '/api/enrollments', true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    const enrollments = JSON.parse(xhr.responseText);
-                    
-                    students = enrollments.map(function(enrollment) {
-                        return {
-                            id: enrollment.user.id,
-                            nim: enrollment.user.nim || enrollment.user.username,
-                            name: enrollment.user.name || enrollment.user.nama,
-                            subjectCode: enrollment.kelas.mataKuliah.kodeMk,
-                            subjectName: enrollment.kelas.mataKuliah.namaMk,
-                            prodi: enrollment.kelas.mataKuliah.programStudi,
-                            semester: enrollment.kelas.mataKuliah.semester,
-                            section: enrollment.kelas.kelas,
-                            schedule: enrollment.kelas.jadwal || 'Belum Dijadwalkan',
-                            lecturer: enrollment.kelas.dosen.nama || 'Dosen Belum Terdaftar'
-                        };
-                    });
-                    
-                    renderStudentTable();
-                } else if (xhr.readyState === 4) {
-                    console.error('Error loading data');
-                    showMessage('Gagal memuat data dari database', 'error');
-                }
-            };
-            xhr.send();
+            fetch('/api/enrollments')
+            .then(response => response.json())
+            .then(enrollments => {
+                students = enrollments.map(function(enrollment) {
+                    return {
+                        id: enrollment.user.id,
+                        nim: enrollment.user.nim || enrollment.user.username,
+                        name: enrollment.user.name || enrollment.user.nama,
+                        subjectCode: enrollment.kelas.mataKuliah.kodeMk,
+                        subjectName: enrollment.kelas.mataKuliah.namaMk,
+                        prodi: enrollment.kelas.mataKuliah.programStudi,
+                        semester: enrollment.kelas.mataKuliah.semester,
+                        section: enrollment.kelas.kelas,
+                        schedule: enrollment.kelas.jadwal || 'Belum Dijadwalkan',
+                        lecturer: enrollment.kelas.dosen.nama || 'Dosen Belum Terdaftar',
+                        kelasId: enrollment.kelas.id // Tambah ini untuk delete
+                    };
+                });
+                
+                renderStudentTable();
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+                showMessage('Gagal memuat data dari database', 'error');
+            });
         }
 
         // Initialize page
@@ -679,14 +676,27 @@
 
         // Handle subject code change - auto fill subject name and semester
         function handleSubjectCodeChange(event) {
-            const subjectCode = event.target.value.toUpperCase();
+            const subjectCode = event.target.value.trim();
             const subjectNameField = document.getElementById('subjectName');
             const semesterField = document.getElementById('semester');
-
-            if (subjectDatabase[subjectCode]) {
-                const subject = subjectDatabase[subjectCode];
-                subjectNameField.value = subject.name;
-                semesterField.value = subject.semester;
+            
+            if (subjectCode) {
+                fetch(`/api/mata-kuliah/by-kode/${subjectCode}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Mata kuliah tidak ditemukan');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        subjectNameField.value = data.namaMk || '';
+                        semesterField.value = data.semester || '';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        subjectNameField.value = '';
+                        semesterField.value = '';
+                    });
             } else {
                 subjectNameField.value = '';
                 semesterField.value = '';
@@ -695,12 +705,30 @@
 
         // Handle student NIM change - auto fill student name
         function handleStudentNIMChange(event) {
-            const nim = event.target.value;
+            const nim = event.target.value.trim();
             const studentNameField = document.getElementById('studentName');
-
-            if (studentDatabase[nim]) {
-                const student = studentDatabase[nim];
-                studentNameField.value = student.name;
+            
+            if (nim) {
+                fetch(`/api/users/by-nim/${nim}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Mahasiswa tidak ditemukan');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Check if user has 'mahasiswa' role
+                        if (data.role && data.role.toLowerCase() === 'mahasiswa') {
+                            studentNameField.value = data.name || data.nama || '';
+                        } else {
+                            studentNameField.value = '';
+                            showMessage('NIM tersebut bukan role mahasiswa!', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        studentNameField.value = '';
+                    });
             } else {
                 studentNameField.value = '';
             }
@@ -805,9 +833,34 @@
         // Delete student
         function deleteStudent(id) {
             if (confirm('Apakah Anda yakin ingin menghapus mahasiswa ini dari kelas?')) {
-                students = students.filter(s => s.id !== id);
-                renderStudentTable();
-                showMessage('Mahasiswa berhasil dihapus dari kelas!', 'success');
+                const student = students.find(s => s.id === id);
+                if (!student) {
+                    showMessage('Data mahasiswa tidak ditemukan', 'error');
+                    return;
+                }
+                
+                // Debug - cek nilai yang dikirim
+                console.log('Deleting:', student.id, student.kelasId);
+                
+                fetch(`/api/enrollments/${student.id}/${student.kelasId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (response.ok) {
+                        loadStudentsFromDatabase();
+                        showMessage('Mahasiswa berhasil dihapus dari kelas!', 'success');
+                    } else {
+                        return response.text().then(text => {
+                            console.log('Error response:', text);
+                            showMessage('Gagal menghapus mahasiswa: ' + text, 'error');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting student:', error);
+                    showMessage('Error saat menghapus mahasiswa', 'error');
+                });
             }
         }
 
