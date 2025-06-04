@@ -766,17 +766,7 @@
         });
 
         // Utility functions
-        function getTotalSKS() {
-            return registeredClasses.reduce((sum, cls) => sum + cls.sks, 0);
-        }
-
-        function getClassesBySemester(semester) {
-            return registeredClasses.filter(cls => cls.semester === semester);
-        }
-
-        function hasConflictingSchedule(newSchedule) {
-            return registeredClasses.some(cls => cls.schedule === newSchedule);
-        }
+       
 
         // Export functions for external use
         window.portalUSU = {
