@@ -91,8 +91,6 @@
             color: #2d5016;
         }
 
-
-
         .main-content {
             flex: 1;
             padding: 30px;
@@ -154,8 +152,6 @@
             align-items: center;
             width: 100%;
             min-width: 300px;
-            resize: horizontal;
-            overflow: hidden;
         }
 
         .form-input {
@@ -165,8 +161,25 @@
             border-radius: 4px;
             font-size: 14px;
             background-color: white;
-            resize: horizontal;
             min-width: 200px;
+            text-align: left; 
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Specific styling for text inputs to handle long content */
+        .form-input[type="text"] {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .form-input[type="text"]:focus {
+            white-space: normal;
+            overflow: visible;
+            height: auto;
+            min-height: 34px;
         }
 
         .form-input:focus {
@@ -231,40 +244,6 @@
             border-top: 1px solid #e0e0e0;
             padding-top: 20px;
             margin-top: 20px;
-        }
-
-        /* Resize handle styling */
-        .form-input-container::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            cursor: ew-resize;
-            background: linear-gradient(90deg, transparent 0%, #ddd 50%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .form-input-container:hover::after {
-            opacity: 1;
-        }
-
-        /* Custom resize handle for better UX */
-        .resize-handle {
-            position: absolute;
-            right: -5px;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            cursor: ew-resize;
-            background: transparent;
-            z-index: 5;
-        }
-
-        .resize-handle:hover {
-            background: rgba(74, 124, 89, 0.1);
         }
 
         /* Responsive adjustments */
@@ -355,7 +334,6 @@
                             <div class="form-input-container">
                                 <input type="password" class="form-input" name="password" placeholder="Masukkan password baru">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -366,7 +344,6 @@
                             <div class="form-input-container">
                                 <input type="password" class="form-input" name="confirmPassword" placeholder="Konfirmasi password">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -377,7 +354,6 @@
                             <div class="form-input-container">
                                 <input type="date" class="form-input" name="birthDate" th:value="${birthDate}">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -388,7 +364,6 @@
                             <div class="form-input-container">
                                 <input type="text" class="form-input" name="birthPlace" th:value="${birthPlace}" placeholder="Masukkan tempat lahir">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -399,11 +374,15 @@
                             <div class="form-input-container">
                                 <select class="form-input" name="gender">
                                     <option value="">Pilih jenis kelamin</option>
+<<<<<<< HEAD
+                                    <option value="Laki-laki" th:selected="${gender == 'Laki-laki'}">Laki-laki</option>
+                                    <option value="Perempuan" th:selected="${gender == 'Perempuan'}">Perempuan</option>
+=======
                                     <option value="L" th:selected="${gender == 'Laki-laki'}">Laki-laki</option>
                                     <option value="P" th:selected="${gender == 'Perempuan'}">Perempuan</option>
+>>>>>>> dc02f700d180bafa3b0980a610f2d12a8125528d
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -422,7 +401,6 @@
                                     <option value="Konghucu" th:selected="${religion == 'Konghucu'}">Konghucu</option>
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -431,9 +409,14 @@
                         <div class="form-group editable-field">
                             <label class="form-label">ALAMAT</label>
                             <div class="form-input-container">
+<<<<<<< HEAD
+                                <input type="text" class="form-input" name="address" th:value="${address}" placeholder="Masukkan alamat lengkap">
+                                <i class="fa-solid fa-pencil edit-icon"></i>
+=======
                                 <input type="text" class="form-input" name="address" th:text="${address}" placeholder="Masukkan alamat lengkap">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
                                 <div class="resize-handle"></div>
+>>>>>>> dc02f700d180bafa3b0980a610f2d12a8125528d
                             </div>
                         </div>
                     </div>
@@ -469,7 +452,6 @@
                             <div class="form-input-container">
                                 <input type="tel" class="form-input" name="phone" th:value="${phone}" placeholder="Masukkan nomor telepon">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -477,9 +459,12 @@
                         <div class="form-group editable-field">
                             <label class="form-label">PEMINATAN KARIR</label>
                             <div class="form-input-container">
+<<<<<<< HEAD
+                                <input type="text" class="form-input" name="careerGoal" th:value="${careerGoal}" placeholder="Masukkan peminatan karir anda">
+=======
                                 <input type="tel" class="form-input" name="careerGoal" th:text="${careerGoal}" placeholder="Masukkan peminatan karir anda">
+>>>>>>> dc02f700d180bafa3b0980a610f2d12a8125528d
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>

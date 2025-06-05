@@ -165,8 +165,25 @@
             border-radius: 4px;
             font-size: 14px;
             background-color: white;
-            resize: horizontal;
             min-width: 200px;
+            text-align: left; 
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Specific styling for text inputs to handle long content */
+        .form-input[type="text"] {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .form-input[type="text"]:focus {
+            white-space: normal;
+            overflow: visible;
+            height: auto;
+            min-height: 34px;
         }
 
         .form-input:focus {
