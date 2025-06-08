@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelas Terdaftar - Mahasiswa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1B470C 0%, #2d6016 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #1B470C;
+        }
+
+        .header-title {
+            font-size: 24px;
+            margin-left: 15px;
+            font-weight: 700;
+            font-style: italic;
+            color: #FFD500;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+            font-family: 'Lato';
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #F1EEEE;
+            border-right: 1px solid #ddd;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar-item.active {
+            background-color: #CEECC2;
+            color: #000000;
+            font-weight: 700;
+        }
+
+        .sidebar-item .fa-solid {
+            margin-right: 12px;
+            width: 16px;
+            text-align: center;
+            color: #666;
+        }
+
+        .sidebar-item.active .fa-solid {
+            color: #2d5016;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            margin: 20px;
+        }
+
+        .table-section {
+            overflow: hidden;
+        }
+
+        .table-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: black;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-family: 'Lato';
+        }
+
+        .class-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border: 1px solid #6E6E6E;
+        }
+
+        .class-table th, .class-table td {
+            padding: 15px 12px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #D9D9D9;
+        }
+
+        .class-table th {
+            font-weight: 600;
+            color: #1B470C;
+            background: #6e6e6e4f;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .delete-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .delete-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+        }
+
+        .delete-btn:active {
+            transform: translateY(0);
+        }
+
+        .delete-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            min-width: 320px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+         .notification.success {
+            background-color: #28a745;
+        }
+
+        .notification.error {
+            background-color: #dc3545;
+        }
+
+        .notification.info {
+            background-color: #17a2b8;
+        }
+
+        .notification.warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .notification-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .notification .close-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .notification .close-btn:hover {
+            opacity: 1;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 450px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h3 {
+            color: #1B470C;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .modal-btn.danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .modal-btn.danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn.cancel {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+        }
+
+        .modal-btn.cancel:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #1B470C;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .class-table {
+                font-size: 12px;
+            }
+            
+            .class-table th,
+            .class-table td {
+                padding: 10px 8px;
+            }
+
+            .notification {
+                min-width: 280px;
+                right: 10px;
+                top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo"></div>
+        <div class="header-title">PORTAL USU</div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <a href="/dashboard_mahasiswa_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
+                <i class="fa-solid fa-user"></i>
+                Profil
+            </a>
+            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
+                <i class="fa-solid fa-house-chimney"></i>
+                Beranda
+            </a>
+            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+                <i class="fa-solid fa-book-open"></i>
+                Daftar Kelas
+            </a>
+            <a href="/dashboard_mahasiswa_kelasterdaftar" class="sidebar-item active" onclick="setActiveMenu(this, 'kelas-terdaftar')">
+                <i class="fa-solid fa-clipboard-list"></i>
+                Kelas Terdaftar
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div class="table-section">
+                <h2 class="table-title">Daftar Kelas yang Terdaftar</h2>
+                <div id="tableContainer">
+                    <table class="class-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kode</th>
+                                <th>Mata Kuliah</th>
+                                <th>Kelas</th>
+                                <th>SKS</th>
+                                <th>Ruangan</th>
+                                <th>Jadwal</th>
+                                <th>Dosen</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="classTableBody">
+                            <!-- Data akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fa-solid fa-book-open"></i>
+                    <h3>Belum Ada Kelas Terdaftar</h3>
+                    <p>Anda belum mendaftar untuk kelas apapun. Silakan daftar kelas terlebih dahulu.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Konfirmasi Hapus Kelas</h3>
+            <p id="modalMessage">Apakah Anda yakin ingin menghapus kelas ini dari daftar terdaftar?</p>
+            <div class="modal-buttons">
+                <button id="confirmBtn" class="modal-btn danger">Ya, Hapus</button>
+                <button id="cancelBtn" class="modal-btn cancel">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Sample data for registered classes
+        let registeredClasses = [
+            {
+                id: 1,
+                code: 'ILK1001',
+                name: 'Dasar Pemrograman',
+                semester: 1,
+                class: 'A',
+                sks: 3,
+                room: 'D-102',
+                schedule: 'Kamis, 13:50 - 16:20',
+                lecturer: 'Drs. Clarissa Hakim, S.Kom, M.sc'
+            },
+            {
+                id: 2,
+                code: 'ILK1002',
+                name: 'Algoritma dan Struktur Data',
+                semester: 2,
+                class: 'A',
+                sks: 3,
+                room: 'D-103',
+                schedule: 'Selasa, 08:00 - 10:30',
+                lecturer: 'Dr. Ahmad Susanto, M.Kom'
+            },
+            {
+                id: 3,
+                code: 'ILK1003',
+                name: 'Basis Data',
+                semester: 3,
+                class: 'B',
+                sks: 3,
+                room: 'D-201',
+                schedule: 'Rabu, 10:00 - 12:30',
+                lecturer: 'Prof. Siti Nurhaliza, Ph.D'
+            },
+            {
+                id: 4,
+                code: 'ILK1004',
+                name: 'Pemrograman Web',
+                semester: 4,
+                class: 'A',
+                sks: 3,
+                room: 'D-104',
+                schedule: 'Jumat, 09:00 - 11:30',
+                lecturer: 'Dr. Andi Pratama, M.T'
+            },
+            {
+                id: 5,
+                code: 'ILK1005',
+                name: 'Sistem Operasi',
+                semester: 5,
+                class: 'A',
+                sks: 3,
+                room: 'D-105',
+                schedule: 'Senin, 14:00 - 16:30',
+                lecturer: 'Dr. Budi Setiawan, M.Kom'
+            },
+            {
+                id: 6,
+                code: 'ILK1006',
+                name: 'Jaringan Komputer',
+                semester: 5,
+                class: 'B',
+                sks: 3,
+                room: 'D-106',
+                schedule: 'Selasa, 13:00 - 15:30',
+                lecturer: 'Prof. Dr. Sari Indah, M.T'
+            }
+        ];
+
+        // Enhanced notification system
+        function showNotification(title, message, type = 'success', duration = 5000) {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Icon mapping for different types
+            const iconMap = {
+                success: 'fa-circle-check',
+                error: 'fa-circle-xmark',
+                warning: 'fa-triangle-exclamation',
+                info: 'fa-circle-info'
+            };
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fa-solid ${iconMap[type]} notification-icon"></i>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="close-btn" onclick="closeNotification(this)">&times;</button>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Trigger animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            // Auto-hide notification
+            if (duration > 0) {
+                setTimeout(() => {
+                    closeNotification(notification.querySelector('.close-btn'));
+                }, duration);
+            }
+
+            return notification;
+        }
+
+        function closeNotification(button) {
+            const notification = button.parentElement;
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 400);
+        }
+
+        // Modal functions
+        function showModal(title, message, onConfirm) {
+            const modal = document.getElementById('confirmationModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modal.style.display = 'block';
+
+            // Remove existing event listeners
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            // Add new event listeners
+            newConfirmBtn.onclick = () => {
+                modal.style.display = 'none';
+                onConfirm();
+            };
+
+            newCancelBtn.onclick = () => {
+                modal.style.display = 'none';
+            };
+
+            // Close modal when clicking outside
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        // Enhanced delete function - langsung proses tanpa delay
+        function deleteClass(classId, courseCode, courseName) {
+            // Find the button and show loading state
+            const deleteButton = document.querySelector(`[onclick*="confirmDelete(${classId}"]`);
+            const originalButtonContent = deleteButton.innerHTML;
+            
+            deleteButton.innerHTML = '<i class="fa-solid fa-spinner loading"></i> Menghapus...';
+            deleteButton.disabled = true;
+
+            // Simulasi proses dengan delay minimal untuk UX yang lebih baik
+            setTimeout(() => {
+                try {
+                    // Remove from array (simulate successful deletion)
+                    registeredClasses = registeredClasses.filter(cls => cls.id !== classId);
+                    
+                    // Update UI
+                    renderTable();
+                    updateStats();
+                    
+                    // Show success notification immediately
+                    showNotification(
+                        'Berhasil Dihapus!',
+                        `Kelas ${courseCode} - ${courseName} telah berhasil dihapus dari daftar terdaftar.`,
+                        'success',
+                        4000
+                    );
+
+                } catch (error) {
+                    // Restore button state since deletion failed
+                    deleteButton.innerHTML = originalButtonContent;
+                    deleteButton.disabled = false;
+                    
+                    // Show error notification
+                    showNotification(
+                        'Gagal Menghapus!',
+                        `Tidak dapat menghapus kelas ${courseCode} - ${courseName}. Silakan coba lagi.`,
+                        'error',
+                        6000
+                    );
+
+                    console.error('Delete operation failed:', error);
+                }
+            }, 300); // Delay minimal 300ms untuk menunjukkan loading state
+        }
+
+        // Render table
+        function renderTable() {
+            const tableBody = document.getElementById('classTableBody');
+            const tableContainer = document.getElementById('tableContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            if (registeredClasses.length === 0) {
+                tableContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            tableContainer.style.display = 'block';
+            emptyState.style.display = 'none';
+            tableBody.innerHTML = '';
+
+            // Sort classes by semester
+            const sortedClasses = [...registeredClasses].sort((a, b) => a.semester - b.semester);
+
+            sortedClasses.forEach((cls, index) => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${cls.code}</strong></td>
+                    <td>${cls.name}</td>
+                    <td>${cls.class}</td>
+                    <td>${cls.sks}</td>
+                    <td>${cls.room}</td>
+                    <td>${cls.schedule}</td>
+                    <td>${cls.lecturer}</td>
+                    <td>
+                        <button class="delete-btn" onclick="confirmDelete(${cls.id}, '${cls.code}', '${cls.name}')">
+                            <i class="fa-solid fa-trash"></i>
+                            Hapus
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Confirm delete
+        function confirmDelete(classId, courseCode, courseName) {
+            showModal(
+                'Konfirmasi Hapus Kelas',
+                `Apakah Anda yakin ingin menghapus kelas ${courseCode} - ${courseName} dari daftar terdaftar? Tindakan ini tidak dapat dibatalkan.`,
+                () => deleteClass(classId, courseCode, courseName)
+            );
+        }
+
+        // Update statistics
+        function updateStats() {
+            const totalClasses = registeredClasses.length;
+            const totalSKS = registeredClasses.reduce((sum, cls) => sum + cls.sks, 0);
+            
+            // Update elements if they exist
+            const totalClassesElement = document.getElementById('totalClasses');
+            const totalSKSElement = document.getElementById('totalSKS');
+            
+            if (totalClassesElement) totalClassesElement.textContent = totalClasses;
+            if (totalSKSElement) totalSKSElement.textContent = totalSKS;
+        }
+
+        // Initialize page
+        function initializePage() {
+            renderTable();
+            updateStats();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Close modal with Escape key
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('confirmationModal');
+                if (modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+                
+                // Close all notifications
+                const notifications = document.querySelectorAll('.notification');
+                notifications.forEach(notification => {
+                    closeNotification(notification.querySelector('.close-btn'));
+                });
+            }
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+        });
+
+        // Utility functions
+       
+
+        // Export functions for external use
+        window.portalUSU = {
+            registeredClasses,
+            deleteClass,
+            getTotalSKS,
+            getClassesBySemester,
+            hasConflictingSchedule,
+            showNotification
+        };
+    </script>
+</body>
+</html>

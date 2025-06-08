@@ -1,5 +1,6 @@
 package com.example.portaluniv.demo.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class User {
 
     @NotBlank(message = "Password is required")
     @Size(min = 6)
-    @JsonIgnore  // Tambahkan JsonIgnore untuk password juga
+    @JsonIgnore
     private String password;
 
     @NotBlank(message = "Email is required")
@@ -54,10 +55,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // Profile fields yang baru ditambahkan
+    private LocalDate birthDate;
+    private String birthPlace;
+    private String gender;
+    private String religion;
+    private String address;
+    private String idNumber;
+    private String idType;
+    private String phone;
+    private String careerGoal;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Ubah fetch type ke LAZY dan pastikan JsonIgnore ada
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Enrollment> enrollments = new HashSet<>();
@@ -88,7 +99,7 @@ public class User {
         this.role = role;
     }
 
-    // Getters and Setters
+    // Getters and Setters - Basic fields
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -115,4 +126,32 @@ public class User {
 
     public Set<Enrollment> getEnrollments() { return enrollments; }
     public void setEnrollments(Set<Enrollment> enrollments) { this.enrollments = enrollments; }
+
+    // Getters and Setters - Profile fields
+    public LocalDate getBirthDate() { return birthDate; }
+    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
+
+    public String getBirthPlace() { return birthPlace; }
+    public void setBirthPlace(String birthPlace) { this.birthPlace = birthPlace; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getReligion() { return religion; }
+    public void setReligion(String religion) { this.religion = religion; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getIdNumber() { return idNumber; }
+    public void setIdNumber(String idNumber) { this.idNumber = idNumber; }
+
+    public String getIdType() { return idType; }
+    public void setIdType(String idType) { this.idType = idType; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getCareerGoal() { return careerGoal; }
+    public void setCareerGoal(String careerGoal) { this.careerGoal = careerGoal; }
 }

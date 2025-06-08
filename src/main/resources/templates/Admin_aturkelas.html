@@ -379,6 +379,7 @@
             display: flex;
             gap: 10px;
             margin-top: 30px;
+            margin-left:84%;
         }
 
         .btn-primary {
@@ -460,7 +461,7 @@
         <div class="header-title">PORTAL USU</div>
     </div>
 
-    <div class="container">
+      <div class="container">
         <div class="sidebar">
             <a href="/Admin_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
@@ -470,7 +471,7 @@
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/Admin_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/Admin_daftarkelas" class="sidebar-item " onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
@@ -478,15 +479,16 @@
                 <i class="fa-solid fa-clipboard-list"></i>
                 Atur Kelas
             </a>
-            <a href="#" class="sidebar-item-daftar" onclick="setActiveMenu(this, 'daftar-mahasiswa')">
+            <a href="/Admin_daftarmahasiswa" class="sidebar-item-daftar" onclick="setActiveMenu(this, 'daftar-mahasiswa')">
                 <i class="fas fa-book-reader"></i>
                 <p>Daftar Mahasiswa</p>
             </a>
-            <a href="#" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-dosen')">
+            <a href="/Admin_daftardosen" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-dosen')">
                 <i class="fa-solid fa-user-tie"></i>
                 <p>Daftar Dosen</p>
             </a>
         </div>
+
 
         <!-- Main Content for Student List -->
         <div class="main-content" id="studentListView">

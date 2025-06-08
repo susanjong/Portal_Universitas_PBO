@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Mahasiswa</title>
+    <title>Profile Dosen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -91,6 +91,8 @@
             color: #2d5016;
         }
 
+
+
         .main-content {
             flex: 1;
             padding: 30px;
@@ -134,7 +136,7 @@
             font-size: 12px;
             color: #666;
             text-transform: uppercase;
-            font-weight: bolder;
+            font-weight: bold;
             min-width: 120px;
             text-align: left;
         }
@@ -152,6 +154,8 @@
             align-items: center;
             width: 100%;
             min-width: 300px;
+            resize: horizontal;
+            overflow: hidden;
         }
 
         .form-input {
@@ -246,6 +250,40 @@
             margin-top: 20px;
         }
 
+        /* Resize handle styling */
+        .form-input-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            cursor: ew-resize;
+            background: linear-gradient(90deg, transparent 0%, #ddd 50%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .form-input-container:hover::after {
+            opacity: 1;
+        }
+
+        /* Custom resize handle for better UX */
+        .resize-handle {
+            position: absolute;
+            right: -5px;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            cursor: ew-resize;
+            background: transparent;
+            z-index: 5;
+        }
+
+        .resize-handle:hover {
+            background: rgba(74, 124, 89, 0.1);
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .form-row {
@@ -271,58 +309,61 @@
 
     <div class="container">
         <div class="sidebar">
-            <a href="/dashboard_mahasiswa_profile" class="sidebar-item active" onclick="setActiveMenu(this, 'profil')">
+            <a href="/dosen_dashboard_profile" class="sidebar-item active" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
+            <a href="/dosen_dashboard_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/dosen_dashboard_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="/dashboard_mahasiswa_kelasterdaftar" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
+            <a href="/dosen_dashboard_kelasterdaftar" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Terdaftar
             </a>
         </div>
 
         <div class="main-content">
-            <h2 class="form-title">Data Pribadi Mahasiswa</h2>
+            <h2 class="form-title">Data Pribadi Dosen</h2>
             
-             <form id="studentForm" th:action="@{/dashboard_mahasiswa_profile/updateProfile}" method="post">
+            <form id="studentForm" method="post">
                 <!-- Basic Information -->
                 <div class="form-section">
                     <div class="form-row">
                         <div class="form-group">
                             <span class="form-label">NAMA</span>
-                            <span class="form-value" th:text="${name}">Nama Mahasiswa</span>
+                            <span class="form-value"></span>
                         </div>
                         <div class="form-group">
                             <span class="form-label">FAKULTAS</span>
-                            <span class="form-value" th:text="${fakultas}">Fakultas Mahasiswa</span>
+                            <span class="form-value"></span>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <span class="form-label">NIM</span>
-                            <span class="form-value" th:text="${username}">NIM Mahasiswa</span>
+                            <span class="form-label">NIDN</span>
+                            <span class="form-value"></span>
                         </div>
                         <div class="form-group">
                             <span class="form-label">JURUSAN</span>
-                            <span class="form-value" th:text="${programStudi}">Jurusan Mahasiswa</span>
+                            <span class="form-value"></span>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <span class="form-label">EMAIL</span>
-                            <span class="form-value" th:text="${email}">Email Mahasiswa</span>
+                            <span class="form-value"></span>
                         </div>
-                        
+                        <div class="form-group">
+                            <span class="form-label">SPESIALISASI</span>
+                            <span class="form-value"></span>
+                        </div>
                     </div>
                 </div>
 
@@ -334,6 +375,7 @@
                             <div class="form-input-container">
                                 <input type="password" class="form-input" name="password" placeholder="Masukkan password baru">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -344,6 +386,7 @@
                             <div class="form-input-container">
                                 <input type="password" class="form-input" name="confirmPassword" placeholder="Konfirmasi password">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -352,8 +395,9 @@
                         <div class="form-group editable-field">
                             <label class="form-label">TANGGAL LAHIR</label>
                             <div class="form-input-container">
-                                <input type="date" class="form-input" name="birthDate" th:value="${birthDate}">
+                                <input type="date" class="form-input" name="birthDate" >
                                 <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -362,8 +406,9 @@
                         <div class="form-group editable-field">
                             <label class="form-label">TEMPAT LAHIR</label>
                             <div class="form-input-container">
-                                <input type="text" class="form-input" name="birthPlace" th:value="${birthPlace}" placeholder="Masukkan tempat lahir">
+                                <input type="text" class="form-input" name="birthPlace" placeholder="Masukkan tempat lahir">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -374,11 +419,11 @@
                             <div class="form-input-container">
                                 <select class="form-input" name="gender">
                                     <option value="">Pilih jenis kelamin</option>
-
-                                    <option value="Laki-laki" th:selected="${gender == 'Laki-laki'}">Laki-laki</option>
-                                    <option value="Perempuan" th:selected="${gender == 'Perempuan'}">Perempuan</option>
+                                    <option value="L">Laki-laki</option>
+                                    <option value="P">Perempuan</option>
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -388,15 +433,16 @@
                             <label class="form-label">AGAMA</label>
                             <div class="form-input-container">
                                 <select class="form-input" name="religion">
-                                    <option value="">Pilih Agama</option>
-                                    <option value="Islam" th:selected="${religion == 'Islam'}">Islam</option>
-                                    <option value="Kristen" th:selected="${religion == 'Kristen'}">Kristen</option>
-                                    <option value="Katolik" th:selected="${religion == 'Katolik'}">Katolik</option>
-                                    <option value="Hindu" th:selected="${religion == 'Hindu'}">Hindu</option>
-                                    <option value="Buddha" th:selected="${religion == 'Buddha'}">Buddha</option>
-                                    <option value="Konghucu" th:selected="${religion == 'Konghucu'}">Konghucu</option>
+                                    <option value="">Pilih agama</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddha">Buddha</option>
+                                    <option value="Konghucu">Konghucu</option>
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -405,11 +451,20 @@
                         <div class="form-group editable-field">
                             <label class="form-label">ALAMAT</label>
                             <div class="form-input-container">
-                                <input type="text" class="form-input" name="address" th:value="${address}" placeholder="Masukkan alamat lengkap">
+                                <input type="text" class="form-input" name="address"  placeholder="Masukkan alamat lengkap">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-
                                 <div class="resize-handle"></div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="form-row">
+                        <div class="form-group editable-field">
+                            <label class="form-label">NO. IDENTITAS</label>
+                            <div class="form-input-container">
+                                <input type="text" class="form-input" name="idNumber"  placeholder="Masukkan nomor KTP/identitas">
+                                <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -419,41 +474,24 @@
                             <label class="form-label">JENIS IDENTITAS</label>
                             <div class="form-input-container">
                                 <select class="form-input" name="idType">
-                                    <option value="">Pilih Jenis Identitas</option>
-                                    <option value="KTP" th:selected="${idType == 'KTP'}">KTP</option>
-                                    <option value="SIM" th:selected="${idType == 'SIM'}">SIM</option>
-                                    <option value="Paspor" th:selected="${idType == 'Paspor'}">Paspor</option>
+                                    <option value="">Pilih jenis identitas</option>
+                                    <option value="KTP">KTP</option>
+                                    <option value="Paspor">Paspor</option>
+                                    <option value="SIM">SIM</option>
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                     <div class="form-row">
-                        <div class="form-group editable-field">
-                            <label class="form-label">NOMOR IDENTITAS</label>
-                            <div class="form-input-container">
-                                <input type="text" class="form-input" name="idNumber" th:value="${idNumber}" placeholder="Masukkan nomor identitas">
-                                <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group editable-field">
-                            <label class="form-label">NOMOR TELEPON</label>
+                            <label class="form-label">NO. TELEPON</label>
                             <div class="form-input-container">
-                                <input type="tel" class="form-input" name="phone" th:value="${phone}" placeholder="Masukkan nomor telepon">
+                                <input type="tel" class="form-input" name="phone" placeholder="Masukkan nomor telepon">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group editable-field">
-                            <label class="form-label">PEMINATAN KARIR</label>
-                            <div class="form-input-container">
-                                <input type="text" class="form-input" name="careerGoal" th:value="${careerGoal}" placeholder="Masukkan peminatan karir anda">
-                                <i class="fa-solid fa-pencil edit-icon"></i>
+                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -468,44 +506,97 @@
     </div>
 
     <script>
-         function setActiveMenu(element, menuType) {
+        // Set active menu
+        function setActiveMenu(clickedItem, menuType) {
             // Remove active class from all sidebar items
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
             });
             
             // Add active class to clicked item
-            element.classList.add('active');
+            clickedItem.classList.add('active');
         }
 
-        // Add some interactivity for edit icons
-        document.querySelectorAll('.edit-icon').forEach(icon => {
-            icon.addEventListener('click', function() {
-                const input = this.parentElement.querySelector('input, select, textarea');
-                if (input) {
-                    input.focus();
-                }
-            });
-        });
-
-        // Form validation
+        // Form submission handling
         document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             const password = document.querySelector('input[name="password"]').value;
             const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
             
-            if (password && password !== confirmPassword) {
-                e.preventDefault();
-                alert('Password dan konfirmasi password tidak cocok!');
-                return false;
+            if (password && confirmPassword) {
+                if (password !== confirmPassword) {
+                    alert('Password dan konfirmasi password tidak cocok!');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('Password harus minimal 6 karakter!');
+                    return;
+                }
             }
             
-            if (password && password.length < 6) {
-                e.preventDefault();
-                alert('Password minimal 6 karakter!');
-                return false;
-            }
-
+            // Simulate form submission
             alert('Data berhasil disimpan!');
+        });
+
+        // Add interactive feedback for form inputs
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.transition = 'transform 0.2s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Edit icon click handlers
+        document.querySelectorAll('.edit-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('.form-input');
+                input.focus();
+            });
+        });
+
+        // Custom resize functionality
+        let isResizing = false;
+        let currentContainer = null;
+
+        document.querySelectorAll('.resize-handle').forEach(handle => {
+            handle.addEventListener('mousedown', function(e) {
+                isResizing = true;
+                currentContainer = this.parentElement;
+                document.body.style.cursor = 'ew-resize';
+                e.preventDefault();
+            });
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing || !currentContainer) return;
+
+            const containerRect = currentContainer.getBoundingClientRect();
+            const newWidth = e.clientX - containerRect.left;
+            
+            if (newWidth >= 200 && newWidth <= 800) {
+                currentContainer.style.width = newWidth + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isResizing) {
+                isResizing = false;
+                currentContainer = null;
+                document.body.style.cursor = 'default';
+            }
+        });
+
+        // Prevent text selection during resize
+        document.addEventListener('selectstart', function(e) {
+            if (isResizing) {
+                e.preventDefault();
+            }
         });
     </script>
 </body>
