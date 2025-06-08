@@ -298,7 +298,7 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
+            display: block;
         }
 
         .form-title {
@@ -477,7 +477,7 @@
         </div>
 
         <!-- Main Content for Class List -->
-        <div class="main-content" id="classListView">
+        <div class="main-content" id="classListView" th:if="${!showForm}">
             <!-- Filter Section -->
             <div class="filter-section">
                 <h3 class="filter-title">Filter Data</h3>
@@ -527,10 +527,12 @@
             <div class="class-list-section">
                 <div class="class-list-header">
                     <h3 class="class-list-title">Daftar Seluruh Kelas yang Tersedia</h3>
-                    <button class="add-class-btn" onclick="showAddClassForm()">
-                        <span>+</span>
-                        Tambah Kelas
-                    </button>
+                    <form action="/Admin_daftarkelas/add-form" method="GET" style="display: inline;">
+                        <button type="submit" class="add-class-btn">
+                            <span>+</span>
+                            Tambah Kelas
+                        </button>
+                    </form>
                 </div>
 
                 <table class="class-table">
@@ -551,75 +553,123 @@
                         </tr>
                     </thead>
                     <tbody id="classTableBody">
+                         <tr th:each="kelas, iterStat : ${kelasList}" class="class-row">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${kelas.mataKuliah?.kodeMk ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.namaMk ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.programStudi ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.semester ?: '-'}"></td>
+                            <td th:text="${kelas.kelas ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.sks ?: '-'}"></td>
+                            <td th:text="${kelas.ruangan ?: '-'}"></td>
+                            <td th:text="${kelas.jadwal ?: '-'}"></td>
+                            <td th:text="${kelas.dosen?.name ?: 'Dosen Belum Terdaftar'}"></td>
+                            <td th:text="${kelas.kuotaInfo ?: '0/0'}"></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form th:action="@{/Admin_daftarkelas/edit}" method="get" style="display: inline;">
+                                        <input type="hidden" name="id" th:value="${kelas.id}">
+                                        <button type="submit" class="action-btn edit-btn" title="Edit" 
+                                                style="cursor: pointer; font-weight: bold;">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/Admin_daftarkelas/delete}" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" th:value="${kelas.id}">
+                                        <button type="submit" class="action-btn delete-btn" title="Hapus" 
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus kelas ini?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- Form for Add/Edit Class -->
-        <div class="main-content class-form-section" id="classFormView">
+        <div class="main-content class-form-section" id="classFormView" 
+            th:if="${showForm}">
+            
             <h2 class="form-title" id="formTitle">Form Pengaturan Kelas</h2>
             
             <div id="messageContainer"></div>
             
-            <form id="classForm">
+            <form id="classForm" th:action="${isEdit ? '/Admin_daftarkelas/edit' : '/Admin_daftarkelas/add'}" method="post">
+                <input type="hidden" id="editId" name="id" th:value="${isEdit ? editKelas?.id : ''}">
+                
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Kode Mata Kuliah<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="classCode" name="code" required>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-input" id="classCode" name="code" 
+                                th:value="${formKodeMk}" style="flex: 1;">
+                            <button type="submit" formaction="/Admin_daftarkelas/fillMataKuliah" 
+                                    style="cursor: pointer; padding: 8px 16px; background: #42832C; color: rgb(255, 255, 255); border: none; border-radius: 4px;">
+                                Cari
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nama Mata Kuliah<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="className" name="name" readonly>
+                        <input type="text" class="form-input disable-input" id="className" name="name" 
+                            th:value="${selectedMataKuliah?.namaMk}" readonly>
                     </div>
                 </div>
 
                 <div class="form-row">
-                     <div class="form-group">
+                    <div class="form-group">
                         <label class="form-label">Semester<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classSemester" name="semester" readonly>
+                        <input type="text" class="form-input disable-input" id="classSemester" name="semester" 
+                            th:value="${selectedMataKuliah?.semester}" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Fakultas<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classFaculty" name="faculty" readonly>
+                        <input type="text" class="form-input disable-input" id="classFaculty" name="faculty" 
+                            th:value="${selectedMataKuliah?.fakultas}" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Program Studi<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classProdi" name="prodi" readonly>
+                        <input type="text" class="form-input disable-input" id="classProdi" name="prodi" 
+                            th:value="${selectedMataKuliah?.programStudi}" readonly>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Bobot SKS<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classSKS" name="sks" readonly>
+                        <input type="text" class="form-input disable-input" id="classSKS" name="sks" 
+                            th:value="${selectedMataKuliah?.sks}" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Kuota Mahasiswa<span class="required">*</span></label>
-                        <input type="number" class="form-input" id="classQuota" name="quota" min="1" required>
+                        <input type="number" class="form-input" id="classQuota" name="quota" min="1" 
+                            th:value="${isEdit ? editKelas?.kuota : formQuota}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Kelas<span class="required">*</span></label>
-                        <select class="form-select" id="classSection" name="section" required>
+                        <select class="form-select" id="classSection" name="section">
                             <option value="">Pilih Kelas</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
+                            <option value="A" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'A'}">A</option>
+                            <option value="B" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'B'}">B</option>
+                            <option value="C" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'C'}">C</option>
+                            <option value="D" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'D'}">D</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Ruangan<span class="required">*</span></label>
-                        <select class="form-select" id="classRoom" name="room" required>
+                        <select class="form-select" id="classRoom" name="room">
                             <option value="">Pilih Ruangan</option>
-                            <option value="D-102">D-101</option>
-                            <option value="D-102">D-102</option>
-                            <option value="D-103">D-103</option>
-                            <option value="D-104">D-104</option>
-                            <option value="D-104">D-105</option>
-                            <option value="D-104">D-106</option>
-                            <option value="Lab-1">Lab-1</option>
-                            <option value="Lab-2">Lab-2</option>
+                            <option value="D-101" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-101'}">D-101</option>
+                            <option value="D-102" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-102'}">D-102</option>
+                            <option value="D-103" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-103'}">D-103</option>
+                            <option value="D-104" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-104'}">D-104</option>
+                            <option value="D-105" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-105'}">D-105</option>
+                            <option value="D-106" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-106'}">D-106</option>
+                            <option value="Lab-1" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'Lab-1'}">Lab-1</option>
+                            <option value="Lab-2" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'Lab-2'}">Lab-2</option>
                         </select>
                     </div>
                 </div>
@@ -627,28 +677,43 @@
                 <div class="form-row">
                     <div class="form-group full-width">
                         <label class="form-label">Jadwal<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="classSchedule" name="schedule" placeholder="Contoh: Kamis, 13:50 - 16:20" required>
+                        <input type="text" class="form-input" id="classSchedule" name="schedule" 
+                            th:value="${isEdit ? editKelas?.jadwal : formSchedule}"
+                            placeholder="Contoh: Kamis, 13:50 - 16:20">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Dosen<span class="required">*</span></label>
-                        <select class="form-select" id="classLecturer" name="lecturer" required onchange="updateNidnDosen()">
-                        </select>
+                        <div style="display: flex; gap: 10px;">
+                            <select class="form-select" id="classLecturer" name="lecturer" style="flex: 1;">
+                                <option value="">Dosen Belum Terdaftar</option>
+                                <option th:each="dosen : ${dosenList}" 
+                                        th:value="${dosen.name}" 
+                                        th:text="${dosen.name}"
+                                        th:selected="${(isEdit ? editKelas?.dosen?.name : selectedLecturer) == dosen.name}">
+                                </option>
+                            </select>
+                            <button type="submit" formaction="/Admin_daftarkelas/fillDosen" 
+                                    style="cursor: pointer; padding: 8px 16px; background: #42832C; color: rgb(255, 255, 255); border: none; border-radius: 4px;">
+                                Cek NIDN
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">NIDN Dosen</label>
-                        <input type="text" class="form-input disable-input" id="classNidnDosen" name="nidnDosen" readonly>
+                        <input type="text" class="form-input disable-input" id="classNidnDosen" name="nidnDosen" 
+                            th:value="${isEdit ? editKelas?.dosen?.nidn : selectedDosen?.nidn}" readonly>
                     </div>
                 </div>
 
                 <div class="form-buttons">
                     <button type="submit" class="btn-primary">
                         <i class="fas fa-save"></i>
-                        Simpan
+                        <span th:text="${isEdit ? 'Update' : 'Simpan'}">Simpan</span>
                     </button>
-                    <button type="button" class="btn-secondary" onclick="cancelForm()">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='/Admin_daftarkelas'">
                         Batal
                     </button>
                 </div>
@@ -657,35 +722,34 @@
     </div>
 
     <script>
-        const API_BASE_URL = '/api/kelas';
 
         let classes = [];
         let currentEditId = null;
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            loadClassesFromDatabase();
             setupEventListeners();
         });
 
-        function loadClassesFromDatabase() {
-            fetch(API_BASE_URL)
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Gagal memuat data kelas dari database');
-                    }
-                })
-                .then(data => {
-                    classes = data;
-                    renderClassTable();
-                })
-                .catch(error => {
-                    console.error('Error loading classes:', error);
-                    showMessage('Error koneksi ke database', 'error');
-                });
+        //Form harus terisi semua sebelum disubmit
+        document.getElementById('classForm').addEventListener('submit', function(e) {
+        const action = e.submitter.getAttribute('formaction') || this.action;
+        
+        // Jika bukan aksi pencarian, validasi semua field
+        if (!action.includes('fillMataKuliah') && !action.includes('fillDosen')) {
+            const fields = ['classCode', 'classQuota', 'classSection', 'classRoom', 'classSchedule', 'classLecturer'];
+            
+            for (let fieldId of fields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    alert('Field ' + field.previousElementSibling.textContent + ' harus diisi!');
+                    field.focus();
+                    e.preventDefault();
+                    return;
+                }
+            }
         }
+    });
 
         // Setup event listeners
         function setupEventListeners() {
@@ -693,300 +757,8 @@
             document.getElementById('nameFilter').addEventListener('input', filterClasses);
             document.getElementById('classFilter').addEventListener('change', filterClasses);
             document.getElementById('roomFilter').addEventListener('change', filterClasses);
-            document.getElementById('classForm').addEventListener('submit', handleFormSubmit);
-            document.getElementById('classCode').addEventListener('input', fetchMataKuliahByKode);
         }
 
-        // Filter functionality
-       function filterClasses() {
-            const codeFilter = document.getElementById('codeFilter').value.toLowerCase();
-            const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
-            const classFilter = document.getElementById('classFilter').value;
-            const roomFilter = document.getElementById('roomFilter').value; // Tambah filter ruangan
-
-            const filteredClasses = classes.filter(cls => {
-                // Fix property names sesuai API response
-                const codeMatch = cls.mataKuliah?.kodeMk?.toLowerCase().includes(codeFilter) || false;
-                const nameMatch = cls.mataKuliah?.namaMk?.toLowerCase().includes(nameFilter) || false;
-                const classMatch = classFilter === '' || cls.kelas === classFilter;
-                const roomMatch = roomFilter === '' || cls.ruangan === roomFilter; // Filter ruangan
-
-                return codeMatch && nameMatch && classMatch && roomMatch;
-            });
-
-            renderClassTable(filteredClasses);
-        }
-
-        function renderClassTable(classList = classes) {
-            const tbody = document.getElementById('classTableBody');
-            tbody.innerHTML = '';
-
-            if (classList.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="12" style="text-align: center; padding: 20px; color: #666;">
-                        Tidak ada data kelas yang ditemukan
-                    </td>
-                `;
-                tbody.appendChild(row);
-                return;
-            }
-
-            classList.forEach((cls, index) => {
-                const kuotaTersedia = cls.kuota - (cls.enrollments ? cls.enrollments.length : 0);
-                const kuotaInfo = `${kuotaTersedia}/${cls.kuota}`;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${cls.mataKuliah?.kodeMk || '-'}</td>
-                    <td>${cls.mataKuliah?.namaMk || '-'}</td>
-                    <td>${cls.mataKuliah?.programStudi || '-'}</td>
-                    <td>${cls.mataKuliah?.semester || '-'}</td>
-                    <td>${cls.kelas || '-'}</td>
-                    <td>${cls.mataKuliah?.sks || '-'}</td>
-                    <td>${cls.ruangan || '-'}</td>
-                    <td>${cls.jadwal || '-'}</td>
-                    <td>${cls.dosen?.name || 'Belum ditentukan'}</td>
-                    <td>${kuotaInfo}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn edit-btn" onclick="editClass(${cls.id})" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn delete-btn" onclick="deleteClass(${cls.id})" title="Hapus">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Show add class form
-        function showAddClassForm() {
-            currentEditId = null;
-            document.getElementById('formTitle').textContent = 'Form Tambah Kelas Baru';
-            document.getElementById('classForm').reset();
-            clearMessages();
-
-            populateDosenDropdown();
-            
-            // Show form, hide list
-            document.getElementById('classListView').style.display = 'none';
-            document.getElementById('classFormView').style.display = 'block';
-        }
-
-
-        function populateDosenDropdown(selectedDosenName = null) {
-            const dosenSelect = document.getElementById('classLecturer');
-            
-            dosenSelect.innerHTML = '<option value="">Pilih Dosen</option>';
-            // Fetch dosen dari API dosen langsung
-            fetch('/api/dosen')
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Gagal memuat data dosen');
-                    }
-                })
-                .then(dosenList => {
-                    if (selectedDosenName) {
-                        dosenSelect.innerHTML = ''; // Kosongkan dulu
-                    }
-                    
-                    dosenList.forEach(dosen => {
-                        const option = document.createElement('option');
-                        option.value = dosen.name;
-                        option.textContent = dosen.name;
-                        option.dataset.dosenId = dosen.id || '';
-                        option.dataset.nidn = dosen.nidn || '';
-                        option.dataset.fakultas = dosen.fakultas || '';
-                        option.dataset.departemen = dosen.departemen || '';
-                        option.dataset.spesialisasi = dosen.spesialisasi || '';
-                        
-                        // Set selected jika ini dosen yang dipilih
-                        if (selectedDosenName && dosen.name === selectedDosenName) {
-                            option.selected = true;
-                        }
-                        
-                        dosenSelect.appendChild(option);
-                    });
-                    
-                    // Tambahkan "Pilih Dosen" di akhir jika ada selected dosen
-                    if (selectedDosenName) {
-                        const defaultOption = document.createElement('option');
-                    }
-                    
-                    if (selectedDosenName) {
-                        updateNidnDosen();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading dosen:', error);
-                    dosenSelect.innerHTML = '<option value="">Error memuat dosen</option>';
-                });
-        }
-
-        // Edit class
-        function editClass(id) {
-            const cls = classes.find(c => c.id === id);
-            if (cls) {
-                currentEditId = id;
-                document.getElementById('formTitle').textContent = 'Form Edit Kelas';
-                clearMessages();
-                
-                document.getElementById('classCode').value = cls.mataKuliah?.kodeMk || '';
-                document.getElementById('classQuota').value = cls.kuota || '';
-                document.getElementById('classSection').value = cls.kelas || '';
-                document.getElementById('classRoom').value = cls.ruangan || '';
-                document.getElementById('classSchedule').value = cls.jadwal || '';
-        
-                fetchMataKuliahByKode();
-                
-                populateDosenDropdown(cls.dosen?.name || '');
-
-                fetchMataKuliahByKode();
-
-                // Show form, hide list
-                document.getElementById('classListView').style.display = 'none';
-                document.getElementById('classFormView').style.display = 'block';
-            }
-        }
-
-        // Delete class
-        function deleteClass(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus kelas ini?')) {
-                fetch(`${API_BASE_URL}/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        loadClassesFromDatabase(); // Reload data
-                        showMessage('Kelas berhasil dihapus!', 'success');
-                    } else {
-                        showMessage('Gagal menghapus kelas', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting class:', error);
-                    showMessage('Error saat menghapus kelas', 'error');
-                });
-            }
-        }
-
-        function fetchMataKuliahByKode() {
-            const kodeMatKul = document.getElementById('classCode').value.trim();
-            const namaField = document.getElementById('className');
-            const semesterField = document.getElementById('classSemester');
-            const fakultasField = document.getElementById('classFaculty');
-            const prodiField = document.getElementById('classProdi');
-            const sksField = document.getElementById('classSKS');
-            
-            if (kodeMatKul) {
-                fetch(`/api/mata-kuliah/by-kode/${kodeMatKul}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Mata kuliah tidak ditemukan');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        namaField.value = data.namaMk || '';
-                        semesterField.value = data.semester || '';
-                        fakultasField.value = data.fakultas || '';
-                        prodiField.value = data.programStudi || '';
-                        sksField.value = data.sks || '';
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        namaField.value = ''; 
-                        semesterField.value = '';
-                        fakultasField.value = '';
-                        prodiField.value = '';
-                        sksField.value = '';
-                    });
-            } else {
-                namaField.value = '';
-                semesterField.value = '';
-                fakultasField.value = '';
-                prodiField.value = '';
-                sksField.value = '';
-            }
-        }
-
-
-        function updateNidnDosen() {
-            const lecturerSelect = document.getElementById('classLecturer');
-            const nidnInput = document.getElementById('classNidnDosen');
-            const selectedOption = lecturerSelect.options[lecturerSelect.selectedIndex];
-            
-            if (selectedOption && selectedOption.dataset.nidn) {
-                nidnInput.value = selectedOption.dataset.nidn;
-            } else {
-                nidnInput.value = '';
-            }
-        }
-
-        // Handle form submission
-        function handleFormSubmit(event) {
-            event.preventDefault();
-
-            const kodeMk = document.getElementById('classCode').value;
-            const dosenName = document.getElementById('classLecturer').value;
-
-            // Fetch MataKuliah ID berdasarkan kode
-            Promise.all([
-                fetch(`/api/mata-kuliah/by-kode/${kodeMk}`),
-                fetch(`/api/dosen/by-name/${dosenName}`) // Atau endpoint yang sesuai
-            ])
-            .then(([mkResponse, dosenResponse]) => {
-                return Promise.all([mkResponse.json(), dosenResponse.json()]);
-            })
-            .then(([mataKuliah, dosen]) => {
-                const formData = {
-                    kelas: document.getElementById('classSection').value,
-                    kuota: parseInt(document.getElementById('classQuota').value),
-                    ruangan: document.getElementById('classRoom').value,
-                    jadwal: document.getElementById('classSchedule').value,
-                    mataKuliah: { id: mataKuliah.id }, // Hanya kirim ID
-                    dosen: { id: dosen.id } // Hanya kirim ID
-                };
-
-                // Submit ke API
-                const url = currentEditId ? `${API_BASE_URL}/${currentEditId}` : API_BASE_URL;
-                const method = currentEditId ? 'PUT' : 'POST';
-
-                return fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-            })
-            .then(response => {
-                if (response.ok) {
-                    loadClassesFromDatabase();
-                    showMessage(currentEditId ? 'Kelas berhasil diperbarui!' : 'Kelas baru berhasil ditambahkan!', 'success');
-                    cancelForm();
-                } else {
-                    throw new Error('Gagal menyimpan data kelas');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('Error: ' + error.message, 'error');
-            });
-        }
-
-        function cancelForm() {
-            document.getElementById('classForm').reset();
-            document.getElementById('classNidnDosen').value = '';
-            document.getElementById('classFormView').style.display = 'none';
-            document.getElementById('classListView').style.display = 'block';
-            clearMessages();
-        }
 
         function showMessage(message, type = 'success') {
             const messageContainer = document.getElementById('messageContainer');
@@ -1005,7 +777,6 @@
             const sidebarItems = document.querySelectorAll('.sidebar-item, .sidebar-item-daftar');
             sidebarItems.forEach(item => item.classList.remove('active'));
             element.classList.add('active');
-            // Optional: Tambahkan logika navigasi halaman jika diperlukan
         }
     </script>
 </body>

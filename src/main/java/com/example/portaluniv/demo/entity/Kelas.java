@@ -44,7 +44,6 @@ public class Kelas {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dosen_id")
-    @NotNull(message = "Dosen is required")
     private Dosen dosen; 
 
     @OneToMany(mappedBy = "kelas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -99,7 +98,8 @@ public class Kelas {
     }
 
     public int getKuotaTersedia() {
-        return kuota - getCurrentEnrollmentCount();
+        if (enrollments == null) return kuota;
+        return kuota - enrollments.size();
     }
 
     public String getKuotaInfo() {

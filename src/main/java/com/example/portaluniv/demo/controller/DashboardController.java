@@ -62,28 +62,6 @@ public class DashboardController {
         return "dashboard_mahasiswa_profile";
     }
 
-
-    @GetMapping("/Admin_daftarkelas")
-    public String admindaftarkelas(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            
-            Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
-            
-            if (currentUser.isPresent()) {
-                User user = currentUser.get();
-                model.addAttribute("username", user.getUsername());
-                model.addAttribute("name", user.getName());
-                model.addAttribute("email", user.getEmail());
-                model.addAttribute("role", user.getRole());
-            }
-        }
-        
-        return "Admin_daftarkelas";
-    }
-
     @GetMapping("/Admin_aturkelas")
     public String adminaturkelas(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
