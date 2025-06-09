@@ -21,8 +21,10 @@ import com.example.portaluniv.demo.config.CustomUserDetails;
 import com.example.portaluniv.demo.entity.Enrollment;
 import com.example.portaluniv.demo.entity.Kelas;
 import com.example.portaluniv.demo.entity.Mahasiswa;
+import com.example.portaluniv.demo.entity.MataKuliah;
 import com.example.portaluniv.demo.entity.User;
 import com.example.portaluniv.demo.service.EnrollmentService;
+import com.example.portaluniv.demo.service.KelasService;
 import com.example.portaluniv.demo.service.UserService;
 
 @Controller
@@ -34,11 +36,14 @@ public class DashboardController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-     @Autowired
+    @Autowired
     private EnrollmentService enrollmentService;
 
-    @GetMapping("/dashboard_mahasiswa_beranda")
-    public String dashboard(Model model) {
+    @Autowired
+    private KelasService kelasService;
+
+    // Method untuk menambahkan user info ke model (mahasiswa)
+    private void addUserInfoToModel(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
@@ -62,6 +67,28 @@ public class DashboardController {
                     model.addAttribute("fakultas", mahasiswa.getFakultas());
                     model.addAttribute("programStudi", mahasiswa.getProgramStudi());
                     model.addAttribute("currentSemester", mahasiswa.getSemester());
+                }
+            }
+        }
+    }
+
+    @GetMapping("/dashboard_mahasiswa_beranda")
+    public String dashboard(Model model) {
+        addUserInfoToModel(model);
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            
+            Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+            
+            if (currentUser.isPresent()) {
+                User user = currentUser.get();
+                
+                // Additional student-specific data
+                if (user instanceof Mahasiswa) {
+                    Mahasiswa mahasiswa = (Mahasiswa) user;
 
                     // Get enrolled classes for this student
                     List<Enrollment> enrollments = enrollmentService.findByUserId(user.getId());
@@ -78,38 +105,176 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard_mahasiswa_daftarkelas")
-    public String daftarkelas(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public String daftarkelas(Model model,
+                             @RequestParam(required = false) String codeFilter,
+                             @RequestParam(required = false) String nameFilter,
+                             @RequestParam(required = false) String classFilter,
+                             @RequestParam(required = false) String roomFilter) {
+        addUserInfoToModel(model);
         
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        // Get all available classes
+        List<Kelas> kelasList = kelasService.findAll();
+        
+        // Apply filters (same as admin controller)
+        if (codeFilter != null && !codeFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getMataKuliah() != null && 
+                        kelas.getMataKuliah().getKodeMk().toLowerCase().contains(codeFilter.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (nameFilter != null && !nameFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getMataKuliah() != null && 
+                        kelas.getMataKuliah().getNamaMk().toLowerCase().contains(nameFilter.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (classFilter != null && !classFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getKelas().equals(classFilter))
+                .collect(Collectors.toList());
+        }
+        
+        if (roomFilter != null && !roomFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getRuangan().equals(roomFilter))
+                .collect(Collectors.toList());
+        }
+        
+        // Add filtered class list to model
+        model.addAttribute("kelasList", kelasList);
+        
+        // Preserve filter values
+        model.addAttribute("codeFilter", codeFilter);
+        model.addAttribute("nameFilter", nameFilter);
+        model.addAttribute("classFilter", classFilter);
+        model.addAttribute("roomFilter", roomFilter);
+        
+        // Set default form state
+        model.addAttribute("showForm", false);
+        
+        return "dashboard_mahasiswa_daftarkelas";
+    }
+
+    @GetMapping("/dashboard_mahasiswa_daftarkelas/add")
+    public String showAddClassForm(Model model) {
+        addUserInfoToModel(model);
+        
+        // Also load all classes for display
+        List<Kelas> kelasList = kelasService.findAll();
+        model.addAttribute("kelasList", kelasList);
+        
+        model.addAttribute("showForm", true);
+        
+        return "dashboard_mahasiswa_daftarkelas";
+    }
+
+    @PostMapping("/dashboard_mahasiswa_daftarkelas/add")
+    public String addClassEnrollment(
+            @RequestParam String kodeMatKul,
+            @RequestParam String kelas,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             
+            if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Session tidak valid!");
+                return "redirect:/dashboard_mahasiswa_daftarkelas";
+            }
+            
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
             
-            if (currentUser.isPresent()) {
-                User user = currentUser.get();
+            if (currentUser.isEmpty() || !(currentUser.get() instanceof Mahasiswa)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "User tidak valid!");
+                return "redirect:/dashboard_mahasiswa_daftarkelas";
+            }
+            
+            Mahasiswa mahasiswa = (Mahasiswa) currentUser.get();
+            
+            // Validasi kelas
+            Optional<Kelas> kelasOpt = kelasService.findByKodeMataKuliahAndKelas(kodeMatKul, kelas);
+            if (kelasOpt.isEmpty()) {
+                // Return to form with error
+                addUserInfoToModel(model);
                 
-                // Basic user information
-                model.addAttribute("username", user.getUsername());
-                model.addAttribute("name", user.getName());
-                model.addAttribute("email", user.getEmail());
-                model.addAttribute("role", user.getRole());
+                // Load all classes for display
+                List<Kelas> kelasList = kelasService.findAll();
+                model.addAttribute("kelasList", kelasList);
                 
-                // Additional student-specific data
-                if (user instanceof Mahasiswa) {
-                    Mahasiswa mahasiswa = (Mahasiswa) user;
-                    model.addAttribute("nim", mahasiswa.getNim());
-                    model.addAttribute("fakultas", mahasiswa.getFakultas());
-                    model.addAttribute("programStudi", mahasiswa.getProgramStudi());
-                    model.addAttribute("currentSemester", mahasiswa.getSemester());
-                }
+                model.addAttribute("showForm", true);
+                model.addAttribute("errorMessage", "Kelas " + kelas + " untuk mata kuliah " + kodeMatKul + " tidak ditemukan!");
+                model.addAttribute("kodeMatKul", kodeMatKul);
+                model.addAttribute("kelas", kelas);
+                
+                return "dashboard_mahasiswa_daftarkelas";
+            }
+            
+            // Check if already enrolled
+            List<Enrollment> existingEnrollments = enrollmentService.findByUserId(mahasiswa.getId());
+            boolean alreadyEnrolled = existingEnrollments.stream()
+                    .anyMatch(enrollment -> 
+                        enrollment.getKelas().getMataKuliah().getKodeMk().equals(kodeMatKul));
+            
+            if (alreadyEnrolled) {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Anda sudah terdaftar di mata kuliah " + kodeMatKul + "!");
+                return "redirect:/dashboard_mahasiswa_daftarkelas";
+            }
+            
+            Kelas selectedKelas = kelasOpt.get();
+            enrollmentService.enroll(mahasiswa.getId(), selectedKelas.getId());
+            
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Berhasil mendaftar ke kelas " + kelas + " mata kuliah " + 
+                selectedKelas.getMataKuliah().getNamaMk() + "!");
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        
+        return "redirect:/dashboard_mahasiswa_daftarkelas";
+    }
+
+    @PostMapping("/dashboard_mahasiswa_daftarkelas/fillMataKuliah")
+    public String fillMataKuliahInfo(@RequestParam String kodeMatKul,
+                                    @RequestParam(required = false) String kelas,
+                                    Model model) {
+        addUserInfoToModel(model);
+        
+        // Load all classes for display
+        List<Kelas> kelasList = kelasService.findAll();
+        model.addAttribute("kelasList", kelasList);
+        
+        model.addAttribute("showForm", true);
+        model.addAttribute("kodeMatKul", kodeMatKul);
+        model.addAttribute("kelas", kelas);
+        
+        // Search for mata kuliah
+        if (kodeMatKul != null && !kodeMatKul.trim().isEmpty()) {
+            List<Kelas> kelasListForMataKuliah = kelasService.findByKodeMataKuliah(kodeMatKul.trim());
+            if (!kelasListForMataKuliah.isEmpty()) {
+                MataKuliah mataKuliah = kelasListForMataKuliah.get(0).getMataKuliah();
+                model.addAttribute("selectedMataKuliah", mataKuliah);
+                
+                // Get available classes for this mata kuliah
+                model.addAttribute("availableClasses", kelasListForMataKuliah);
+                model.addAttribute("successMessage", "Mata kuliah ditemukan!");
+            } else {
+                model.addAttribute("errorMessage", "Mata kuliah dengan kode " + kodeMatKul + " tidak ditemukan");
             }
         }
+        
         return "dashboard_mahasiswa_daftarkelas";
     }
 
     @GetMapping("/dashboard_mahasiswa_kelasterdaftar")
     public String kelasterdaftar(Model model) {
+        addUserInfoToModel(model);
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
@@ -119,28 +284,56 @@ public class DashboardController {
             
             if (currentUser.isPresent()) {
                 User user = currentUser.get();
-                
-                // Basic user information
-                model.addAttribute("username", user.getUsername());
-                model.addAttribute("name", user.getName());
-                model.addAttribute("email", user.getEmail());
-                model.addAttribute("role", user.getRole());
                 
                 // Additional student-specific data
                 if (user instanceof Mahasiswa) {
                     Mahasiswa mahasiswa = (Mahasiswa) user;
-                    model.addAttribute("nim", mahasiswa.getNim());
-                    model.addAttribute("fakultas", mahasiswa.getFakultas());
-                    model.addAttribute("programStudi", mahasiswa.getProgramStudi());
-                    model.addAttribute("currentSemester", mahasiswa.getSemester());
+                    
+                    // Get enrolled classes for this student
+                    List<Enrollment> enrollments = enrollmentService.findByUserId(user.getId());
+                    model.addAttribute("enrollments", enrollments);
                 }
             }
         }
+        
         return "dashboard_mahasiswa_kelasterdaftar";
+    }
+
+    @PostMapping("/dashboard_mahasiswa_kelasterdaftar/unenroll")
+    public String unenrollFromClass(@RequestParam Long kelasId,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            
+            if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Session tidak valid!");
+                return "redirect:/dashboard_mahasiswa_kelasterdaftar";
+            }
+            
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+            
+            if (currentUser.isEmpty() || !(currentUser.get() instanceof Mahasiswa)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "User tidak valid!");
+                return "redirect:/dashboard_mahasiswa_kelasterdaftar";
+            }
+            
+            Mahasiswa mahasiswa = (Mahasiswa) currentUser.get();
+            enrollmentService.unenroll(mahasiswa.getId(), kelasId);
+            
+            redirectAttributes.addFlashAttribute("successMessage", "Berhasil membatalkan pendaftaran kelas!");
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        
+        return "redirect:/dashboard_mahasiswa_kelasterdaftar";
     }
 
     @GetMapping("/dashboard_mahasiswa_profile")
     public String mahasiswaProfile(Model model) {
+        addUserInfoToModel(model);
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
@@ -150,12 +343,6 @@ public class DashboardController {
             
             if (currentUser.isPresent()) {
                 User user = currentUser.get();
-                
-                // Basic user information
-                model.addAttribute("username", user.getUsername());
-                model.addAttribute("name", user.getName());
-                model.addAttribute("email", user.getEmail());
-                model.addAttribute("role", user.getRole());
                 
                 // Profile information
                 model.addAttribute("birthDate", user.getBirthDate());
@@ -167,15 +354,6 @@ public class DashboardController {
                 model.addAttribute("idType", user.getIdType());
                 model.addAttribute("phone", user.getPhone());
                 model.addAttribute("careerGoal", user.getCareerGoal());
-                
-                // Additional student-specific data
-                if (user instanceof Mahasiswa) {
-                    Mahasiswa mahasiswa = (Mahasiswa) user;
-                    model.addAttribute("nim", mahasiswa.getNim());
-                    model.addAttribute("fakultas", mahasiswa.getFakultas());
-                    model.addAttribute("programStudi", mahasiswa.getProgramStudi());
-                    model.addAttribute("currentSemester", mahasiswa.getSemester());
-                }
             }
         }
 
@@ -370,7 +548,7 @@ public class DashboardController {
         }
         
         // Add the missing showForm attribute
-        model.addAttribute("showForm", false); // or true, depending on your default state
+        model.addAttribute("showForm", false);
         
         return "Admin_matakuliah";
     }

@@ -93,7 +93,6 @@
         .main-content {
             flex: 1;
             padding: 30px;
-         
             margin: 20px;
             overflow-y: auto;
         }
@@ -106,10 +105,8 @@
         }
 
         .filter-section {
-           
             padding: 5px;
             margin-bottom: 30px;
-           
         }
 
         .filter-title {
@@ -164,6 +161,21 @@
             cursor: pointer;
         }
 
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
         .table-title {
             font-size: 20px;
             font-weight: 700;
@@ -196,57 +208,81 @@
             z-index: 10;
         }
 
-        .register-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            min-width: 90px;
-        }
-
-        .register-btn.available {
+        /* Enroll Button Styles */
+        .enroll-btn {
             background-color: #28a745;
             color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 100px;
+            justify-content: center;
         }
 
-        .register-btn.available:hover {
+        .enroll-btn:hover {
             background-color: #218838;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
 
-        .register-btn.full {
+        .enroll-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+        }
+
+        .enroll-btn:disabled {
             background-color: #6c757d;
-            color: white;
             cursor: not-allowed;
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
-        .register-btn.full:hover {
-            background-color: #6c757d;
+        .enroll-btn:disabled:hover {
             transform: none;
+            box-shadow: none;
+            background-color: #6c757d;
         }
 
-        .register-btn.registered {
+        .enroll-btn.enrolled {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .enroll-btn.enrolled:hover {
+            background-color: #138496;
+        }
+
+        .enroll-btn.full {
             background-color: #dc3545;
             color: white;
-            cursor: pointer;
+            cursor: not-allowed;
         }
 
-        .register-btn.registered:hover {
-            background-color: #c82333;
-            transform: translateY(-1px);
+        .enroll-btn.full:hover {
+            background-color: #dc3545;
+            transform: none;
+            box-shadow: none;
         }
 
-        .status-text {
-            font-size: 12px;
-            color: #666;
-            font-style: italic;
+        /* Loading animation */
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Notification styles */
@@ -301,80 +337,7 @@
             opacity: 1;
         }
 
-        .quota-info {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .quota-full {
-            color: #dc3545;
-            font-weight: 600;
-        }
-
-        .quota-available {
-            color: #28a745;
-            font-weight: 600;
-        }
-
-        .quota-warning {
-            color: #ffc107;
-            font-weight: 600;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                order: 2;
-            }
-            
-            .main-content {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            .filter-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filter-group {
-                min-width: 100%;
-            }
-            
-            .class-table {
-                font-size: 12px;
-            }
-            
-            .class-table th,
-            .class-table td {
-                padding: 8px 10px;
-            }
-        }
-
-        /* Search icon styling */
-        .search-container {
-            position: relative;
-        }
-
-        .search-container .fa-search {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            pointer-events: none;
-        }
-
-        .search-input {
-            padding-right: 35px !important;
-        }
-
-        /* Confirmation modal styles */
+        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -431,97 +394,135 @@
             background-color: #5a6268;
         }
 
-        .modal-btn.danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .modal-btn.danger:hover {
-            background-color: #c82333;
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+            
+            .class-table {
+                font-size: 12px;
+            }
+            
+            .class-table th,
+            .class-table td {
+                padding: 8px 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-      <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
+        <img th:src="@{/images/Logo_USU.png}" alt="Logo USU" class="logo">
         <div class="header-title">PORTAL USU</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <a href="/dashboard_mahasiswa_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
+            <a href="/dashboard_mahasiswa_profile" class="sidebar-item">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
+            <a href="/dashboard_mahasiswa_beranda" class="sidebar-item">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item active" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/dashboard_mahasiswa_daftarkelas" class="sidebar-item active">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="/dashboard_mahasiswa_kelasterdaftar" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-terdaftar')">
+            <a href="/dashboard_mahasiswa_kelasterdaftar" class="sidebar-item">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Kelas Terdaftar
             </a>
         </div>
 
+        <!-- Main Content for Class List -->
         <div class="main-content">
-            <h1 class="page-title">Filter Data</h1>
-            
+            <!-- Filter Section -->
             <div class="filter-section">
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">Kode Mata Kuliah</label>
-                        <div class="search-container">
-                            <input type="text" class="filter-input search-input" id="courseCodeFilter" placeholder="Masukkan kode mata kuliah">
-                            <i class="fa-solid fa-search"></i>
+                <h3 class="filter-title">Filter Data</h3>
+                <form action="/dashboard_mahasiswa_daftarkelas" method="GET">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">Kode Mata Kuliah</label>
+                            <input type="text" class="filter-input" name="codeFilter" 
+                                th:value="${codeFilter}" placeholder="Masukkan kode mata kuliah">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Mata Kuliah</label>
+                            <input type="text" class="filter-input" name="nameFilter" 
+                                th:value="${nameFilter}" placeholder="Masukkan nama mata kuliah">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Kelas</label>
+                            <select class="filter-select" name="classFilter">
+                                <option value="">Semua Kelas</option>
+                                <option value="A" th:selected="${classFilter == 'A'}">A</option>
+                                <option value="B" th:selected="${classFilter == 'B'}">B</option>
+                                <option value="C" th:selected="${classFilter == 'C'}">C</option>
+                                <option value="D" th:selected="${classFilter == 'D'}">D</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Ruangan</label>
+                            <select class="filter-select" name="roomFilter">
+                                <option value="">Semua Ruangan</option>
+                                <option value="D-101" th:selected="${roomFilter == 'D-101'}">D-101</option>
+                                <option value="D-102" th:selected="${roomFilter == 'D-102'}">D-102</option>
+                                <option value="D-103" th:selected="${roomFilter == 'D-103'}">D-103</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button type="submit" class="btn-primary">
+                                <i class="fa-solid fa-search"></i> Filter
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Mata Kuliah</label>
-                        <div class="search-container">
-                            <input type="text" class="filter-input search-input" id="courseNameFilter" placeholder="Masukkan nama mata kuliah">
-                            <i class="fa-solid fa-search"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Semester</label>
-                        <select class="filter-select" id="semesterFilter">
-                            <option value="">Pilih Semester</option>
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                            <option value="3">Semester 3</option>
-                            <option value="4">Semester 4</option>
-                            <option value="5">Semester 5</option>
-                            <option value="6">Semester 6</option>
-                            <option value="7">Semester 7</option>
-                            <option value="8">Semester 8</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Dosen</label>
-                        <div class="search-container">
-                            <input type="text" class="filter-input search-input" id="lecturerFilter" placeholder="Masukkan nama dosen">
-                            <i class="fa-solid fa-search"></i>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
 
-            <div class="table-section">
-                <h2 class="table-title">Daftar Seluruh Kelas yang Tersedia</h2>
-                
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="notification success show" id="successNotification">
+                <span th:text="${successMessage}"></span>
+                <button class="close-btn" onclick="closeNotification(this)">&times;</button>
+            </div>
+            
+            <div th:if="${errorMessage}" class="notification error show" id="errorNotification">
+                <span th:text="${errorMessage}"></span>
+                <button class="close-btn" onclick="closeNotification(this)">&times;</button>
+            </div>
+
+            <!-- Class List Section -->
+            <div class="class-list-section">
+                <h3 class="table-title">Daftar Seluruh Kelas yang Tersedia</h3>
+
                 <table class="class-table">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Kode</th>
                             <th>Mata Kuliah</th>
+                            <th>Prodi</th>
                             <th>Semester</th>
                             <th>Kelas</th>
                             <th>SKS</th>
@@ -532,89 +533,27 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="classTableBody">
-                        <tr data-course-code="ILK1001" data-course-name="Dasar Pemrograman" data-semester="1" data-lecturer="Dosen Belum Terdaftar" data-class="A" data-current-quota="3" data-max-quota="50">
-                            <td>1</td>
-                            <td>ILK1001</td>
-                            <td>Dasar Pemrograman</td>
-                            <td>1</td>
-                            <td>A</td>
-                            <td>3</td>
-                            <td>D-102</td>
-                            <td>Kamis, 13:50 - 16:20</td>
-                            <td>Dosen Belum Terdaftar</td>
-                            <td><span class="quota-info quota-available">3/50</span></td>
+                    <tbody>
+                        <tr th:each="kelas, iterStat : ${kelasList}" class="class-row">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${kelas.mataKuliah?.kodeMk ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.namaMk ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.programStudi ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.semester ?: '-'}"></td>
+                            <td th:text="${kelas.kelas ?: '-'}"></td>
+                            <td th:text="${kelas.mataKuliah?.sks ?: '-'}"></td>
+                            <td th:text="${kelas.ruangan ?: '-'}"></td>
+                            <td th:text="${kelas.jadwal ?: '-'}"></td>
+                            <td th:text="${kelas.dosen?.name ?: 'Dosen Belum Terdaftar'}"></td>
+                            <td th:text="${kelas.kuotaInfo ?: '0/0'}"></td>
                             <td>
-                                <button class="register-btn available" onclick="handleClassAction(this, 'ILK1001', 'A', 'Dasar Pemrograman')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-course-code="ILK1001" data-course-name="Dasar Pemrograman" data-semester="1" data-lecturer="Drs. Jenni Blekping, S.Kom, M.sc" data-class="B" data-current-quota="50" data-max-quota="50">
-                            <td>2</td>
-                            <td>ILK1001</td>
-                            <td>Dasar Pemrograman</td>
-                            <td>1</td>
-                            <td>B</td>
-                            <td>3</td>
-                            <td>D-102</td>
-                            <td>Kamis, 13:50 - 16:20</td>
-                            <td>Drs. Jenni Blekping, S.Kom, M.sc</td>
-                            <td><span class="quota-info quota-full">50/50</span></td>
-                            <td>
-                                <button class="register-btn full" disabled>
-                                    <i class="fa-solid fa-ban"></i> Penuh
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-course-code="ILK1002" data-course-name="Algoritma dan Struktur Data" data-semester="2" data-lecturer="Dr. Ahmad Susanto, M.Kom" data-class="A" data-current-quota="15" data-max-quota="45">
-                            <td>3</td>
-                            <td>ILK1002</td>
-                            <td>Algoritma dan Struktur Data</td>
-                            <td>2</td>
-                            <td>A</td>
-                            <td>3</td>
-                            <td>D-103</td>
-                            <td>Selasa, 08:00 - 10:30</td>
-                            <td>Dr. Ahmad Susanto, M.Kom</td>
-                            <td><span class="quota-info quota-available">15/45</span></td>
-                            <td>
-                                <button class="register-btn available" onclick="handleClassAction(this, 'ILK1002', 'A', 'Algoritma dan Struktur Data')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-course-code="ILK1003" data-course-name="Basis Data" data-semester="3" data-lecturer="Prof. Siti Nurhaliza, Ph.D" data-class="A" data-current-quota="28" data-max-quota="40">
-                            <td>4</td>
-                            <td>ILK1003</td>
-                            <td>Basis Data</td>
-                            <td>3</td>
-                            <td>A</td>
-                            <td>3</td>
-                            <td>D-201</td>
-                            <td>Rabu, 10:00 - 12:30</td>
-                            <td>Prof. Siti Nurhaliza, Ph.D</td>
-                            <td><span class="quota-info quota-available">28/40</span></td>
-                            <td>
-                                <button class="register-btn available" onclick="handleClassAction(this, 'ILK1003', 'A', 'Basis Data')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-course-code="ILK1004" data-course-name="Pemrograman Web" data-semester="4" data-lecturer="Dr. Andi Pratama, M.T" data-class="A" data-current-quota="38" data-max-quota="40">
-                            <td>5</td>
-                            <td>ILK1004</td>
-                            <td>Pemrograman Web</td>
-                            <td>4</td>
-                            <td>A</td>
-                            <td>3</td>
-                            <td>D-104</td>
-                            <td>Jumat, 09:00 - 11:30</td>
-                            <td>Dr. Andi Pratama, M.T</td>
-                            <td><span class="quota-info quota-warning">38/40</span></td>
-                            <td>
-                                <button class="register-btn available" onclick="handleClassAction(this, 'ILK1004', 'A', 'Pemrograman Web')">
-                                    <i class="fa-solid fa-plus"></i> Daftar
+                                <button class="enroll-btn" 
+                                        th:attr="data-course-code=${kelas.mataKuliah?.kodeMk}, 
+                                                 data-class=${kelas.kelas},
+                                                 data-course-name=${kelas.mataKuliah?.namaMk}"
+                                        onclick="handleEnrollment(this)">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>Daftar</span>
                                 </button>
                             </td>
                         </tr>
@@ -627,21 +566,21 @@
     <!-- Confirmation Modal -->
     <div id="confirmationModal" class="modal">
         <div class="modal-content">
-            <h3 id="modalTitle">Konfirmasi Aksi</h3>
-            <p id="modalMessage">Apakah Anda yakin?</p>
+            <h3 id="modalTitle">Konfirmasi Pendaftaran</h3>
+            <p id="modalMessage">Apakah Anda yakin ingin mendaftar ke kelas ini?</p>
             <div class="modal-buttons">
-                <button id="confirmBtn" class="modal-btn confirm">Ya</button>
+                <button id="confirmBtn" class="modal-btn confirm">Ya, Daftar</button>
                 <button id="cancelBtn" class="modal-btn cancel">Batal</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Class data storage
-        let registeredClasses = new Set();
+        let currentEnrollmentData = null;
 
-        // Notification function
+        // Show notification function
         function showNotification(message, type = 'info') {
+            // Remove existing notifications
             const existingNotifications = document.querySelectorAll('.notification');
             existingNotifications.forEach(notification => notification.remove());
 
@@ -658,8 +597,11 @@
                 notification.classList.add('show');
             }, 100);
 
+            // Auto close after 5 seconds
             setTimeout(() => {
-                closeNotification(notification.querySelector('.close-btn'));
+                if (notification.parentElement) {
+                    closeNotification(notification.querySelector('.close-btn'));
+                }
             }, 5000);
         }
 
@@ -667,368 +609,161 @@
             const notification = button.parentElement;
             notification.classList.remove('show');
             setTimeout(() => {
-                notification.remove();
+                if (notification.parentElement) {
+                    notification.remove();
+                }
             }, 300);
         }
 
-        // Modal functions
-        function showModal(title, message, onConfirm, isDanger = false) {
+        // Handle enrollment button click
+        function handleEnrollment(button) {
+            const courseCode = button.getAttribute('data-course-code');
+            const classCode = button.getAttribute('data-class');
+            const courseName = button.getAttribute('data-course-name');
+
+            if (!courseCode || !classCode) {
+                showNotification('Data kelas tidak lengkap!', 'error');
+                return;
+            }
+
+            // Store enrollment data for confirmation
+            currentEnrollmentData = {
+                courseCode: courseCode,
+                classCode: classCode,
+                courseName: courseName,
+                button: button
+            };
+
+            // Show confirmation modal
+            showConfirmationModal(courseCode, classCode, courseName);
+        }
+
+        // Show confirmation modal
+        function showConfirmationModal(courseCode, classCode, courseName) {
             const modal = document.getElementById('confirmationModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalMessage = document.getElementById('modalMessage');
-            const confirmBtn = document.getElementById('confirmBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
 
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            
-            // Reset button classes
-            confirmBtn.className = isDanger ? 'modal-btn danger' : 'modal-btn confirm';
-            confirmBtn.textContent = isDanger ? 'Ya, Batalkan' : 'Ya, Daftar';
+            modalTitle.textContent = 'Konfirmasi Pendaftaran';
+            modalMessage.innerHTML = `
+                Apakah Anda yakin ingin mendaftar ke:<br>
+                <strong>${courseCode} - ${classCode}</strong><br>
+                <em>${courseName}</em>
+            `;
 
             modal.style.display = 'block';
-
-            // Remove existing event listeners
-            const newConfirmBtn = confirmBtn.cloneNode(true);
-            const newCancelBtn = cancelBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-
-            // Add new event listeners
-            newConfirmBtn.onclick = () => {
-                modal.style.display = 'none';
-                onConfirm();
-            };
-
-            newCancelBtn.onclick = () => {
-                modal.style.display = 'none';
-            };
-
-            // Close modal when clicking outside
-            window.onclick = (event) => {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            };
         }
 
-        // Update quota display
-        function updateQuotaDisplay(row, currentQuota, maxQuota) {
-            const quotaSpan = row.querySelector('.quota-info');
-            quotaSpan.textContent = `${currentQuota}/${maxQuota}`;
+        // Confirm enrollment
+        function confirmEnrollment() {
+            if (!currentEnrollmentData) return;
+
+            const { courseCode, classCode, courseName, button } = currentEnrollmentData;
             
-            // Update quota styling
-            quotaSpan.className = 'quota-info';
-            if (currentQuota >= maxQuota) {
-                quotaSpan.classList.add('quota-full');
-            } else if (currentQuota >= maxQuota * 0.9) {
-                quotaSpan.classList.add('quota-warning');
-            } else {
-                quotaSpan.classList.add('quota-available');
-            }
-        }
-
-        // Update button state
-        function updateButtonState(button, row, courseCode, classCode, courseName) {
-            const classKey = `${courseCode}-${classCode}`;
-            const currentQuota = parseInt(row.dataset.currentQuota);
-            const maxQuota = parseInt(row.dataset.maxQuota);
-
-            if (registeredClasses.has(classKey)) {
-                // User is registered - show cancel button
-                button.className = 'register-btn registered';
-                button.innerHTML = '<i class="fa-solid fa-times"></i> Batalkan';
-                button.disabled = false;
-                button.onclick = () => handleClassAction(button, courseCode, classCode, courseName);
-            } else if (currentQuota >= maxQuota) {
-                // Class is full
-                button.className = 'register-btn full';
-                button.innerHTML = '<i class="fa-solid fa-ban"></i> Penuh';
-                button.disabled = true;
-                button.onclick = null;
-            } else {
-                // Available for registration
-                button.className = 'register-btn available';
-                button.innerHTML = '<i class="fa-solid fa-plus"></i> Daftar';
-                button.disabled = false;
-                button.onclick = () => handleClassAction(button, courseCode, classCode, courseName);
-            }
-        }
-
-        // Main handler for class actions
-        function handleClassAction(button, courseCode, classCode, courseName) {
-            if (button.disabled) return;
-
-            const classKey = `${courseCode}-${classCode}`;
-            const row = button.closest('tr');
-            const isRegistered = registeredClasses.has(classKey);
-
-            if (isRegistered) {
-                // Show cancellation confirmation
-                showModal(
-                    'Batalkan Pendaftaran',
-                    `Apakah Anda yakin ingin membatalkan pendaftaran dari kelas ${courseCode} - ${classCode} (${courseName})?`,
-                    () => cancelClass(button, courseCode, classCode, courseName),
-                    true
-                );
-            } else {
-                // Show registration confirmation
-                showModal(
-                    'Konfirmasi Pendaftaran',
-                    `Apakah Anda yakin ingin mendaftar ke kelas ${courseCode} - ${classCode} (${courseName})?`,
-                    () => registerClass(button, courseCode, classCode, courseName),
-                    false
-                );
-            }
-        }
-
-        // Register for class
-        function registerClass(button, courseCode, classCode, courseName) {
-            const row = button.closest('tr');
-            const currentQuota = parseInt(row.dataset.currentQuota);
-            const maxQuota = parseInt(row.dataset.maxQuota);
-
-            if (currentQuota >= maxQuota) {
-                showNotification('Kelas sudah penuh! Silakan pilih kelas lain.', 'error');
-                return;
-            }
-
             // Show loading state
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mendaftar...';
+            button.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>Mendaftar...</span>
+            `;
             button.disabled = true;
 
-            setTimeout(() => {
-                // Update quota
-                const newQuota = currentQuota + 1;
-                row.dataset.currentQuota = newQuota;
-                updateQuotaDisplay(row, newQuota, maxQuota);
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/dashboard_mahasiswa_daftarkelas/add';
 
-                // Add to registered classes
-                const classKey = `${courseCode}-${classCode}`;
-                registeredClasses.add(classKey);
+            const courseCodeInput = document.createElement('input');
+            courseCodeInput.type = 'hidden';
+            courseCodeInput.name = 'kodeMatKul';
+            courseCodeInput.value = courseCode;
 
-                // Update button state
-                updateButtonState(button, row, courseCode, classCode, courseName);
+            const classCodeInput = document.createElement('input');
+            classCodeInput.type = 'hidden';
+            classCodeInput.name = 'kelas';
+            classCodeInput.value = classCode;
 
-                // Check if class is now full and update other buttons for same class
-                if (newQuota >= maxQuota) {
-                    updateAllButtonsForClass(courseCode, classCode);
-                }
-
-                showNotification(`Berhasil mendaftar ke kelas ${courseCode} - ${classCode} (${courseName})!`, 'success');
-            }, 1500);
-        }
-
-        // Cancel class registration
-        function cancelClass(button, courseCode, classCode, courseName) {
-            const row = button.closest('tr');
-            const currentQuota = parseInt(row.dataset.currentQuota);
-            const maxQuota = parseInt(row.dataset.maxQuota);
-
-            // Show loading state
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Membatalkan...';
-            button.disabled = true;
-
-            setTimeout(() => {
-                // Update quota (decrease by 1)
-                const newQuota = Math.max(0, currentQuota - 1);
-                row.dataset.currentQuota = newQuota;
-                updateQuotaDisplay(row, newQuota, maxQuota);
-
-                // Remove from registered classes
-                const classKey = `${courseCode}-${classCode}`;
-                registeredClasses.delete(classKey);
-
-                // Update button state
-                updateButtonState(button, row, courseCode, classCode, courseName);
-
-                // Update all buttons for this class if it was previously full
-                updateAllButtonsForClass(courseCode, classCode);
-
-                showNotification(`Berhasil membatalkan pendaftaran dari kelas ${courseCode} - ${classCode} (${courseName})!`, 'warning');
-            }, 1500);
-        }
-
-        // Update all buttons for a specific class
-        function updateAllButtonsForClass(courseCode, classCode) {
-            const allRows = document.querySelectorAll(`tr[data-course-code="${courseCode}"][data-class="${classCode}"]`);
-            allRows.forEach(row => {
-                const button = row.querySelector('.register-btn');
-                const courseName = row.dataset.courseName;
-                updateButtonState(button, row, courseCode, classCode, courseName);
-            });
-        }
-
-        // Filter functionality
-        function filterTable() {
-            const courseCodeFilter = document.getElementById('courseCodeFilter').value.toLowerCase();
-            const courseNameFilter = document.getElementById('courseNameFilter').value.toLowerCase();
-            const semesterFilter = document.getElementById('semesterFilter').value;
-            const lecturerFilter = document.getElementById('lecturerFilter').value.toLowerCase();
-            
-            const tableBody = document.getElementById('classTableBody');
-            const rows = tableBody.getElementsByTagName('tr');
-            
-            let visibleRowCount = 0;
-            
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                const courseCode = row.dataset.courseCode?.toLowerCase() || '';
-                const courseName = row.dataset.courseName?.toLowerCase() || '';
-                const semester = row.dataset.semester || '';
-                const lecturer = row.dataset.lecturer?.toLowerCase() || '';
-                
-                const matchesCourseCode = courseCode.includes(courseCodeFilter);
-                const matchesCourseName = courseName.includes(courseNameFilter);
-                const matchesSemester = !semesterFilter || semester === semesterFilter;
-                const matchesLecturer = lecturer.includes(lecturerFilter);
-                
-                if (matchesCourseCode && matchesCourseName && matchesSemester && matchesLecturer) {
-                    row.style.display = '';
-                    visibleRowCount++;
-                    // Update row number
-                    row.cells[0].textContent = visibleRowCount;
-                } else {
-                    row.style.display = 'none';
-                }
+            // Add CSRF token if available
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            if (csrfToken && csrfHeader) {
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_csrf';
+                csrfInput.value = csrfToken.getAttribute('content');
+                form.appendChild(csrfInput);
             }
+
+            form.appendChild(courseCodeInput);
+            form.appendChild(classCodeInput);
+            document.body.appendChild(form);
+            
+            // Submit form
+            form.submit();
         }
 
-        // Add event listeners for filters
-        document.getElementById('courseCodeFilter').addEventListener('input', filterTable);
-        document.getElementById('courseNameFilter').addEventListener('input', filterTable);
-        document.getElementById('semesterFilter').addEventListener('change', filterTable);
-        document.getElementById('lecturerFilter').addEventListener('input', filterTable);
+        // Cancel enrollment
+        function cancelEnrollment() {
+            const modal = document.getElementById('confirmationModal');
+            modal.style.display = 'none';
+            currentEnrollmentData = null;
+        }
 
-        // Add hover effects for buttons
-        document.querySelectorAll('.register-btn').forEach(btn => {
-            btn.addEventListener('mouseenter', function() {
-                if (!this.disabled && !this.classList.contains('full')) {
-                    this.style.transform = 'translateY(-2px)';
-                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-                }
-            });
-            
-            btn.addEventListener('mouseleave', function() {
-                if (!this.disabled && !this.classList.contains('full')) {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = 'none';
-                }
-            });
+        // Modal event listeners
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            document.getElementById('confirmationModal').style.display = 'none';
+            confirmEnrollment();
         });
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set some initial registered classes for demo purposes
-            // registeredClasses.add('ILK1002-A'); // Uncomment this line to test with a pre-registered class
-            
-            // Update all button states on page load
-            const allRows = document.querySelectorAll('#classTableBody tr');
-            allRows.forEach(row => {
-                const button = row.querySelector('.register-btn');
-                if (button && !button.disabled) {
-                    const courseCode = row.dataset.courseCode;
-                    const classCode = row.dataset.class;
-                    const courseName = row.dataset.courseName;
-                    updateButtonState(button, row, courseCode, classCode, courseName);
-                }
-            });
+        document.getElementById('cancelBtn').addEventListener('click', cancelEnrollment);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('confirmationModal');
+            if (event.target === modal) {
+                cancelEnrollment();
+            }
         });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(event) {
-            // Close modal with Escape key
+        // Close modal with Escape key
+        document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 const modal = document.getElementById('confirmationModal');
                 if (modal.style.display === 'block') {
-                    modal.style.display = 'none';
+                    cancelEnrollment();
                 }
             }
         });
 
-        // Add some utility functions for better user experience
-        function getRegisteredClassesCount() {
-            return registeredClasses.size;
-        }
+        // Auto-close server notifications after page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const notifications = document.querySelectorAll('.notification.show');
+            notifications.forEach(notification => {
+                setTimeout(() => {
+                    const closeBtn = notification.querySelector('.close-btn');
+                    if (closeBtn) {
+                        closeNotification(closeBtn);
+                    }
+                }, 5000);
+            });
+        });
 
-        function getRegisteredClassesList() {
-            return Array.from(registeredClasses);
-        }
-
-        function isClassRegistered(courseCode, classCode) {
-            return registeredClasses.has(`${courseCode}-${classCode}`);
-        }
-
-        // Add notification for maximum class registration (optional feature)
-        const MAX_CLASSES = 8; // Maximum classes a student can register
-
-        function checkMaxClassesLimit() {
-            if (registeredClasses.size >= MAX_CLASSES) {
-                showNotification(`Anda telah mencapai batas maksimal ${MAX_CLASSES} mata kuliah yang dapat didaftarkan.`, 'warning');
-                return false;
-            }
-            return true;
-        }
-
-        // Enhanced registration function with max classes check
-        function registerClassWithLimit(button, courseCode, classCode, courseName) {
-            if (!checkMaxClassesLimit()) {
-                return;
-            }
-            registerClass(button, courseCode, classCode, courseName);
-        }
-
-        // Add some visual feedback for better UX
-        function addVisualFeedback() {
-            // Add ripple effect to buttons
-            document.querySelectorAll('.register-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    if (this.disabled) return;
-                    
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.cssText = `
-                        position: absolute;
-                        border-radius: 50%;
-                        background: rgba(255,255,255,0.6);
-                        transform: scale(0);
-                        animation: ripple 0.6s linear;
-                        width: ${size}px;
-                        height: ${size}px;
-                        left: ${x}px;
-                        top: ${y}px;
-                        pointer-events: none;
-                    `;
-                    
-                    this.style.position = 'relative';
-                    this.style.overflow = 'hidden';
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
+        // Add hover effects for better UX
+        document.addEventListener('DOMContentLoaded', () => {
+            const enrollButtons = document.querySelectorAll('.enroll-btn');
+            enrollButtons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(-2px)';
+                    }
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(0)';
+                    }
                 });
             });
-        }
-
-        // Add CSS for ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Initialize visual feedback
-        document.addEventListener('DOMContentLoaded', addVisualFeedback);
+        });
     </script>
 </body>
 </html>
