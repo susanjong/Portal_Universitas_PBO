@@ -2,6 +2,7 @@ package com.example.portaluniv.demo.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -69,11 +70,52 @@ public class AdminDaftarKelas {
     }
 
     @GetMapping("/Admin_daftarkelas")
-    public String admindaftarkelas(Model model) {
+    public String admindaftarkelas(Model model,
+                                @RequestParam(required = false) String codeFilter,
+                                @RequestParam(required = false) String nameFilter,
+                                @RequestParam(required = false) String classFilter,
+                                @RequestParam(required = false) String roomFilter) {
         addUserInfoToModel(model);
-        addBasicDataToModel(model);
         
-        // Default tampilkan list kelas, sembunyikan form
+        List<Kelas> kelasList = kelasService.findAll();
+        
+        // Apply filters
+        if (codeFilter != null && !codeFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getMataKuliah() != null && 
+                        kelas.getMataKuliah().getKodeMk().toLowerCase().contains(codeFilter.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (nameFilter != null && !nameFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getMataKuliah() != null && 
+                        kelas.getMataKuliah().getNamaMk().toLowerCase().contains(nameFilter.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (classFilter != null && !classFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getKelas().equals(classFilter))
+                .collect(Collectors.toList());
+        }
+        
+        if (roomFilter != null && !roomFilter.trim().isEmpty()) {
+            kelasList = kelasList.stream()
+                .filter(kelas -> kelas.getRuangan().equals(roomFilter))
+                .collect(Collectors.toList());
+        }
+        
+        model.addAttribute("kelasList", kelasList);
+        model.addAttribute("mataKuliahList", mataKuliahService.findAll());
+        model.addAttribute("dosenList", dosenService.findAll());
+        
+        // Preserve filter values
+        model.addAttribute("codeFilter", codeFilter);
+        model.addAttribute("nameFilter", nameFilter);
+        model.addAttribute("classFilter", classFilter);
+        model.addAttribute("roomFilter", roomFilter);
+        
         model.addAttribute("showForm", false);
         
         return "Admin_daftarkelas";

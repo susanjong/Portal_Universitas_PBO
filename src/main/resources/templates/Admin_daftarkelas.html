@@ -370,7 +370,6 @@
             display: flex;
             gap: 10px;
             margin-top: 30px;
-            margin-left:84%;
         }
 
         .btn-primary {
@@ -483,46 +482,49 @@
             <!-- Filter Section -->
             <div class="filter-section">
                 <h3 class="filter-title">Filter Data</h3>
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">Kode Mata Kuliah</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="codeFilter" placeholder="Cari berdasarkan kode mata kuliah">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
+                <form action="/Admin_daftarkelas" method="GET">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">Kode Mata Kuliah</label>
+                            <div class="filter-input-container">
+                                <input type="text" class="filter-input" name="codeFilter" 
+                                    th:value="${codeFilter}" placeholder="Cari berdasarkan kode mata kuliah">
+                                <span class="search-icon"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Mata Kuliah</label>
+                            <div class="filter-input-container">
+                                <input type="text" class="filter-input" name="nameFilter" 
+                                    th:value="${nameFilter}" placeholder="Cari berdasarkan nama mata kuliah">
+                                <span class="search-icon"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Kelas</label>
+                            <select class="filter-select" name="classFilter">
+                                <option value="">Semua Kelas</option>
+                                <option value="A" th:selected="${classFilter == 'A'}">A</option>
+                                <option value="B" th:selected="${classFilter == 'B'}">B</option>
+                                <option value="C" th:selected="${classFilter == 'C'}">C</option>
+                                <option value="D" th:selected="${classFilter == 'D'}">D</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Ruangan</label>
+                            <select class="filter-select" name="roomFilter">
+                                <option value="">Semua Ruangan</option>
+                                <option value="D-101" th:selected="${roomFilter == 'D-101'}">D-101</option>
+                                <option value="D-102" th:selected="${roomFilter == 'D-102'}">D-102</option>
+                                <option value="D-103" th:selected="${roomFilter == 'D-103'}">D-103</option>
+                                <!-- dst... -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button type="submit" class="btn-primary" style="padding: 8px 16px;">Filter</button>
                         </div>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Mata Kuliah</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="nameFilter" placeholder="Cari berdasarkan nama mata kuliah">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Kelas</label>
-                        <select class="filter-select" id="classFilter">
-                            <option value="">Semua Kelas</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Ruangan</label>
-                        <select class="filter-select" id="roomFilter">
-                            <option value="">Semua Ruangan</option>
-                            <option value="D-101">D-101</option>
-                            <option value="D-102">D-102</option>
-                            <option value="D-103">D-103</option>
-                            <option value="D-104">D-104</option>
-                            <option value="D-105">D-105</option>
-                            <option value="D-106">D-106</option>
-                            <option value="Lab-1">Lab-1</option>
-                            <option value="Lab-2">Lab-2</option>
-                        </select>
-                    </div>
-                </div>
+                </form>
             </div>
 
             <!-- Class List Section -->
@@ -735,23 +737,24 @@
 
         //Form harus terisi semua sebelum disubmit
         document.getElementById('classForm').addEventListener('submit', function(e) {
-        const action = e.submitter.getAttribute('formaction') || this.action;
-        
-        // Jika bukan aksi pencarian, validasi semua field
-        if (!action.includes('fillMataKuliah') && !action.includes('fillDosen')) {
-            const fields = ['classCode', 'classQuota', 'classSection', 'classRoom', 'classSchedule', 'classLecturer'];
+            const action = e.submitter.getAttribute('formaction') || this.action;
             
-            for (let fieldId of fields) {
-                const field = document.getElementById(fieldId);
-                if (!field.value.trim()) {
-                    alert('Field ' + field.previousElementSibling.textContent + ' harus diisi!');
-                    field.focus();
-                    e.preventDefault();
-                    return;
+            // Jika bukan aksi pencarian, validasi semua field
+            if (!action.includes('fillMataKuliah') && !action.includes('fillDosen')) {
+                const fields = ['classCode', 'classQuota', 'classSection', 'classRoom', 'classSchedule', 'classLecturer'];
+                
+                for (let fieldId of fields) {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        alert('Field ' + field.previousElementSibling.textContent + ' harus diisi!');
+                        field.focus();
+                        e.preventDefault();
+                        return;
+                    }
                 }
             }
-        }
-    });
+        });
+
 
         // Setup event listeners
         function setupEventListeners() {
