@@ -88,7 +88,6 @@ public class DashboardController {
                 
                 // Additional student-specific data
                 if (user instanceof Mahasiswa) {
-                    Mahasiswa mahasiswa = (Mahasiswa) user;
 
                     // Get enrolled classes for this student
                     List<Enrollment> enrollments = enrollmentService.findByUserId(user.getId());
@@ -287,7 +286,6 @@ public class DashboardController {
                 
                 // Additional student-specific data
                 if (user instanceof Mahasiswa) {
-                    Mahasiswa mahasiswa = (Mahasiswa) user;
                     
                     // Get enrolled classes for this student
                     List<Enrollment> enrollments = enrollmentService.findByUserId(user.getId());
