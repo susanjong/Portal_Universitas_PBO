@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Kelas</title>
+    <title>Mata Kuliah</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -190,24 +190,24 @@
             position: relative;
         }
 
-        .class-list-section {
+        .course-list-section {
             margin-top: 30px;
         }
 
-        .class-list-header {
+        .course-list-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        .class-list-title {
+        .course-list-title {
             font-size: 16px;
             font-weight: bold;
             color: #333;
         }
 
-        .add-class-btn {
+        .add-course-btn {
             background-color: #42832C;
             color: white;
             padding: 8px 16px;
@@ -220,11 +220,11 @@
             gap: 5px;
         }
 
-        .add-class-btn:hover {
+        .add-course-btn:hover {
             background-color: #16610E;
         }
 
-        .class-table {
+        .course-table {
             width: 100%;
             border-collapse: collapse;
             background-color: white;
@@ -232,7 +232,7 @@
             border-radius: 4px;
         }
 
-        .class-table th {
+        .course-table th {
             background-color: #f8f9fa;
             padding: 12px;
             text-align: left;
@@ -242,18 +242,18 @@
             border-bottom: 1px solid #e0e0e0;
         }
 
-        .class-table td {
+        .course-table td {
             padding: 12px;
             border-bottom: 1px solid #f0f0f0;
             font-size: 14px;
             color: #333;
         }
 
-        .class-table tr:last-child td {
+        .course-table tr:last-child td {
             border-bottom: none;
         }
 
-        .class-table tr:hover {
+        .course-table tr:hover {
             background-color: #f8f9fa;
         }
 
@@ -293,7 +293,7 @@
         }
 
         /* Form Styles */
-        .class-form-section {
+        .course-form-section {
             background-color: white;
             padding: 30px;
             border-radius: 8px;
@@ -407,22 +407,6 @@
             color: red;
         }
 
-        .dosen-selector {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-            margin-top: 5px;
-            min-height: 100px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        .disable-input {
-            background-color: #e9ecef;
-            color: #6c757d;
-        }
-
         .success-message {
             background-color: #d4edda;
             color: #155724;
@@ -448,7 +432,7 @@
         <div class="header-title">PORTAL USU</div>
     </div>
 
-      <div class="container">
+    <div class="container">
         <div class="sidebar">
             <a href="/Admin_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
                 <i class="fa-solid fa-user"></i>
@@ -458,7 +442,7 @@
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/Admin_daftarkelas" class="sidebar-item active" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/Admin_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
@@ -474,54 +458,56 @@
                 <i class="fa-solid fa-user-tie"></i>
                 <p>Daftar Dosen</p>
             </a>
-            <a href="/Admin_matakuliah" class="sidebar-item" onclick="setActiveMenu(this, 'mata-kuliah')">
+            <a href="/Admin_matakuliah" class="sidebar-item active" onclick="setActiveMenu(this, 'mata-kuliah')">
                 <i class="fa-solid fa-book-open"></i>
                 Mata Kuliah
             </a>
         </div>
 
-
-        <!-- Main Content for Class List -->
-        <div class="main-content" id="classListView" th:if="${!showForm}">
+        <!-- Main Content for Course List -->
+        <div class="main-content" id="courseListView" th:if="${!showForm}">
             <!-- Filter Section -->
             <div class="filter-section">
                 <h3 class="filter-title">Filter Data</h3>
-                <form action="/Admin_daftarkelas" method="GET">
+                <form action="/Admin_matakuliah" method="GET">
                     <div class="filter-row">
                         <div class="filter-group">
                             <label class="filter-label">Kode Mata Kuliah</label>
                             <div class="filter-input-container">
                                 <input type="text" class="filter-input" name="codeFilter" 
-                                    th:value="${codeFilter}">
+                                    th:value="${codeFilter}" placeholder="Cari berdasarkan kode mata kuliah">
                                 <span class="search-icon"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label">Mata Kuliah</label>
+                            <label class="filter-label">Nama Mata Kuliah</label>
                             <div class="filter-input-container">
                                 <input type="text" class="filter-input" name="nameFilter" 
-                                    th:value="${nameFilter}">
+                                    th:value="${nameFilter}" placeholder="Cari berdasarkan nama mata kuliah">
                                 <span class="search-icon"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label">Kelas</label>
-                            <select class="filter-select" name="classFilter">
-                                <option value="">Semua Kelas</option>
-                                <option value="A" th:selected="${classFilter == 'A'}">A</option>
-                                <option value="B" th:selected="${classFilter == 'B'}">B</option>
-                                <option value="C" th:selected="${classFilter == 'C'}">C</option>
-                                <option value="D" th:selected="${classFilter == 'D'}">D</option>
+                            <label class="filter-label">Program Studi</label>
+                            <select class="filter-select" name="prodiFilter">
+                                <option value="">Semua Program Studi</option>
+                                <option value="Ilmu Komputer" th:selected="${prodiFilter == 'Ilmu Komputer'}">Ilmu Komputer</option>
+                                <option value="Sistem Informasi" th:selected="${prodiFilter == 'Sistem Informasi'}">Sistem Informasi</option>
+                                <option value="Teknologi Informasi" th:selected="${prodiFilter == 'Teknologi Informasi'}">Teknologi Informasi</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label">Ruangan</label>
-                            <select class="filter-select" name="roomFilter">
-                                <option value="">Semua Ruangan</option>
-                                <option value="D-101" th:selected="${roomFilter == 'D-101'}">D-101</option>
-                                <option value="D-102" th:selected="${roomFilter == 'D-102'}">D-102</option>
-                                <option value="D-103" th:selected="${roomFilter == 'D-103'}">D-103</option>
-                                <!-- dst... -->
+                            <label class="filter-label">Semester</label>
+                            <select class="filter-select" name="semesterFilter">
+                                <option value="">Semua Semester</option>
+                                <option value="1" th:selected="${semesterFilter == '1'}">1</option>
+                                <option value="2" th:selected="${semesterFilter == '2'}">2</option>
+                                <option value="3" th:selected="${semesterFilter == '3'}">3</option>
+                                <option value="4" th:selected="${semesterFilter == '4'}">4</option>
+                                <option value="5" th:selected="${semesterFilter == '5'}">5</option>
+                                <option value="6" th:selected="${semesterFilter == '6'}">6</option>
+                                <option value="7" th:selected="${semesterFilter == '7'}">7</option>
+                                <option value="8" th:selected="${semesterFilter == '8'}">8</option>
                             </select>
                         </div>
                         <div class="filter-group">
@@ -531,61 +517,53 @@
                 </form>
             </div>
 
-            <!-- Class List Section -->
-            <div class="class-list-section">
-                <div class="class-list-header">
-                    <h3 class="class-list-title">Daftar Seluruh Kelas yang Tersedia</h3>
-                    <form action="/Admin_daftarkelas/add-form" method="GET" style="display: inline;">
-                        <button type="submit" class="add-class-btn">
+            <!-- Course List Section -->
+            <div class="course-list-section">
+                <div class="course-list-header">
+                    <h3 class="course-list-title">Daftar Mata Kuliah</h3>
+                    <form action="/Admin_matakuliah/add-form" method="GET" style="display: inline;">
+                        <button type="submit" class="add-course-btn">
                             <span>+</span>
-                            Tambah Kelas
+                            Tambah Mata Kuliah
                         </button>
                     </form>
                 </div>
 
-                <table class="class-table">
+                <table class="course-table">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Kode</th>
-                            <th>Mata Kuliah</th>
-                            <th>Prodi</th>
+                            <th>Kode Mata Kuliah</th>
+                            <th>Nama Mata Kuliah</th>
+                            <th>Fakultas</th>
+                            <th>Program Studi</th>
                             <th>Semester</th>
-                            <th>Kelas</th>
-                            <th>SKS</th>
-                            <th>Ruangan</th>
-                            <th>Jadwal</th>
-                            <th>Dosen</th>
-                            <th>Kuota</th>
+                            <th>Jumlah SKS</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="classTableBody">
-                         <tr th:each="kelas, iterStat : ${kelasList}" class="class-row">
+                    <tbody id="courseTableBody">
+                        <tr th:each="matakuliah, iterStat : ${matakuliahList}" class="course-row">
                             <td th:text="${iterStat.count}"></td>
-                            <td th:text="${kelas.mataKuliah?.kodeMk ?: '-'}"></td>
-                            <td th:text="${kelas.mataKuliah?.namaMk ?: '-'}"></td>
-                            <td th:text="${kelas.mataKuliah?.programStudi ?: '-'}"></td>
-                            <td th:text="${kelas.mataKuliah?.semester ?: '-'}"></td>
-                            <td th:text="${kelas.kelas ?: '-'}"></td>
-                            <td th:text="${kelas.mataKuliah?.sks ?: '-'}"></td>
-                            <td th:text="${kelas.ruangan ?: '-'}"></td>
-                            <td th:text="${kelas.jadwal ?: '-'}"></td>
-                            <td th:text="${kelas.dosen?.name ?: 'Dosen Belum Terdaftar'}"></td>
-                            <td th:text="${kelas.kuotaInfo ?: '0/0'}"></td>
+                            <td th:text="${matakuliah.kodeMk ?: '-'}"></td>
+                            <td th:text="${matakuliah.namaMk ?: '-'}"></td>
+                            <td th:text="${matakuliah.fakultas ?: '-'}"></td>
+                            <td th:text="${matakuliah.programStudi ?: '-'}"></td>
+                            <td th:text="${matakuliah.semester ?: '-'}"></td>
+                            <td th:text="${matakuliah.sks ?: '-'}"></td>
                             <td>
                                 <div class="action-buttons">
-                                    <form th:action="@{/Admin_daftarkelas/edit}" method="get" style="display: inline;">
-                                        <input type="hidden" name="id" th:value="${kelas.id}">
+                                    <form th:action="@{/Admin_matakuliah/edit}" method="get" style="display: inline;">
+                                        <input type="hidden" name="id" th:value="${matakuliah.id}">
                                         <button type="submit" class="action-btn edit-btn" title="Edit" 
                                                 style="cursor: pointer; font-weight: bold;">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </form>
-                                    <form th:action="@{/Admin_daftarkelas/delete}" method="post" style="display: inline;">
-                                        <input type="hidden" name="id" th:value="${kelas.id}">
+                                    <form th:action="@{/Admin_matakuliah/delete}" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" th:value="${matakuliah.id}">
                                         <button type="submit" class="action-btn delete-btn" title="Hapus" 
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus kelas ini?')">
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus mata kuliah ini?')">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
@@ -597,122 +575,95 @@
             </div>
         </div>
 
-        <!-- Form for Add/Edit Class -->
-        <div class="main-content class-form-section" id="classFormView" 
+        <!-- Form for Add/Edit Course -->
+        <div class="main-content course-form-section" id="courseFormView" 
             th:if="${showForm}">
             
-            <h2 class="form-title" id="formTitle">Form Pengaturan Kelas</h2>
+            <h2 class="form-title" id="formTitle">Form Tambah Mata Kuliah</h2>
             
             <div id="messageContainer"></div>
             
-            <form id="classForm" th:action="${isEdit ? '/Admin_daftarkelas/edit' : '/Admin_daftarkelas/add'}" method="post">
-                <input type="hidden" id="editId" name="id" th:value="${isEdit ? editKelas?.id : ''}">
+            <form id="courseForm" th:action="${isEdit ? '/Admin_matakuliah/edit' : '/Admin_matakuliah/add'}" method="post">
+                <input type="hidden" id="editId" name="id" th:value="${isEdit ? editMatakuliah?.id : ''}">
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Kode Mata Kuliah<span class="required">*</span></label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" class="form-input" id="classCode" name="code" 
-                                th:value="${formKodeMk}" style="flex: 1;">
-                            <button type="submit" formaction="/Admin_daftarkelas/fillMataKuliah" 
-                                    style="cursor: pointer; padding: 8px 16px; background: #42832C; color: rgb(255, 255, 255); border: none; border-radius: 4px;">
-                                Cari
-                            </button>
-                        </div>
+                        <input type="text" class="form-input" id="courseCode" name="code" 
+                            th:value="${isEdit ? editMatakuliah?.kodeMk : formCode}"
+                            placeholder="Contoh: ILK001">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nama Mata Kuliah<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="className" name="name" 
-                            th:value="${selectedMataKuliah?.namaMk}" readonly>
+                        <input type="text" class="form-input" id="courseName" name="name" 
+                            th:value="${isEdit ? editMatakuliah?.namaMk : formName}"
+                            placeholder="Contoh: Algoritma dan Pemrograman">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Fakultas<span class="required">*</span></label>
+                        <select class="form-select" id="courseFaculty" name="faculty">
+                            <option value="">Pilih Fakultas</option>
+                            <option value="Fakultas Ilmu Komputer dan Teknologi Informasi" 
+                                    th:selected="${(isEdit ? editMatakuliah?.fakultas : formFaculty) == 'Fakultas Ilmu Komputer dan Teknologi Informasi'}">
+                                Fakultas Ilmu Komputer dan Teknologi Informasi
+                            </option>
+                            <option value="Fakultas Teknik" 
+                                    th:selected="${(isEdit ? editMatakuliah?.fakultas : formFaculty) == 'Fakultas Teknik'}">
+                                Fakultas Teknik
+                            </option>
+                            <option value="Fakultas Ekonomi dan Bisnis" 
+                                    th:selected="${(isEdit ? editMatakuliah?.fakultas : formFaculty) == 'Fakultas Ekonomi dan Bisnis'}">
+                                Fakultas Ekonomi dan Bisnis
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Program Studi<span class="required">*</span></label>
+                        <select class="form-select" id="courseProdi" name="prodi">
+                            <option value="">Pilih Program Studi</option>
+                            <option value="Ilmu Komputer" 
+                                    th:selected="${(isEdit ? editMatakuliah?.programStudi : formProdi) == 'Ilmu Komputer'}">
+                                Ilmu Komputer
+                            </option>
+                            <option value="Sistem Informasi" 
+                                    th:selected="${(isEdit ? editMatakuliah?.programStudi : formProdi) == 'Sistem Informasi'}">
+                                Sistem Informasi
+                            </option>
+                            <option value="Teknologi Informasi" 
+                                    th:selected="${(isEdit ? editMatakuliah?.programStudi : formProdi) == 'Teknologi Informasi'}">
+                                Teknologi Informasi
+                            </option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Semester<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classSemester" name="semester" 
-                            th:value="${selectedMataKuliah?.semester}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Fakultas<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classFaculty" name="faculty" 
-                            th:value="${selectedMataKuliah?.fakultas}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Program Studi<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classProdi" name="prodi" 
-                            th:value="${selectedMataKuliah?.programStudi}" readonly>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Bobot SKS<span class="required">*</span></label>
-                        <input type="text" class="form-input disable-input" id="classSKS" name="sks" 
-                            th:value="${selectedMataKuliah?.sks}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Kuota Mahasiswa<span class="required">*</span></label>
-                        <input type="number" class="form-input" id="classQuota" name="quota" min="1" 
-                            th:value="${isEdit ? editKelas?.kuota : formQuota}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Kelas<span class="required">*</span></label>
-                        <select class="form-select" id="classSection" name="section">
-                            <option value="">Pilih Kelas</option>
-                            <option value="A" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'A'}">A</option>
-                            <option value="B" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'B'}">B</option>
-                            <option value="C" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'C'}">C</option>
-                            <option value="D" th:selected="${(isEdit ? editKelas?.kelas : formSection) == 'D'}">D</option>
+                        <select class="form-select" id="courseSemester" name="semester">
+                            <option value="">Pilih Semester</option>
+                            <option value="1" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '1'}">1</option>
+                            <option value="2" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '2'}">2</option>
+                            <option value="3" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '3'}">3</option>
+                            <option value="4" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '4'}">4</option>
+                            <option value="5" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '5'}">5</option>
+                            <option value="6" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '6'}">6</option>
+                            <option value="7" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '7'}">7</option>
+                            <option value="8" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '8'}">8</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Ruangan<span class="required">*</span></label>
-                        <select class="form-select" id="classRoom" name="room">
-                            <option value="">Pilih Ruangan</option>
-                            <option value="D-101" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-101'}">D-101</option>
-                            <option value="D-102" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-102'}">D-102</option>
-                            <option value="D-103" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-103'}">D-103</option>
-                            <option value="D-104" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-104'}">D-104</option>
-                            <option value="D-105" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-105'}">D-105</option>
-                            <option value="D-106" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'D-106'}">D-106</option>
-                            <option value="Lab-1" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'Lab-1'}">Lab-1</option>
-                            <option value="Lab-2" th:selected="${(isEdit ? editKelas?.ruangan : formRoom) == 'Lab-2'}">Lab-2</option>
+                        <label class="form-label">Jumlah SKS<span class="required">*</span></label>
+                        <select class="form-select" id="courseSKS" name="sks">
+                            <option value="">Pilih SKS</option>
+                            <option value="1" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '1'}">1</option>
+                            <option value="2" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '2'}">2</option>
+                            <option value="3" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '3'}">3</option>
+                            <option value="4" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '4'}">4</option>
                         </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <label class="form-label">Jadwal<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="classSchedule" name="schedule" 
-                            th:value="${isEdit ? editKelas?.jadwal : formSchedule}"
-                            placeholder="Contoh: Kamis, 13:50 - 16:20">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Dosen<span class="required">*</span></label>
-                        <div style="display: flex; gap: 10px;">
-                            <select class="form-select" id="classLecturer" name="lecturer" style="flex: 1;">
-                                <option value="">Dosen Belum Terdaftar</option>
-                                <option th:each="dosen : ${dosenList}" 
-                                        th:value="${dosen.name}" 
-                                        th:text="${dosen.name}"
-                                        th:selected="${(isEdit ? editKelas?.dosen?.name : selectedLecturer) == dosen.name}">
-                                </option>
-                            </select>
-                            <button type="submit" formaction="/Admin_daftarkelas/fillDosen" 
-                                    style="cursor: pointer; padding: 8px 16px; background: #42832C; color: rgb(255, 255, 255); border: none; border-radius: 4px;">
-                                Cek NIDN
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">NIDN Dosen</label>
-                        <input type="text" class="form-input disable-input" id="classNidnDosen" name="nidnDosen" 
-                            th:value="${isEdit ? editKelas?.dosen?.nidn : selectedDosen?.nidn}" readonly>
                     </div>
                 </div>
 
@@ -721,7 +672,7 @@
                         <i class="fas fa-save"></i>
                         <span th:text="${isEdit ? 'Update' : 'Simpan'}">Simpan</span>
                     </button>
-                    <button type="button" class="btn-secondary" onclick="window.location.href='/Admin_daftarkelas'">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='/Admin_matakuliah'">
                         Batal
                     </button>
                 </div>
@@ -730,8 +681,7 @@
     </div>
 
     <script>
-
-        let classes = [];
+        let courses = [];
         let currentEditId = null;
 
         // Initialize page
@@ -739,35 +689,26 @@
             setupEventListeners();
         });
 
-        //Form harus terisi semua sebelum disubmit
-        document.getElementById('classForm').addEventListener('submit', function(e) {
-            const action = e.submitter.getAttribute('formaction') || this.action;
+        // Form validation before submit
+        document.getElementById('courseForm').addEventListener('submit', function(e) {
+            const fields = ['courseCode', 'courseName', 'courseFaculty', 'courseProdi', 'courseSemester', 'courseSKS'];
             
-            // Jika bukan aksi pencarian, validasi semua field
-            if (!action.includes('fillMataKuliah') && !action.includes('fillDosen')) {
-                const fields = ['classCode', 'classQuota', 'classSection', 'classRoom', 'classSchedule', 'classLecturer'];
-                
-                for (let fieldId of fields) {
-                    const field = document.getElementById(fieldId);
-                    if (!field.value.trim()) {
-                        alert('Field ' + field.previousElementSibling.textContent + ' harus diisi!');
-                        field.focus();
-                        e.preventDefault();
-                        return;
-                    }
+            for (let fieldId of fields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    alert('Field ' + field.previousElementSibling.textContent + ' harus diisi!');
+                    field.focus();
+                    e.preventDefault();
+                    return;
                 }
             }
         });
 
-
         // Setup event listeners
         function setupEventListeners() {
-            document.getElementById('codeFilter').addEventListener('input', filterClasses);
-            document.getElementById('nameFilter').addEventListener('input', filterClasses);
-            document.getElementById('classFilter').addEventListener('change', filterClasses);
-            document.getElementById('roomFilter').addEventListener('change', filterClasses);
+            // Filter functionality would be handled by server-side processing
+            // but we can add client-side enhancement if needed
         }
-
 
         function showMessage(message, type = 'success') {
             const messageContainer = document.getElementById('messageContainer');
