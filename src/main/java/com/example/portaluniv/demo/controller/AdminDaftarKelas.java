@@ -230,12 +230,12 @@ public class AdminDaftarKelas {
 
     @PostMapping("/Admin_daftarkelas/edit")
     public String editKelas(@RequestParam Long id,
-                        @RequestParam String code,        // Ubah dari kodeMk ke code
-                        @RequestParam String section,     // Ubah dari kelas ke section  
-                        @RequestParam Integer quota,      // Ubah dari kuota ke quota
-                        @RequestParam String room,        // Ubah dari ruangan ke room
-                        @RequestParam String schedule,    // Ubah dari jadwal ke schedule
-                        @RequestParam String lecturer,    // Ubah dari dosenName ke lecturer
+                        @RequestParam String code,        
+                        @RequestParam String section,       
+                        @RequestParam Integer quota,      
+                        @RequestParam String room,        
+                        @RequestParam String schedule,    
+                        @RequestParam String lecturer,    
                         Model model,
                         RedirectAttributes redirectAttributes) {
         try {
