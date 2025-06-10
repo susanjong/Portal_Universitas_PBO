@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin -Daftar Mahasiswa</title>
+    <title>Dashboard Admin - Daftar Mahasiswa</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -100,18 +100,6 @@
             font-weight: 700;
         }
 
-        .sidebar-item .icon {
-            width: 16px;
-            height: 16px;
-            margin-right: 12px;
-            background: #666;
-            border-radius: 2px;
-        }
-
-        .sidebar-item.active .icon {
-            background: #2d5016;
-        }
-
         .sidebar-item .fa-solid {
             margin-right: 12px;
             width: 16px;
@@ -147,6 +135,7 @@
             display: flex;
             gap: 20px;
             align-items: end;
+            margin-bottom: 10px;
         }
 
         .filter-group {
@@ -184,21 +173,43 @@
             background-color: white;
         }
 
-        .search-icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn-filter {
+            background-color: #42832C;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 14px;
         }
 
-        .filter-input-container {
-            position: relative;
+        .btn-filter:hover {
+            background-color: #16610E;
+        }
+
+        .btn-clear {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-clear:hover {
+            background-color: #5a6268;
         }
 
         .student-list-section {
-            margin-top: 60px;
+            margin-top: 40px;
         }
 
         .student-list-header {
@@ -219,22 +230,21 @@
             color: white;
             padding: 8px 16px;
             border: none;
+            text-decoration: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
             display: flex;
             align-items: center;
             gap: 5px;
-            margin-right: 70%;
         }
 
         .add-student-btn:hover {
             background-color: #16610E;
         }
 
-         .student-table {
+        .student-table {
             width: 100%;
-            border-collapse: collapse;
             background-color: white;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
@@ -269,6 +279,7 @@
         .action-buttons {
             display: flex;
             gap: 5px;
+            justify-content: center;
         }
 
         .action-btn {
@@ -303,11 +314,12 @@
 
         /* Form Styles */
         .student-form-section {
+            width: 100%;
             background-color: white;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none; /* Hidden by default */
+            margin-top: 20px;
         }
 
         .form-title {
@@ -329,10 +341,6 @@
             flex: 1;
         }
 
-        .form-group.full-width {
-            flex: 2;
-        }
-
         .form-label {
             display: block;
             font-size: 14px;
@@ -342,7 +350,6 @@
         }
 
         .form-input {
-            width: 100%;
             padding: 10px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -353,29 +360,6 @@
         .form-input:focus {
             outline: none;
             border-color: #4a7c59;
-        }
-
-        .form-input:disabled {
-            background-color: #e9ecef;
-            border-color: #ced4da;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            background-color: white;
-        }
-
-        .form-select:disabled {
-            background-color: #e9ecef;
-            border-color: #ced4da;
-            color: #6c757d;
-            cursor: not-allowed;
         }
 
         .form-buttons {
@@ -406,6 +390,7 @@
             color: white;
             padding: 10px 20px;
             border: none;
+            text-decoration: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
@@ -437,122 +422,8 @@
             border: 1px solid #f5c6cb;
         }
 
-        /* Toast Notification Styles */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .toast {
-            padding: 16px 24px;
-            margin-bottom: 16px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 350px;
-            animation: slideIn 0.3s ease-out;
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .toast.success {
-            background-color: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-
-        .toast.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        .toast.warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border-left: 4px solid #ffc107;
-        }
-
-        .toast.info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-
-        .toast-icon {
-            font-size: 18px;
-        }
-
-        .toast-message {
-            flex: 1;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .toast-close {
-            background: none;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            opacity: 0.7;
-            padding: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toast-close:hover {
-            opacity: 1;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .note-section {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            border-left: 4px solid #42832C;
-            margin-bottom: 20px;
-        }
-
-        .note-section h4 {
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .note-section p {
-            color: #666;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        #Namalengkap {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -562,104 +433,113 @@
         <div class="header-title">PORTAL USU</div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
     <div class="container">
         <div class="sidebar">
-            <a href="/Admin_profile" class="sidebar-item" onclick="setActiveMenu(this, 'profil')">
+            <a href="/Admin_profile" class="sidebar-item">
                 <i class="fa-solid fa-user"></i>
                 Profil
             </a>
-            <a href="/Admin_beranda" class="sidebar-item" onclick="setActiveMenu(this, 'beranda')">
+            <a href="/Admin_beranda" class="sidebar-item">
                 <i class="fa-solid fa-house-chimney"></i>
                 Beranda
             </a>
-            <a href="/Admin_daftarkelas" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-kelas')">
+            <a href="/Admin_daftarkelas" class="sidebar-item">
                 <i class="fa-solid fa-book-open"></i>
                 Daftar Kelas
             </a>
-            <a href="/Admin_aturkelas" class="sidebar-item" onclick="setActiveMenu(this, 'kelas-tersimpan')">
+            <a href="/Admin_aturkelas" class="sidebar-item">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Atur Kelas
             </a>
-            <a href="/Admin_daftarmahasiswa" class="sidebar-item-daftar active" onclick="setActiveMenu(this, 'daftar-mahasiswa')">
+            <a href="/Admin_daftarmahasiswa" class="sidebar-item-daftar active">
                 <i class="fas fa-book-reader"></i>
                 <p>Daftar Mahasiswa</p>
             </a>
-            <a href="/Admin_daftardosen" class="sidebar-item" onclick="setActiveMenu(this, 'daftar-dosen')">
+            <a href="/Admin_daftardosen" class="sidebar-item">
                 <i class="fa-solid fa-user-tie"></i>
-                <p>Daftar Dosen</p>
+                Daftar Dosen
             </a>
-            <a href="/Admin_matakuliah" class="sidebar-item" onclick="setActiveMenu(this, 'mata-kuliah')">
+            <a href="/Admin_matakuliah" class="sidebar-item">
                 <i class="fa-solid fa-book-open"></i>
                 Mata Kuliah
             </a>
         </div>
 
-        <div class="main-content" id="studentListView">
+        <div class="main-content">
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="success-message" th:text="${success}"></div>
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
             <!-- Filter Section -->
             <div class="filter-section">
                 <h3 class="filter-title">Filter Data</h3>
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">NIM</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="codeFilter" placeholder="Cari berdasarkan NIM ">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
+                <form method="get" th:action="@{/Admin_daftarmahasiswa}">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">NIM</label>
+                            <input type="text" class="filter-input" name="nimFilter" 
+                                   th:value="${nimFilter}" placeholder="Cari berdasarkan NIM">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Nama Mahasiswa</label>
+                            <input type="text" class="filter-input" name="nameFilter" 
+                                   th:value="${nameFilter}" placeholder="Cari berdasarkan nama">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Semester</label>
+                            <select class="filter-select" name="semesterFilter">
+                                <option value="">Semua Semester</option>
+                                <option value="1" th:selected="${semesterFilter == '1'}">Semester 1</option>
+                                <option value="2" th:selected="${semesterFilter == '2'}">Semester 2</option>
+                                <option value="3" th:selected="${semesterFilter == '3'}">Semester 3</option>
+                                <option value="4" th:selected="${semesterFilter == '4'}">Semester 4</option>
+                                <option value="5" th:selected="${semesterFilter == '5'}">Semester 5</option>
+                                <option value="6" th:selected="${semesterFilter == '6'}">Semester 6</option>   
+                                <option value="7" th:selected="${semesterFilter == '7'}">Semester 7</option>
+                                <option value="8" th:selected="${semesterFilter == '8'}">Semester 8</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Nama Mahasiswa</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="nameFilter" placeholder="Cari berdasarkan nama ">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">Fakultas</label>
+                            <select class="filter-select" name="fakultasFilter">
+                                <option value="">Semua Fakultas</option>
+                                <option value="Kedokteran" th:selected="${fakultasFilter == 'Kedokteran'}">Fakultas Kedokteran</option>
+                                <option value="Ilmu Komputer dan Teknologi Informasi" th:selected="${fakultasFilter == 'Ilmu Komputer dan Teknologi Informasi'}">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
+                                <option value="Teknik" th:selected="${fakultasFilter == 'Teknik'}">Fakultas Teknik</option>
+                                <option value="Farmasi" th:selected="${fakultasFilter == 'Farmasi'}">Fakultas Farmasi</option>
+                                <option value="Ekonomi" th:selected="${fakultasFilter == 'Ekonomi'}">Fakultas Ekonomi</option>
+                                <option value="Hukum" th:selected="${fakultasFilter == 'Hukum'}">Fakultas Hukum</option>
+                                <option value="MIPA" th:selected="${fakultasFilter == 'MIPA'}">Fakultas MIPA</option>
+                                <option value="Sosial Politik" th:selected="${fakultasFilter == 'Sosial Politik'}">Fakultas Sosial Politik</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Program Studi</label>
+                            <input type="text" class="filter-input" name="prodiFilter" 
+                                   th:value="${prodiFilter}" placeholder="Cari Program Studi">
                         </div>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Semester</label>
-                        <select class="filter-select" id="classFilter">
-                            <option value="">Semester</option>
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                            <option value="3">Semester 3</option>
-                            <option value="4">Semester 4</option>
-                            <option value="5">Semester 5</option>
-                            <option value="6">Semester 6</option>   
-                            <option value="7">Semester 7</option>
-                            <option value="8">Semester 8</option>
-                        </select>
+                    <div class="filter-buttons">
+                        <button type="submit" class="btn-filter">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <a href="/Admin_daftarmahasiswa" class="btn-clear">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Fakultas</label>
-                        <select class="filter-select" id="roomFilter">
-                            <option value="" disabled selected>Pilih Fakultas</option>
-                            <option value="Fakultas Kedokteran">Fakultas Kedokteran</option>
-                            <option value="Fakultas Ilmu Komputer dan Teknologi Informasi">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
-                            <option value="Fakultas Teknik">Fakultas Teknik</option>
-                            <option value="Fakultas Ekonomi">Fakultas Ekonomi</option>
-                            <option value="Fakultas Hukum">Fakultas Hukum</option>
-                            <option value="Fakultas MIPA">Fakultas MIPA</option>
-                            <option value="Fakultas Sosial Politik">Fakultas Sosial Politik</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Program Studi</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="prodiFilter" placeholder="Cari Program Studi ">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
 
-            <div class="student-list-section">
+            <!-- Student List Section -->
+            <div class="student-list-section" th:unless="${showAddForm or showEditForm}">
                 <div class="student-list-header">
-                    <h2 class="student-list-title">Daftar Mahasiswa </h2>
-                    <button class="add-student-btn" onclick="showAddStudentForm()">
+                    <h2 class="student-list-title">Daftar Mahasiswa</h2>
+                    <a href="/Admin_daftarmahasiswa?showAddForm=true" class="add-student-btn">
                         <span>+</span>
                         Tambah Mahasiswa
-                    </button>
+                    </a>
                 </div>
 
                 <table class="student-table">
@@ -675,675 +555,201 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="studentTableBody">
+                    <tbody>
+                         <tr th:each="student, iterStat : ${students}">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${student.nim}"></td>  <!-- CHANGE: username → nim -->
+                            <td th:text="${student.name}"></td>
+                            <td th:text="${student.semester}"></td>
+                            <td th:text="${student.fakultas}"></td>
+                            <td th:text="${student.programStudi}"></td>  <!-- CHANGE: prodi → programStudi -->
+                            <td th:text="${student.email}"></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form method="get" th:action="@{/Admin_daftarmahasiswa/edit-student}" style="display: inline;">
+                                        <input type="hidden" name="editUserId" th:value="${student.id}">  <!-- CHANGE: user.id → student.id -->
+                                        <button type="submit" class="action-btn edit-btn" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/Admin_daftarmahasiswa/delete-student}" 
+                                        method="post" style="display: inline;" 
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus mahasiswa ini?')">
+                                        <input type="hidden" name="id" th:value="${student.id}">
+                                        <button type="submit" class="action-btn delete-btn" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(students)}">
+                            <td colspan="8" style="text-align: center; color: #666;">
+                                Tidak ada data mahasiswa yang ditemukan
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <div class="main-content student-form-section" id="studentFormView">
-            <h2 class="form-title" id="formTitle">Form Tambah Mahasiswa</h2>
-
-            <div id="messageContainer"></div>
-
-            <form id="studentForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">NIM Mahasiswa<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="studentNIM" name="studentNIM" required>
-                        <div id="nimError" class="error-message" style="display: none;"></div>
+            
+            <div class="student-form-section" th:if="${showAddForm}">
+                <h3 class="form-title">Tambah Mahasiswa Baru</h3>
+                <form th:action="@{/Admin_daftarmahasiswa/add-student}" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">NIM <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="nim" required placeholder="Masukkan NIM">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nama Lengkap <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="name" required placeholder="Masukkan nama lengkap">
+                        </div>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Nama Lengkap<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="studentName" name="studentName" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" class="form-input" name="email" required placeholder="Masukkan email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password <span class="required">*</span></label>
+                            <input type="password" class="form-input" name="password" required placeholder="Masukkan password">
+                        </div>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Semester<span class="required">*</span></label>
-                        <select class="form-input" id="semester" name="semester" required>
-                            <option value="" disabled selected>-- Pilih Semester --</option>
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                            <option value="3">Semester 3</option>
-                            <option value="4">Semester 4</option>
-                            <option value="5">Semester 5</option>
-                            <option value="6">Semester 6</option>
-                            <option value="7">Semester 7</option>
-                            <option value="8">Semester 8</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Semester <span class="required">*</span></label>
+                            <select class="form-input" name="semester" required>
+                                <option value="">Pilih Semester</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fakultas <span class="required">*</span></label>
+                            <select class="form-input" name="fakultas" required>
+                                <option value="">Pilih Fakultas</option>
+                                <option value="Fakultas Kedokteran">Fakultas Kedokteran</option>
+                                <option value="Fakultas Ilmu Komputer dan Teknologi Informasi">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
+                                <option value="Fakultas Teknik">Fakultas Teknik</option>
+                                <option value="Fakultas Ekonomi">Fakultas Ekonomi</option>
+                                <option value="Fakultas Hukum">Fakultas Hukum</option>
+                                <option value="Fakultas MIPA">Fakultas MIPA</option>
+                                <option value="Fakultas Sosial Politik">Fakultas Sosial Politik</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Fakultas<span class="required">*</span></label>
-                        <select class="form-input" id="faculty" name="faculty" required>
-                            <option value="" disabled selected>Pilih Fakultas</option>
-                            <option value="Fakultas Kedokteran">Fakultas Kedokteran</option>
-                            <option value="Fakultas Ilmu Komputer dan Teknologi Informasi">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
-                            <option value="Fakultas Teknik">Fakultas Teknik</option>
-                            <option value="Fakultas Ekonomi">Fakultas Ekonomi</option>
-                            <option value="Fakultas Hukum">Fakultas Hukum</option>
-                            <option value="Fakultas MIPA">Fakultas MIPA</option>
-                            <option value="Fakultas Sosial Politik">Fakultas Sosial Politik</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Program Studi <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="prodi" required placeholder="Masukkan program studi">
+                        </div>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Program Studi<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="programStudi" name="programStudi" required>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                        <a href="/Admin_daftarmahasiswa" class="btn-secondary">
+                            <i class="fas fa-times"></i> Batal
+                        </a>
                     </div>
-                </div>
+                </form>
+            </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Email<span class="required">*</span></label>
-                        <input type="email" class="form-input" id="studentEmail" name="studentEmail" required>
+            <!-- Edit Student Form -->
+            <div class="student-form-section" th:if="${showEditForm}">
+                <h3 class="form-title">Edit Data Mahasiswa</h3>
+                <form th:action="@{/Admin_daftarmahasiswa/edit-student}" method="post">
+                    <input type="hidden" name="id" th:value="${editStudent.id}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">NIM <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="nim" required 
+                                   th:value="${editStudent.username}" placeholder="Masukkan NIM">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nama Lengkap <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="name" required 
+                                   th:value="${editStudent.name}" placeholder="Masukkan nama lengkap">
+                        </div>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Password<span class="required">*</span></label>
-                        <input type="password" class="form-input" id="studentPassword" name="studentPassword" required>
-                        <div id="passwordError" class="error-message" style="display: none;"></div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" class="form-input" name="email" required 
+                                   th:value="${editStudent.email}" placeholder="Masukkan email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Semester <span class="required">*</span></label>
+                            <select class="form-input" name="semester" required>
+                                <option value="">Pilih Semester</option>
+                                <option value="1" th:selected="${editStudent.semester == 1}">Semester 1</option>
+                                <option value="2" th:selected="${editStudent.semester == 2}">Semester 2</option>
+                                <option value="3" th:selected="${editStudent.semester == 3}">Semester 3</option>
+                                <option value="4" th:selected="${editStudent.semester == 4}">Semester 4</option>
+                                <option value="5" th:selected="${editStudent.semester == 5}">Semester 5</option>
+                                <option value="6" th:selected="${editStudent.semester == 6}">Semester 6</option>
+                                <option value="7" th:selected="${editStudent.semester == 7}">Semester 7</option>
+                                <option value="8" th:selected="${editStudent.semester == 8}">Semester 8</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-
-                <div class="form-buttons">
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i>
-                        Simpan
-                    </button>
-                    <button type="button" class="btn-secondary" onclick="cancelForm()">
-                        Batal
-                    </button>
-                </div>
-            </form>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Fakultas <span class="required">*</span></label>
+                            <select class="form-input" name="fakultas" required>
+                                <option value="">Pilih Fakultas</option>
+                                <option value="Kedokteran" th:selected="${editStudent.fakultas == 'Kedokteran'}">Fakultas Kedokteran</option>
+                                <option value="Ilmu Komputer dan Teknologi Informasi" th:selected="${editStudent.fakultas == 'Ilmu Komputer dan Teknologi Informasi'}">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
+                                <option value="Teknik" th:selected="${editStudent.fakultas == 'Teknik'}">Fakultas Teknik</option>
+                                <option value="Farmasi" th:selected="${editStudent.fakultas == 'Farmasi'}">Fakultas Farmasi</option>
+                                <option value="Ekonomi" th:selected="${editStudent.fakultas == 'Ekonomi'}">Fakultas Ekonomi</option>
+                                <option value="Hukum" th:selected="${editStudent.fakultas == 'Hukum'}">Fakultas Hukum</option>
+                                <option value="MIPA" th:selected="${editStudent.fakultas == 'MIPA'}">Fakultas MIPA</option>
+                                <option value="Sosial Politik" th:selected="${editStudent.fakultas == 'Sosial Politik'}">Fakultas Sosial Politik</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Program Studi <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="prodi" required 
+                                   th:value="${editStudent.programStudi}" placeholder="Masukkan program studi">
+                        </div>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Update
+                        </button>
+                        <a href="/Admin_daftarmahasiswa" class="btn-secondary">
+                            <i class="fas fa-times"></i> Batal
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-          
+
     <script>
-        
-   let students = [];
-let currentEditId = null;
-let filteredStudents = [];
-
-// Function to set active menu item
-function setActiveMenu(element, menuName) {
-    const sidebarItems = document.querySelectorAll('.sidebar-item, .sidebar-item-daftar');
-    sidebarItems.forEach(item => {
-        item.classList.remove('active');
-    });
-    element.classList.add('active');
-}
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    setupEventListeners();
-    filteredStudents = [...students];
-    renderStudentTable();
-    populateFilterOptions();
-});
-
-// Setup event listeners
-function setupEventListeners() {
-    document.getElementById('studentForm').addEventListener('submit', handleFormSubmit);
-    
-    // Add filter event listeners with real-time filtering
-    const filterInputs = ['searchInput', 'filterFaculty', 'filterSemester'];
-    filterInputs.forEach(inputId => {
-        const element = document.getElementById(inputId);
-        if (element) {
-            // Use 'input' for real-time search and 'change' for dropdowns
-            if (inputId === 'searchInput') {
-                element.addEventListener('input', applyFilters);
-                element.addEventListener('keyup', applyFilters);
-            } else {
-                element.addEventListener('change', applyFilters);
+        // Auto-hide success/error messages after 5 seconds
+        setTimeout(function() {
+            const successMsg = document.querySelector('.success-message');
+            const errorMsg = document.querySelector('.error-message');
+            if (successMsg) {
+                successMsg.style.display = 'none';
             }
+            if (errorMsg) {
+                errorMsg.style.display = 'none';
+            }
+        }, 5000);
+
+        // Confirm delete action
+        function confirmDelete(studentName) {
+            return confirm('Apakah Anda yakin ingin menghapus mahasiswa "' + studentName + '"?');
         }
-    });
-}
-
-// Populate filter options automatically
-function populateFilterOptions() {
-    const facultySelect = document.getElementById('filterFaculty');
-    const semesterSelect = document.getElementById('filterSemester');
-    
-    if (facultySelect && semesterSelect) {
-        // Get unique faculties and semesters from student data
-        const faculties = [...new Set(students.map(student => student.faculty))].sort();
-        const semesters = [...new Set(students.map(student => student.semester))].sort((a, b) => a - b);
-        
-        // Clear existing options (except the first "All" option)
-        facultySelect.innerHTML = '<option value="">Semua Fakultas</option>';
-        semesterSelect.innerHTML = '<option value="">Semua Semester</option>';
-        
-        // Add faculty options
-        faculties.forEach(faculty => {
-            if (faculty) {
-                const option = document.createElement('option');
-                option.value = faculty;
-                option.textContent = faculty;
-                facultySelect.appendChild(option);
-            }
-        });
-        
-        // Add semester options
-        semesters.forEach(semester => {
-            if (semester) {
-                const option = document.createElement('option');
-                option.value = semester;
-                option.textContent = `Semester ${semester}`;
-                semesterSelect.appendChild(option);
-            }
-        });
-    }
-}
-
-// Apply filters to student data
-function applyFilters() {
-    const searchInput = document.getElementById('searchInput');
-    const facultyFilter = document.getElementById('filterFaculty');
-    const semesterFilter = document.getElementById('filterSemester');
-    
-    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    const facultyFilterValue = facultyFilter ? facultyFilter.value : '';
-    const semesterFilterValue = semesterFilter ? semesterFilter.value : '';
-
-    filteredStudents = students.filter(student => {
-        // Search filter - check multiple fields
-        const matchesSearch = !searchTerm || 
-            (student.name && student.name.toLowerCase().includes(searchTerm)) ||
-            (student.nim && student.nim.toLowerCase().includes(searchTerm)) ||
-            (student.email && student.email.toLowerCase().includes(searchTerm)) ||
-            (student.program && student.program.toLowerCase().includes(searchTerm));
-
-        // Faculty filter
-        const matchesFaculty = !facultyFilterValue || student.faculty === facultyFilterValue;
-        
-        // Semester filter
-        const matchesSemester = !semesterFilterValue || student.semester === semesterFilterValue;
-
-        return matchesSearch && matchesFaculty && matchesSemester;
-    });
-
-    renderStudentTable();
-    updateStudentCount();
-}
-
-// Show add student form
-function showAddStudentForm() {
-    currentEditId = null;
-    document.getElementById('formTitle').textContent = 'Form Tambah Mahasiswa';
-    document.getElementById('studentForm').reset();
-    clearMessages();
-
-    // Show form, hide list
-    document.getElementById('studentListView').style.display = 'none';
-    document.getElementById('studentFormView').style.display = 'block';
-}
-
-// Handle form submission
-async function handleFormSubmit(event) {
-    event.preventDefault(); // Prevent default form submission
-
-    const nim = document.getElementById('studentNIM').value.trim();
-    const name = document.getElementById('studentName').value.trim();
-    const semester = document.getElementById('semester').value;
-    const faculty = document.getElementById('faculty').value;
-    const programStudi = document.getElementById('programStudi').value;
-    const email = document.getElementById('studentEmail').value.trim();
-    const password = document.getElementById('studentPassword').value;
-
-    // Basic validation
-    if (!nim || !name || !semester || !faculty || !programStudi || !email || !password) {
-        showNotification('Semua kolom bertanda * harus diisi.', 'error');
-        return;
-    }
-
-    // Check for duplicate NIM (exclude current student when editing)
-    const existingStudent = students.find(student => 
-        student.nim === nim && student.id !== currentEditId
-    );
-    if (existingStudent) {
-        showNotification('NIM sudah digunakan oleh mahasiswa lain.', 'error');
-        const nimError = document.getElementById('nimError');
-        if (nimError) {
-            nimError.innerText = 'NIM sudah digunakan.';
-            nimError.style.display = 'block';
-        }
-        return;
-    }
-
-    // NIM validation
-    if (!/^\d{9}$/.test(nim)) {
-        const nimError = document.getElementById('nimError');
-        if (nimError) {
-            nimError.innerText = 'NIM harus terdiri dari 9 digit angka.';
-            nimError.style.display = 'block';
-        }
-        showNotification('NIM harus terdiri dari 9 digit angka.', 'error');
-        return;
-    } else {
-        const nimError = document.getElementById('nimError');
-        if (nimError) {
-            nimError.style.display = 'none';
-        }
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showNotification('Format email tidak valid.', 'error');
-        return;
-    }
-
-    // Password validation
-    if (password.length < 6) {
-        const passwordError = document.getElementById('passwordError');
-        if (passwordError) {
-            passwordError.innerText = 'Password harus terdiri dari minimal 6 karakter.';
-            passwordError.style.display = 'block';
-        }
-        showNotification('Password harus terdiri dari minimal 6 karakter.', 'error');
-        return;
-    } else {
-        const passwordError = document.getElementById('passwordError');
-        if (passwordError) {
-            passwordError.style.display = 'none';
-        }
-    }
-
-    const studentData = {
-        nim,
-        name,
-        semester,
-        faculty,
-        program: programStudi,
-        email,
-        password
-    };
-
-    // Check if editing an existing student
-    if (currentEditId) {
-        // Update existing student
-        const index = students.findIndex(student => student.id === currentEditId);
-        if (index !== -1) {
-            students[index] = { id: currentEditId, ...studentData };
-            showNotification('Data mahasiswa berhasil diubah!', 'success');
-        }
-    } else {
-        // Add new student to the list
-        const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
-        students.push({ id: newId, ...studentData });
-        showNotification('Data mahasiswa berhasil disimpan!', 'success');
-    }
-
-    // Update filter options and apply filters
-    populateFilterOptions();
-    applyFilters();
-    cancelForm(); // Reset form after submission
-}
-
-// Render student table
-function renderStudentTable() {
-    const tbody = document.getElementById('studentTableBody');
-    if (!tbody) return;
-    
-    tbody.innerHTML = '';
-
-    if (filteredStudents.length === 0) {
-        const row = document.createElement('tr');
-        let message = '';
-        
-        // Check if there are students but filter doesn't match
-        if (students.length === 0) {
-            message = 'Tidak ada data mahasiswa yang ditemukan';
-        } else {
-            // Check which filter is active to show appropriate message
-            const searchInput = document.getElementById('searchInput');
-            const facultyFilter = document.getElementById('filterFaculty');
-            const semesterFilter = document.getElementById('filterSemester');
-            
-            const searchTerm = searchInput ? searchInput.value.trim() : '';
-            const facultyFilterValue = facultyFilter ? facultyFilter.value : '';
-            const semesterFilterValue = semesterFilter ? semesterFilter.value : '';
-            
-            if (searchTerm && !facultyFilterValue && !semesterFilterValue) {
-                message = `Tidak ada data mahasiswa yang mengandung kata "${searchTerm}"`;
-            } else if (!searchTerm && facultyFilterValue && !semesterFilterValue) {
-                message = `Tidak ada data mahasiswa dari fakultas "${facultyFilterValue}"`;
-            } else if (!searchTerm && !facultyFilterValue && semesterFilterValue) {
-                message = `Tidak ada data mahasiswa semester ${semesterFilterValue}`;
-            } else if (searchTerm && facultyFilterValue && !semesterFilterValue) {
-                message = `Tidak ada data mahasiswa yang mengandung kata "${searchTerm}" dari fakultas "${facultyFilterValue}"`;
-            } else if (searchTerm && !facultyFilterValue && semesterFilterValue) {
-                message = `Tidak ada data mahasiswa yang mengandung kata "${searchTerm}" di semester ${semesterFilterValue}`;
-            } else if (!searchTerm && facultyFilterValue && semesterFilterValue) {
-                message = `Tidak ada data mahasiswa semester ${semesterFilterValue} dari fakultas "${facultyFilterValue}"`;
-            } else if (searchTerm && facultyFilterValue && semesterFilterValue) {
-                message = `Tidak ada data mahasiswa yang mengandung kata "${searchTerm}" di semester ${semesterFilterValue} dari fakultas "${facultyFilterValue}"`;
-            } else {
-                message = 'Tidak ada data yang sesuai dengan filter';
-            }
-        }
-        
-        row.innerHTML = `
-            <td colspan="8" style="text-align: center; padding: 30px; color: #666; font-style: italic;">
-                <div style="margin-bottom: 10px;">
-                    <i class="fas fa-search" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
-                </div>
-                <div style="font-size: 16px; margin-bottom: 10px;">
-                    ${message}
-                </div>
-                ${students.length > 0 ? '<div style="font-size: 14px; color: #999;">Coba ubah kriteria pencarian atau filter Anda</div>' : ''}
-            </td>
-        `;
-        tbody.appendChild(row);
-        return;
-    }
-
-    filteredStudents.forEach((student, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${student.nim || ''}</td>
-            <td>${student.name || ''}</td>
-            <td>${student.semester || ''}</td>
-            <td>${student.faculty || ''}</td>
-            <td>${student.program || ''}</td>
-            <td>${student.email || ''}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn edit-btn" onclick="editStudent(${student.id})" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteStudent(${student.id})" title="Hapus">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-// Update student count display
-function updateStudentCount() {
-    const countElement = document.getElementById('studentCount');
-    if (countElement) {
-        const totalStudents = students.length;
-        const filteredCount = filteredStudents.length;
-        
-        if (totalStudents === filteredCount) {
-            countElement.textContent = `Total: ${totalStudents} mahasiswa`;
-        } else {
-            countElement.textContent = `Menampilkan: ${filteredCount} dari ${totalStudents} mahasiswa`;
-        }
-    }
-}
-
-// Edit student
-function editStudent(id) {
-    const student = students.find(s => s.id === id);
-    if (student) {
-        currentEditId = id;
-        const formTitle = document.getElementById('formTitle');
-        if (formTitle) {
-            formTitle.textContent = 'Form Edit Mahasiswa';
-        }
-        
-        // Populate form fields
-        const fields = {
-            'studentNIM': student.nim,
-            'studentName': student.name,
-            'semester': student.semester,
-            'faculty': student.faculty,
-            'programStudi': student.program,
-            'studentEmail': student.email,
-            'studentPassword': student.password
-        };
-        
-        Object.keys(fields).forEach(fieldId => {
-            const element = document.getElementById(fieldId);
-            if (element) {
-                element.value = fields[fieldId] || '';
-            }
-        });
-
-        // Clear any previous error messages
-        clearMessages();
-        const nimError = document.getElementById('nimError');
-        const passwordError = document.getElementById('passwordError');
-        if (nimError) nimError.style.display = 'none';
-        if (passwordError) passwordError.style.display = 'none';
-
-        // Show form, hide list
-        const listView = document.getElementById('studentListView');
-        const formView = document.getElementById('studentFormView');
-        if (listView) listView.style.display = 'none';
-        if (formView) formView.style.display = 'block';
-    }
-}
-
-// Delete student
-function deleteStudent(id) {
-    const student = students.find(s => s.id === id);
-    if (!student) return;
-
-    if (confirm(`Apakah Anda yakin ingin menghapus mahasiswa "${student.name}" (${student.nim})?`)) {
-        students = students.filter(student => student.id !== id);
-        showNotification(`Data mahasiswa "${student.name}" berhasil dihapus!`, 'success');
-        
-        // Update filter options and apply filters
-        populateFilterOptions();
-        applyFilters();
-    }
-}
-
-// Cancel form and go back to list view
-function cancelForm() {
-    const form = document.getElementById('studentForm');
-    if (form) {
-        form.reset();
-    }
-    
-    currentEditId = null;
-    clearMessages();
-    
-    // Clear error messages
-    const nimError = document.getElementById('nimError');
-    const passwordError = document.getElementById('passwordError');
-    if (nimError) nimError.style.display = 'none';
-    if (passwordError) passwordError.style.display = 'none';
-    
-    const formView = document.getElementById('studentFormView');
-    const listView = document.getElementById('studentListView');
-    if (formView) formView.style.display = 'none';
-    if (listView) listView.style.display = 'block';
-}
-
-// Enhanced notification system
-function showNotification(message, type) {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => notification.remove());
-
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-icon">
-                ${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}
-            </span>
-            <span class="notification-message">${message}</span>
-            <button class="notification-close" onclick="closeNotification(this)">&times;</button>
-        </div>
-    `;
-
-    // Add styles if not already present
-    if (!document.getElementById('notificationStyles')) {
-        const style = document.createElement('style');
-        style.id = 'notificationStyles';
-        style.textContent = `
-            .notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 9999;
-                min-width: 300px;
-                max-width: 400px;
-                padding: 0;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                animation: slideInRight 0.3s ease-out;
-            }
-            
-            .notification-success {
-                background: linear-gradient(135deg, #4CAF50, #45a049);
-                color: white;
-            }
-            
-            .notification-error {
-                background: linear-gradient(135deg, #f44336, #da190b);
-                color: white;
-            }
-            
-            .notification-info {
-                background: linear-gradient(135deg, #2196F3, #1976D2);
-                color: white;
-            }
-            
-            .notification-content {
-                display: flex;
-                align-items: center;
-                padding: 12px 16px;
-                gap: 8px;
-            }
-            
-            .notification-icon {
-                font-weight: bold;
-                font-size: 16px;
-                flex-shrink: 0;
-            }
-            
-            .notification-message {
-                flex: 1;
-                font-size: 14px;
-                line-height: 1.4;
-            }
-            
-            .notification-close {
-                background: none;
-                border: none;
-                color: inherit;
-                font-size: 18px;
-                cursor: pointer;
-                padding: 0;
-                width: 20px;
-                height: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0.8;
-                flex-shrink: 0;
-            }
-            
-            .notification-close:hover {
-                opacity: 1;
-            }
-            
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    // Add to page
-    document.body.appendChild(notification);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        closeNotification(notification.querySelector('.notification-close'));
-    }, 5000);
-}
-
-// Close notification
-function closeNotification(closeButton) {
-    const notification = closeButton.closest('.notification');
-    if (notification) {
-        notification.style.animation = 'slideOutRight 0.3s ease-in';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 300);
-    }
-}
-
-// Clear all filter inputs
-function clearFilters() {
-    const filterInputs = ['searchInput', 'filterFaculty', 'filterSemester'];
-    filterInputs.forEach(inputId => {
-        const element = document.getElementById(inputId);
-        if (element) {
-            element.value = '';
-        }
-    });
-    applyFilters();
-}
-
-// Display message (legacy function for compatibility)
-function showMessage(message, type) {
-    showNotification(message, type);
-}
-
-// Clear messages
-function clearMessages() {
-    const messageContainer = document.getElementById('messageContainer');
-    if (messageContainer) {
-        messageContainer.innerHTML = '';
-        messageContainer.style.display = 'none';
-    }
-}
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
