@@ -286,10 +286,14 @@ public class DashboardController {
                 
                 // Additional student-specific data
                 if (user instanceof Mahasiswa) {
-                    
+
                     // Get enrolled classes for this student
                     List<Enrollment> enrollments = enrollmentService.findByUserId(user.getId());
-                    model.addAttribute("enrollments", enrollments);
+                    List<Kelas> enrolledClasses = enrollments.stream()
+                            .map(Enrollment::getKelas)
+                            .collect(Collectors.toList());
+                    
+                    model.addAttribute("enrolledClasses", enrolledClasses);
                 }
             }
         }
@@ -298,8 +302,9 @@ public class DashboardController {
     }
 
     @PostMapping("/dashboard_mahasiswa_kelasterdaftar/unenroll")
-    public String unenrollFromClass(@RequestParam Long kelasId,
-                                   RedirectAttributes redirectAttributes) {
+    public String unenrollFromClass(@RequestParam String kodeMatKul,
+                                @RequestParam String kelas,
+                                RedirectAttributes redirectAttributes) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             
@@ -317,9 +322,34 @@ public class DashboardController {
             }
             
             Mahasiswa mahasiswa = (Mahasiswa) currentUser.get();
-            enrollmentService.unenroll(mahasiswa.getId(), kelasId);
             
-            redirectAttributes.addFlashAttribute("successMessage", "Berhasil membatalkan pendaftaran kelas!");
+            // Find the kelas by kodeMatKul and kelas
+            Optional<Kelas> kelasOpt = kelasService.findByKodeMataKuliahAndKelas(kodeMatKul, kelas);
+            if (kelasOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Kelas " + kelas + " untuk mata kuliah " + kodeMatKul + " tidak ditemukan!");
+                return "redirect:/dashboard_mahasiswa_kelasterdaftar";
+            }
+            
+            Kelas selectedKelas = kelasOpt.get();
+            
+            // Check if student is actually enrolled in this class
+            List<Enrollment> enrollments = enrollmentService.findByUserId(mahasiswa.getId());
+            boolean isEnrolled = enrollments.stream()
+                    .anyMatch(enrollment -> enrollment.getKelas().getId().equals(selectedKelas.getId()));
+            
+            if (!isEnrolled) {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Anda tidak terdaftar di kelas " + kelas + " mata kuliah " + kodeMatKul + "!");
+                return "redirect:/dashboard_mahasiswa_kelasterdaftar";
+            }
+            
+            // Unenroll using the kelas ID
+            enrollmentService.unenroll(mahasiswa.getId(), selectedKelas.getId());
+            
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Berhasil membatalkan pendaftaran kelas " + kelas + " mata kuliah " + 
+                selectedKelas.getMataKuliah().getNamaMk() + "!");
             
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
