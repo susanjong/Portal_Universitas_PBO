@@ -14,13 +14,14 @@ import com.example.portaluniv.demo.entity.User;
 import com.example.portaluniv.demo.service.UserService;
 
 @Controller
-public class MataKuliahController {
+public class AdminDaftarDosenController {
 
     @Autowired
     private UserService userService;
-    
-    @GetMapping("/Admin_matakuliah")
-    public String adminmatakuliah(Model model) {
+
+
+    @GetMapping("/Admin_daftardosen")
+    public String admindaftardosen(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
@@ -37,9 +38,6 @@ public class MataKuliahController {
             }
         }
         
-        // Add the missing showForm attribute
-        model.addAttribute("showForm", false);
-        
-        return "Admin_matakuliah";
+        return "Admin_daftardosen";
     }
 }
