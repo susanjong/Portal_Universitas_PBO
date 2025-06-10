@@ -197,24 +197,24 @@
             position: relative;
         }
 
-        .student-list-section {
+        .lecturer-list-section {
             margin-top: 60px;
         }
 
-        .student-list-header {
+        .lecturer-list-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        .student-list-title {
+        .lecturer-list-title {
             font-size: 18px;
             font-weight: bold;
             color: #333;
         }
 
-     .add-student-btn {
+     .add-lecturer-btn {
             background-color: #42832C;
             color: white;
             padding: 8px 16px;
@@ -225,14 +225,13 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            margin-right: 75%;
         }
 
-        .add-student-btn:hover {
+        .add-lecturer-btn:hover {
             background-color: #16610E;
         }
 
-        .student-table {
+        .lecturer-table {
             width: 100%;
             border-collapse: collapse;
             background-color: white;
@@ -241,7 +240,7 @@
             text-align: center;
         }
 
-        .student-table th {
+        .lecturer-table th {
             background-color: #f8f9fa;
             padding: 12px;
             text-align: center;
@@ -251,18 +250,18 @@
             border-bottom: 1px solid #e0e0e0;
         }
 
-        .student-table td {
+        .lecturer-table td {
             padding: 12px;
             border-bottom: 1px solid #f0f0f0;
             font-size: 14px;
             color: #333;
         }
 
-        .student-table tr:last-child td {
+        .lecturer-table tr:last-child td {
             border-bottom: none;
         }
 
-        .student-table tr:hover {
+        .lecturer-table tr:hover {
             background-color: #f8f9fa;
         }
 
@@ -302,7 +301,7 @@
         }
 
         /* Form Styles */
-        .student-form-section {
+        .lecturer-form-section {
             background-color: white;
             padding: 30px;
             border-radius: 8px;
@@ -597,63 +596,73 @@
             </a>
         </div>
 
-        <div class="main-content" id="studentListView">
+        <div class="main-content" id="LecturerListView" th:unless="${showForm}">
             <!-- Filter Section -->
             <div class="filter-section">
                 <h3 class="filter-title">Filter Data</h3>
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">NIP</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="codeFilter" placeholder="Cari berdasarkan NIP ">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
+                <form action="/Admin_daftardosen" method="GET">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">NIP</label>
+                            <div class="filter-input-container">
+                                <input type="text" class="filter-input" name="nidn" 
+                                    th:value="${nidnFilter}" placeholder="Cari berdasarkan NIP">
+                                <span class="search-icon"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Nama Dosen</label>
+                            <div class="filter-input-container">
+                                <input type="text" class="filter-input" name="name" 
+                                    th:value="${nameFilter}" placeholder="Cari berdasarkan nama">
+                                <span class="search-icon"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Fakultas</label>
+                            <select class="filter-select" name="fakultas">
+                                <option value="">Semua Fakultas</option>
+                                <option value="Fakultas Kedokteran" th:selected="${fakultasFilter == 'Fakultas Kedokteran'}">Fakultas Kedokteran</option>
+                                <option value="Fakultas Ilmu Komputer dan Teknologi Informasi" th:selected="${fakultasFilter == 'Fakultas Ilmu Komputer dan Teknologi Informasi'}">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
+                                <option value="Fakultas Teknik" th:selected="${fakultasFilter == 'Fakultas Teknik'}">Fakultas Teknik</option>
+                                <option value="Fakultas Ekonomi" th:selected="${fakultasFilter == 'Fakultas Ekonomi'}">Fakultas Ekonomi</option>
+                                <option value="Fakultas Hukum" th:selected="${fakultasFilter == 'Fakultas Hukum'}">Fakultas Hukum</option>
+                                <option value="Fakultas MIPA" th:selected="${fakultasFilter == 'Fakultas MIPA'}">Fakultas MIPA</option>
+                                <option value="Fakultas Sosial Politik" th:selected="${fakultasFilter == 'Fakultas Sosial Politik'}">Fakultas Sosial Politik</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Departemen</label>
+                            <div class="filter-input-container">
+                                <input type="text" class="filter-input" name="departemen" 
+                                    th:value="${departemenFilter}" placeholder="Cari Departemen">
+                                <span class="search-icon"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <button type="submit" class="btn-primary">Filter</button>
                         </div>
                     </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Nama Dosen</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="nameFilter" placeholder="Cari berdasarkan nama ">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
-                        </div>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Fakultas</label>
-                        <select class="filter-select" id="roomFilter">
-                            <option value="" disabled selected>Pilih Fakultas</option>
-                            <option value="Fakultas Kedokteran">Fakultas Kedokteran</option>
-                            <option value="Fakultas Ilmu Komputer dan Teknologi Informasi">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
-                            <option value="Fakultas Teknik">Fakultas Teknik</option>
-                            <option value="Fakultas Ekonomi">Fakultas Ekonomi</option>
-                            <option value="Fakultas Hukum">Fakultas Hukum</option>
-                            <option value="Fakultas MIPA">Fakultas MIPA</option>
-                            <option value="Fakultas Sosial Politik">Fakultas Sosial Politik</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Departemen</label>
-                        <div class="filter-input-container">
-                            <input type="text" class="filter-input" id="prodiFilter" placeholder="Cari Departemen ">
-                            <span class="search-icon"><i class="fas fa-search"></i></span>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
 
-            <div class="student-list-section">
-                <div class="student-list-header">
-                    <h2 class="student-list-title">Daftar Dosen </h2>
-                    <button class="add-student-btn" onclick="showAddStudentForm()">
-                        <span>+</span>
-                        Tambah Dosen
-                    </button>
+            <div class="lecturer-list-section">
+                <div class="lecturer-list-header">
+                    <h2 class="lecturer-list-title">Daftar Dosen </h2>
+                    <form action="/Admin_daftardosen/add-form" method="GET" style="display: inline;">
+                        <button type="submit" class="add-lecturer-btn">
+                            <span>+</span>
+                            Tambah Dosen
+                        </button>
+                    </form>
                 </div>
 
-                <table class="student-table">
+                <table class="lecturer-table">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>NIP</th>
+                            <th>NIDN</th>
                             <th>Nama Dosen</th>
                             <th>Fakultas</th>
                             <th>Departemen</th>
@@ -662,42 +671,80 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="studentTableBody">
-                    </tbody>
+                        <tbody>
+                            <tr th:each="dosen, iterStat : ${dosenList}">
+                                <td th:text="${iterStat.count}"></td>
+                                <td th:text="${dosen.nidn}"></td>
+                                <td th:text="${dosen.name}"></td>
+                                <td th:text="${dosen.fakultas}"></td>
+                                <td th:text="${dosen.departemen}"></td>
+                                <td th:text="${dosen.spesialisasi}"></td>
+                                <td th:text="${dosen.email}"></td>
+                                <td> 
+                                    <div class="action-buttons">     
+                                    <form th:action="@{/Admin_daftardosen/edit}" method="get" style="display: inline;">
+                                        <input type="hidden" name="id" th:value="${dosen.id}">
+                                        <button type="submit" class="action-btn edit-btn" title="Edit" 
+                                                style="cursor: pointer; font-weight: bold;">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </form>
+
+                                    <form th:action="@{/Admin_daftardosen/delete}" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" th:value="${dosen.id}">
+                                        <button type="submit" class="action-btn delete-btn" title="Hapus" 
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus dosen ini?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    </div>  
+                                </td>
+                            </tr>
+                        </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="main-content student-form-section" id="studentFormView">
-            <h2 class="form-title" id="formTitle">Form Tambah Dosen</h2>
+        <!-- Form tambah/edit dosen -->
+        <div class="main-content lecturer-form-section" th:if="${showForm}" id="lecturerFormView" style="display: block;">
+            <h2 class="form-title" th:text="${isEdit} ? 'Form Edit Dosen' : 'Form Tambah Dosen'">Form Tambah Dosen</h2>
 
-            <div id="messageContainer"></div>
+            <!-- Pesan Error/Success -->
+            <div th:if="${errorMessage}" class="alert alert-danger" style="color: red; margin-bottom: 15px;">
+                <span th:text="${errorMessage}"></span>
+            </div>
+            
+            <div th:if="${successMessage}" class="alert alert-success" style="color: green; margin-bottom: 15px;">
+                <span th:text="${successMessage}"></span>
+            </div>
 
-            <form id="studentForm">
+            <form th:action="@{/Admin_daftardosen/save}" th:object="${dosen}" method="post">
+                <!-- Hidden field untuk ID saat edit -->
+                <input type="hidden" th:field="*{id}" th:if="${isEdit}">
+                
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">NIP Dosen<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="studentNIM" name="studentNIM" required>
-                        <div id="nimError" class="error-message" style="display: none;"></div>
+                        <label class="form-label">NIDN<span class="required">*</span></label>
+                        <input type="text" class="form-input" th:field="*{nidn}" required>
                     </div>
-                     <div class="form-group">
-                        <label class="form-label">Nama Dosen<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="studentName" name="studentName" required>
+                    <div class="form-group">
+                        <label class="form-label">Username<span class="required">*</span></label>
+                        <input type="text" class="form-input" th:field="*{username}" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Nama Lengkap<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="studentName" name="studentName" required>
+                        <input type="text" class="form-input" th:field="*{name}" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Fakultas<span class="required">*</span></label>
-                        <select class="form-input" id="faculty" name="faculty" required>
-                            <option value="" disabled selected>Pilih Fakultas</option>
+                        <select class="form-input" th:field="*{fakultas}" required>
+                            <option value="" disabled>Pilih Fakultas</option>
                             <option value="Fakultas Kedokteran">Fakultas Kedokteran</option>
                             <option value="Fakultas Ilmu Komputer dan Teknologi Informasi">Fakultas Ilmu Komputer dan Teknologi Informasi</option>
                             <option value="Fakultas Teknik">Fakultas Teknik</option>
@@ -709,33 +756,45 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Departemen<span class="required">*</span></label>
-                        <input type="text" class="form-input" id="programStudi" name="programStudi" required>
+                        <input type="text" class="form-input" th:field="*{departemen}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Spesialisasi</label>
+                        <input type="text" class="form-input" th:field="*{spesialisasi}">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Email<span class="required">*</span></label>
-                        <input type="email" class="form-input" id="studentEmail" name="studentEmail" required>
+                        <input type="email" class="form-input" th:field="*{email}" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Password<span class="required">*</span></label>
-                        <input type="password" class="form-input" id="studentPassword" name="studentPassword" required>
-                        <div id="passwordError" class="error-message" style="display: none;"></div>
+                        <label class="form-label">Password<span class="required" th:if="${!isEdit}">*</span></label>
+                        <input type="password" class="form-input" th:field="*{password}" 
+                            th:required="${!isEdit}" 
+                            th:disabled="${isEdit}"
+                            th:placeholder="${isEdit} ? 'Password tidak dapat diubah' : 'Masukkan password'">
+                        <small th:if="${isEdit}" style="color: #666; font-size: 12px;">
+                            Password tidak dapat diubah melalui form ini
+                        </small>
                     </div>
                 </div>
 
                 <div class="form-buttons">
                     <button type="submit" class="btn-primary">
                         <i class="fas fa-save"></i>
-                        Simpan
+                        <span th:text="${isEdit} ? 'Update' : 'Simpan'">Simpan</span>
                     </button>
-                    <button type="button" class="btn-secondary" onclick="cancelForm()">
+                    <a href="/Admin_daftardosen" class="btn-secondary" style="text-decoration: none; display: inline-block; text-align: center;">
                         Batal
-                    </button>
+                    </a>
                 </div>
             </form>
         </div>
@@ -765,7 +824,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Setup event listeners
 function setupEventListeners() {
-    document.getElementById('studentForm').addEventListener('submit', handleFormSubmit);
+    document.getElementById('lecturerForm').addEventListener('submit', handleFormSubmit);
     
     // Filter event listeners
     const codeFilter = document.getElementById('codeFilter');
@@ -779,489 +838,6 @@ function setupEventListeners() {
     if (prodiFilter) prodiFilter.addEventListener('input', applyFilters);
 }
 
-// Apply filters to lecturer data
-function applyFilters() {
-    const codeFilter = document.getElementById('codeFilter');
-    const nameFilter = document.getElementById('nameFilter');
-    const roomFilter = document.getElementById('roomFilter');
-    const prodiFilter = document.getElementById('prodiFilter');
-    
-    const codeValue = codeFilter ? codeFilter.value.toLowerCase().trim() : '';
-    const nameValue = nameFilter ? nameFilter.value.toLowerCase().trim() : '';
-    const roomValue = roomFilter ? roomFilter.value : '';
-    const prodiValue = prodiFilter ? prodiFilter.value.toLowerCase().trim() : '';
-
-    filteredLecturers = lecturers.filter(lecturer => {
-        const matchesCode = !codeValue || (lecturer.nip && lecturer.nip.toLowerCase().includes(codeValue));
-        const matchesName = !nameValue || (lecturer.name && lecturer.name.toLowerCase().includes(nameValue));
-        const matchesRoom = !roomValue || lecturer.faculty === roomValue;
-        const matchesProdi = !prodiValue || (lecturer.department && lecturer.department.toLowerCase().includes(prodiValue));
-
-        return matchesCode && matchesName && matchesRoom && matchesProdi;
-    });
-
-    renderLecturerTable();
-}
-
-// Populate filter options
-function populateFilterOptions() {
-    const roomFilter = document.getElementById('roomFilter');
-    
-    if (roomFilter && lecturers.length > 0) {
-        const faculties = [...new Set(lecturers.map(lecturer => lecturer.faculty))].sort();
-        
-        // Clear existing options (except the first placeholder option)
-        const placeholderOption = roomFilter.querySelector('option[value=""][disabled]');
-        roomFilter.innerHTML = '';
-        if (placeholderOption) {
-            roomFilter.appendChild(placeholderOption);
-        }
-        
-        // Add all option
-        const allOption = document.createElement('option');
-        allOption.value = '';
-        allOption.textContent = 'Semua Fakultas';
-        roomFilter.appendChild(allOption);
-        
-        // Add faculty options
-        faculties.forEach(faculty => {
-            if (faculty) {
-                const option = document.createElement('option');
-                option.value = faculty;
-                option.textContent = faculty;
-                roomFilter.appendChild(option);
-            }
-        });
-    }
-}
-
-// Show add lecturer form
-function showAddStudentForm() {
-    currentEditId = null;
-    document.getElementById('formTitle').textContent = 'Form Tambah Dosen';
-    document.getElementById('studentForm').reset();
-    clearMessages();
-
-    // Show form, hide list
-    document.getElementById('studentListView').style.display = 'none';
-    document.getElementById('studentFormView').style.display = 'block';
-}
-
-// Handle form submission
-function handleFormSubmit(event) {
-    event.preventDefault();
-
-    const nip = document.getElementById('studentNIM').value.trim();
-    const name = document.getElementById('studentName').value.trim();
-    const fullName = document.getElementById('Namalengkap') ? document.getElementById('Namalengkap').value.trim() : name;
-    const faculty = document.getElementById('faculty').value;
-    const department = document.getElementById('programStudi').value.trim();
-    const email = document.getElementById('studentEmail').value.trim();
-    const password = document.getElementById('studentPassword').value;
-
-    // Validation
-    if (!nip || !name || !faculty || !department || !email || !password) {
-        showNotification('Semua kolom bertanda * harus diisi.', 'error');
-        return;
-    }
-
-    // Check for duplicate NIP (exclude current lecturer when editing)
-    const existingLecturer = lecturers.find(lecturer => 
-        lecturer.nip === nip && lecturer.id !== currentEditId
-    );
-    if (existingLecturer) {
-        showNotification('NIP sudah digunakan oleh dosen lain.', 'error');
-        const nimError = document.getElementById('nimError');
-        if (nimError) {
-            nimError.innerText = 'NIP sudah digunakan.';
-            nimError.style.display = 'block';
-        }
-        return;
-    }
-
-    // NIP validation (assuming NIP should be numeric and at least 8 digits)
-    if (!/^\d{13,}$/.test(nip)) {
-        const nimError = document.getElementById('nimError');
-        if (nimError) {
-            nimError.innerText = 'NIP harus terdiri dari minimal 13 digit angka.';
-            nimError.style.display = 'block';
-        }
-        showNotification('NIP harus terdiri dari minimal 13 digit angka.', 'error');
-        return;
-    } else {
-        const nimError = document.getElementById('nimError');
-        if (nimError) {
-            nimError.style.display = 'none';
-        }
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showNotification('Format email tidak valid.', 'error');
-        return;
-    }
-
-    // Password validation
-    if (password.length < 6) {
-        const passwordError = document.getElementById('passwordError');
-        if (passwordError) {
-            passwordError.innerText = 'Password harus terdiri dari minimal 6 karakter.';
-            passwordError.style.display = 'block';
-        }
-        showNotification('Password harus terdiri dari minimal 6 karakter.', 'error');
-        return;
-    } else {
-        const passwordError = document.getElementById('passwordError');
-        if (passwordError) {
-            passwordError.style.display = 'none';
-        }
-    }
-
-    const lecturerData = {
-        nip,
-        name,
-        fullName,
-        faculty,
-        department,
-        specialization: 'Belum ditentukan', // Default value
-        email,
-        password
-    };
-
-    // Check if editing an existing lecturer
-    if (currentEditId) {
-        // Update existing lecturer
-        const index = lecturers.findIndex(lecturer => lecturer.id === currentEditId);
-        if (index !== -1) {
-            lecturers[index] = { id: currentEditId, ...lecturerData };
-            showNotification('Data dosen berhasil diubah!', 'success');
-        }
-    } else {
-        // Add new lecturer to the list
-        const newId = lecturers.length > 0 ? Math.max(...lecturers.map(l => l.id)) + 1 : 1;
-        lecturers.push({ id: newId, ...lecturerData });
-        showNotification('Data dosen berhasil disimpan!', 'success');
-    }
-
-    // Update filter options and apply filters
-    populateFilterOptions();
-    applyFilters();
-    cancelForm();
-}
-
-// Render lecturer table
-function renderLecturerTable() {
-    const tbody = document.getElementById('studentTableBody');
-    if (!tbody) return;
-    
-    tbody.innerHTML = '';
-
-    if (filteredLecturers.length === 0) {
-        const row = document.createElement('tr');
-        let message = '';
-        
-        if (lecturers.length === 0) {
-            message = 'Tidak ada data dosen yang ditemukan';
-        } else {
-            // Check which filter is active
-            const codeFilter = document.getElementById('codeFilter');
-            const nameFilter = document.getElementById('nameFilter');
-            const roomFilter = document.getElementById('roomFilter');
-            const prodiFilter = document.getElementById('prodiFilter');
-            
-            const codeValue = codeFilter ? codeFilter.value.trim() : '';
-            const nameValue = nameFilter ? nameFilter.value.trim() : '';
-            const roomValue = roomFilter ? roomFilter.value : '';
-            const prodiValue = prodiFilter ? prodiFilter.value.trim() : '';
-            
-            if (codeValue) {
-                message = `Tidak ada data dosen dengan NIP "${codeValue}"`;
-            } else if (nameValue) {
-                message = `Tidak ada data dosen dengan nama "${nameValue}"`;
-            } else if (roomValue) {
-                message = `Tidak ada data dosen dari fakultas "${roomValue}"`;
-            } else if (prodiValue) {
-                message = `Tidak ada data dosen dari departemen "${prodiValue}"`;
-            } else {
-                message = 'Tidak ada data yang sesuai dengan filter';
-            }
-        }
-        
-        row.innerHTML = `
-            <td colspan="8" style="text-align: center; padding: 30px; color: #666; font-style: italic;">
-                <div style="margin-bottom: 10px;">
-                    <i class="fas fa-search" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
-                </div>
-                <div style="font-size: 16px; margin-bottom: 10px;">
-                    ${message}
-                </div>
-                ${lecturers.length > 0 ? '<div style="font-size: 14px; color: #999;">Coba ubah kriteria pencarian atau filter Anda</div>' : ''}
-            </td>
-        `;
-        tbody.appendChild(row);
-        return;
-    }
-
-    filteredLecturers.forEach((lecturer, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${lecturer.nip || ''}</td>
-            <td>${lecturer.name || ''}</td>
-            <td>${lecturer.faculty || ''}</td>
-            <td>${lecturer.department || ''}</td>
-            <td>${lecturer.specialization || 'Belum ditentukan'}</td>
-            <td>${lecturer.email || ''}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn edit-btn" onclick="editLecturer(${lecturer.id})" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteLecturer(${lecturer.id})" title="Hapus">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-// Edit lecturer
-function editLecturer(id) {
-    const lecturer = lecturers.find(l => l.id === id);
-    if (lecturer) {
-        currentEditId = id;
-        const formTitle = document.getElementById('formTitle');
-        if (formTitle) {
-            formTitle.textContent = 'Form Edit Dosen';
-        }
-        
-        // Populate form fields
-        const fields = {
-            'studentNIM': lecturer.nip,
-            'studentName': lecturer.name,
-            'faculty': lecturer.faculty,
-            'programStudi': lecturer.department,
-            'studentEmail': lecturer.email,
-            'studentPassword': lecturer.password
-        };
-        
-        Object.keys(fields).forEach(fieldId => {
-            const element = document.getElementById(fieldId);
-            if (element) {
-                element.value = fields[fieldId] || '';
-            }
-        });
-
-        // Populate full name if field exists
-        const fullNameField = document.getElementById('Namalengkap');
-        if (fullNameField) {
-            fullNameField.value = lecturer.fullName || lecturer.name || '';
-        }
-
-        // Clear any previous error messages
-        clearMessages();
-        const nimError = document.getElementById('nimError');
-        const passwordError = document.getElementById('passwordError');
-        if (nimError) nimError.style.display = 'none';
-        if (passwordError) passwordError.style.display = 'none';
-
-        // Show form, hide list
-        const listView = document.getElementById('studentListView');
-        const formView = document.getElementById('studentFormView');
-        if (listView) listView.style.display = 'none';
-        if (formView) formView.style.display = 'block';
-    }
-}
-
-// Delete lecturer
-function deleteLecturer(id) {
-    const lecturer = lecturers.find(l => l.id === id);
-    if (!lecturer) return;
-
-    if (confirm(`Apakah Anda yakin ingin menghapus dosen "${lecturer.name}" (${lecturer.nip})?`)) {
-        lecturers = lecturers.filter(lecturer => lecturer.id !== id);
-        showNotification(`Data dosen "${lecturer.name}" berhasil dihapus!`, 'success');
-        
-        // Update filter options and apply filters
-        populateFilterOptions();
-        applyFilters();
-    }
-}
-
-// Cancel form and go back to list view
-function cancelForm() {
-    const form = document.getElementById('studentForm');
-    if (form) {
-        form.reset();
-    }
-    
-    currentEditId = null;
-    clearMessages();
-    
-    // Clear error messages
-    const nimError = document.getElementById('nimError');
-    const passwordError = document.getElementById('passwordError');
-    if (nimError) nimError.style.display = 'none';
-    if (passwordError) passwordError.style.display = 'none';
-    
-    const formView = document.getElementById('studentFormView');
-    const listView = document.getElementById('studentListView');
-    if (formView) formView.style.display = 'none';
-    if (listView) listView.style.display = 'block';
-}
-
-// Enhanced notification system
-function showNotification(message, type) {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => notification.remove());
-
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-icon">
-                ${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}
-            </span>
-            <span class="notification-message">${message}</span>
-            <button class="notification-close" onclick="closeNotification(this)">&times;</button>
-        </div>
-    `;
-
-    // Add styles if not already present
-    if (!document.getElementById('notificationStyles')) {
-        const style = document.createElement('style');
-        style.id = 'notificationStyles';
-        style.textContent = `
-            .notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 9999;
-                min-width: 300px;
-                max-width: 400px;
-                padding: 0;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                animation: slideInRight 0.3s ease-out;
-            }
-            
-            .notification-success {
-                background: linear-gradient(135deg, #4CAF50, #45a049);
-                color: white;
-            }
-            
-            .notification-error {
-                background: linear-gradient(135deg, #f44336, #da190b);
-                color: white;
-            }
-            
-            .notification-info {
-                background: linear-gradient(135deg, #2196F3, #1976D2);
-                color: white;
-            }
-            
-            .notification-content {
-                display: flex;
-                align-items: center;
-                padding: 12px 16px;
-                gap: 8px;
-            }
-            
-            .notification-icon {
-                font-weight: bold;
-                font-size: 16px;
-                flex-shrink: 0;
-            }
-            
-            .notification-message {
-                flex: 1;
-                font-size: 14px;
-                line-height: 1.4;
-            }
-            
-            .notification-close {
-                background: none;
-                border: none;
-                color: inherit;
-                font-size: 18px;
-                cursor: pointer;
-                padding: 0;
-                width: 20px;
-                height: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0.8;
-                flex-shrink: 0;
-            }
-            
-            .notification-close:hover {
-                opacity: 1;
-            }
-            
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    // Add to page
-    document.body.appendChild(notification);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        closeNotification(notification.querySelector('.notification-close'));
-    }, 5000);
-}
-
-// Close notification
-function closeNotification(closeButton) {
-    const notification = closeButton.closest('.notification');
-    if (notification) {
-        notification.style.animation = 'slideOutRight 0.3s ease-in';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 300);
-    }
-}
-
-// Clear all filters
-function clearFilters() {
-    const filterInputs = ['codeFilter', 'nameFilter', 'roomFilter', 'prodiFilter'];
-    filterInputs.forEach(inputId => {
-        const element = document.getElementById(inputId);
-        if (element) {
-            element.value = '';
-        }
-    });
-    applyFilters();
-}
 
 // Display message (legacy function for compatibility)
 function showMessage(message, type) {
