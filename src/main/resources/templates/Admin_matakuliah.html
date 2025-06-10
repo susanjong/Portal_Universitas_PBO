@@ -475,7 +475,7 @@
                             <label class="filter-label">Kode Mata Kuliah</label>
                             <div class="filter-input-container">
                                 <input type="text" class="filter-input" name="codeFilter" 
-                                    th:value="${codeFilter}" placeholder="Cari berdasarkan kode mata kuliah">
+                                    th:value="${codeFilter}">
                                 <span class="search-icon"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
@@ -483,7 +483,7 @@
                             <label class="filter-label">Nama Mata Kuliah</label>
                             <div class="filter-input-container">
                                 <input type="text" class="filter-input" name="nameFilter" 
-                                    th:value="${nameFilter}" placeholder="Cari berdasarkan nama mata kuliah">
+                                    th:value="${nameFilter}">
                                 <span class="search-icon"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
@@ -576,8 +576,7 @@
         </div>
 
         <!-- Form for Add/Edit Course -->
-        <div class="main-content course-form-section" id="courseFormView" 
-            th:if="${showForm}">
+        <div class="main-content course-form-section" id="courseFormView" th:if="${showForm}">
             
             <h2 class="form-title" id="formTitle">Form Tambah Mata Kuliah</h2>
             
@@ -618,25 +617,26 @@
                                     th:selected="${(isEdit ? editMatakuliah?.fakultas : formFaculty) == 'Fakultas Ekonomi dan Bisnis'}">
                                 Fakultas Ekonomi dan Bisnis
                             </option>
+                            <option value="Fakultas Farmasi" 
+                                    th:selected="${(isEdit ? editMatakuliah?.fakultas : formFaculty) == 'Fakultas Farmasi'}">
+                                Fakultas Farmasi
+                            </option>
+                            <option value="Fakultas Kedokteran" 
+                                    th:selected="${(isEdit ? editMatakuliah?.fakultas : formFaculty) == 'Fakultas Kedokteran'}">
+                                Fakultas Kedokteran
+                            </option>
+                            <option value="Fakultas Hukum" 
+                                    th:selected="${(isEdit ? editMatakuliah?.fakultas : formFaculty) == 'Fakultas Hukum'}">
+                                Fakultas Hukum
+                            </option>
                         </select>
                     </div>
+
                     <div class="form-group">
                         <label class="form-label">Program Studi<span class="required">*</span></label>
-                        <select class="form-select" id="courseProdi" name="prodi">
-                            <option value="">Pilih Program Studi</option>
-                            <option value="Ilmu Komputer" 
-                                    th:selected="${(isEdit ? editMatakuliah?.programStudi : formProdi) == 'Ilmu Komputer'}">
-                                Ilmu Komputer
-                            </option>
-                            <option value="Sistem Informasi" 
-                                    th:selected="${(isEdit ? editMatakuliah?.programStudi : formProdi) == 'Sistem Informasi'}">
-                                Sistem Informasi
-                            </option>
-                            <option value="Teknologi Informasi" 
-                                    th:selected="${(isEdit ? editMatakuliah?.programStudi : formProdi) == 'Teknologi Informasi'}">
-                                Teknologi Informasi
-                            </option>
-                        </select>
+                        <input type="text" class="form-input" id="courseProdi" name="prodi" 
+                            th:value="${isEdit ? editMatakuliah?.programStudi : formProdi}"
+                            placeholder="Contoh: Ilmu Komputer">
                     </div>
                 </div>
 
@@ -645,24 +645,24 @@
                         <label class="form-label">Semester<span class="required">*</span></label>
                         <select class="form-select" id="courseSemester" name="semester">
                             <option value="">Pilih Semester</option>
-                            <option value="1" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '1'}">1</option>
-                            <option value="2" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '2'}">2</option>
-                            <option value="3" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '3'}">3</option>
-                            <option value="4" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '4'}">4</option>
-                            <option value="5" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '5'}">5</option>
-                            <option value="6" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '6'}">6</option>
-                            <option value="7" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '7'}">7</option>
-                            <option value="8" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == '8'}">8</option>
+                            <option value="1" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 1}">1</option>
+                            <option value="2" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 2}">2</option>
+                            <option value="3" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 3}">3</option>
+                            <option value="4" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 4}">4</option>
+                            <option value="5" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 5}">5</option>
+                            <option value="6" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 6}">6</option>
+                            <option value="7" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 7}">7</option>
+                            <option value="8" th:selected="${(isEdit ? editMatakuliah?.semester : formSemester) == 8}">8</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Jumlah SKS<span class="required">*</span></label>
                         <select class="form-select" id="courseSKS" name="sks">
                             <option value="">Pilih SKS</option>
-                            <option value="1" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '1'}">1</option>
-                            <option value="2" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '2'}">2</option>
-                            <option value="3" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '3'}">3</option>
-                            <option value="4" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == '4'}">4</option>
+                            <option value="1" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == 1}">1</option>
+                            <option value="2" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == 2}">2</option>
+                            <option value="3" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == 3}">3</option>
+                            <option value="4" th:selected="${(isEdit ? editMatakuliah?.sks : formSks) == 4}">4</option>
                         </select>
                     </div>
                 </div>

@@ -223,7 +223,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            float: right;
         }
 
         .save-btn:hover {
@@ -232,6 +231,11 @@
 
         .save-btn i {
             font-size: 12px;
+        }
+
+        .save-btn, .logout-btn {
+            padding: 10px 20px;
+            max-width: 110px;
         }
 
         .readonly-row {
@@ -244,6 +248,26 @@
             border-top: 1px solid #e0e0e0;
             padding-top: 20px;
             margin-top: 20px;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 30px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover{
+            background-color: #c82333;
         }
 
         /* Responsive adjustments */
@@ -462,6 +486,11 @@
                 <button type="submit" class="save-btn">
                     <i class="fa-solid fa-floppy-disk"></i>
                     Simpan
+                </button>
+
+                <button type="button" class="logout-btn" style="flex: 1;" onclick="window.location.href='/logout'">
+                        <span><i class="fa-solid fa-sign-out-alt"></i></span>
+                        Logout
                 </button>
             </form>
         </div>
