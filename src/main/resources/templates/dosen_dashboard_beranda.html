@@ -307,34 +307,34 @@
             <div class="profile-section">
                 <h2 class="form-title">Data Pribadi Dosen</h2>
                 
-                <form id="studentForm" method="post">
-                    <div class="form-section">
+                <form id="dosenForm" method="post">
+                     <div class="form-section">
                         <div class="form-row">
                             <div class="form-group">
                                 <span class="form-label">NAMA</span>
-                                <span class="form-value">Clarissa Hali</span>
+                                <span class="form-value" th:text="${name}">Nama Dosen</span>
                             </div>
                             <div class="form-group">
                                 <span class="form-label">FAKULTAS</span>
-                                <span class="form-value">Fakultas Ilmu Komputer dan Teknologi Informasi</span>
+                                <span class="form-value" th:text="${fakultas}">Fakultas</span>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <span class="form-label">NIP</span>
-                                <span class="form-value">198802192019032016</span>
+                                <span class="form-label">NIDN</span>
+                                <span class="form-value" th:text="${username}">NIDN</span>
                             </div>
                             <div class="form-group">
-                                <span class="form-label">JURUSAN</span>
-                                <span class="form-value">Ilmu Komputer</span>
+                                <span class="form-label">Departemen</span>
+                                <span class="form-value" th:text="${departemen}">departemen</span>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <span class="form-label">EMAIL</span>
-                                <span class="form-value">clarissa.halim@students.usu.ac.id</span>
+                                <span class="form-value" th:text="${email}">Email</span>
                             </div>
                         </div>
                     </div>
@@ -360,8 +360,23 @@
                                 <th>Dosen</th>
                             </tr>
                         </thead>
-                        <tbody id="classTableBody">
-                            <tr class="no-data-row" id="noDataRow">
+                        <tbody>
+                            <!-- Data dari backend menggunakan Thymeleaf -->
+                            <tr th:if="${teachingClasses != null and !teachingClasses.empty}" 
+                                th:each="kelas, iterStat : ${teachingClasses}">
+                                <td th:text="${iterStat.count}">1</td>
+                                <td th:text="${kelas.mataKuliah.kodeMk}">ILK101</td>
+                                <td th:text="${kelas.mataKuliah.namaMk}">Algoritma dan Pemrograman</td>
+                                <td th:text="${kelas.mataKuliah.semester}">1</td>
+                                <td th:text="${kelas.kelas}">A</td>
+                                <td th:text="${kelas.mataKuliah.sks}">3</td>
+                                <td th:text="${kelas.ruangan}">Lab Kom 1</td>
+                                <td th:text="${kelas.jadwal}">Senin 08:00-10:30</td>
+                                <td th:text="${kelas.dosen.name}">Dr. Ahmad Susanto</td>
+                            </tr>
+                            
+                            <!-- Tampilkan pesan jika tidak ada data -->
+                            <tr th:if="${teachingClasses == null or teachingClasses.empty}" class="no-data-row">
                                 <td colspan="9" class="no-data-message">
                                     <i class="fa-solid fa-inbox no-data-icon"></i>
                                     Belum ada kelas yang terdaftar
@@ -375,30 +390,6 @@
     </div>
 
     <script>
-      //Data Dummy, bole didelete 
-        let classData = [
-            {
-                kode: "ILK101",
-                mataKuliah: "Algoritma dan Pemrograman",
-                semester: "1",
-                kelas: "A",
-                sks: "3",
-                ruangan: "Lab Kom 1",
-                jadwal: "Senin 08:00-10:30",
-                dosen: "Dr. Ahmad Susanto"
-            },
-            
-            {
-                kode: "ILK204",
-                mataKuliah: "Pemrograman Web",
-                semester: "3",
-                kelas: "B",
-                sks: "3",
-                ruangan: "Lab 3",
-                jadwal: "Jumat 10:30-13:00",
-                dosen: "M.Kom. Rudi Hartono"
-            }
-        ];
 
         // Fungsi untuk update tampilan tabel
         function updateTableDisplay() {

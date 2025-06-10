@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Dosen</title>
+    <title>Profile Mahasiswa</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -91,8 +91,6 @@
             color: #2d5016;
         }
 
-
-
         .main-content {
             flex: 1;
             padding: 30px;
@@ -136,7 +134,7 @@
             font-size: 12px;
             color: #666;
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: bolder;
             min-width: 120px;
             text-align: left;
         }
@@ -154,8 +152,6 @@
             align-items: center;
             width: 100%;
             min-width: 300px;
-            resize: horizontal;
-            overflow: hidden;
         }
 
         .form-input {
@@ -227,7 +223,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            float: right;
         }
 
         .save-btn:hover {
@@ -236,6 +231,11 @@
 
         .save-btn i {
             font-size: 12px;
+        }
+
+        .save-btn, .logout-btn {
+            padding: 10px 20px;
+            max-width: 110px;
         }
 
         .readonly-row {
@@ -250,38 +250,24 @@
             margin-top: 20px;
         }
 
-        /* Resize handle styling */
-        .form-input-container::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            cursor: ew-resize;
-            background: linear-gradient(90deg, transparent 0%, #ddd 50%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.2s;
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 30px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .form-input-container:hover::after {
-            opacity: 1;
-        }
-
-        /* Custom resize handle for better UX */
-        .resize-handle {
-            position: absolute;
-            right: -5px;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            cursor: ew-resize;
-            background: transparent;
-            z-index: 5;
-        }
-
-        .resize-handle:hover {
-            background: rgba(74, 124, 89, 0.1);
+        .logout-btn:hover{
+            background-color: #c82333;
         }
 
         /* Responsive adjustments */
@@ -328,42 +314,39 @@
         </div>
 
         <div class="main-content">
-            <h2 class="form-title">Data Pribadi Dosen</h2>
+            <h2 class="form-title">Data Pribadi Mahasiswa</h2>
             
-            <form id="studentForm" method="post">
+             <form id="dosenForm" th:action="@{/dosen_dashboard_profile/updateProfile}" method="post">
                 <!-- Basic Information -->
                 <div class="form-section">
                     <div class="form-row">
                         <div class="form-group">
                             <span class="form-label">NAMA</span>
-                            <span class="form-value"></span>
+                            <span class="form-value" th:text="${name}">Nama Dosen</span>
                         </div>
                         <div class="form-group">
                             <span class="form-label">FAKULTAS</span>
-                            <span class="form-value"></span>
+                            <span class="form-value" th:text="${fakultas}">Fakultas</span>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <span class="form-label">NIDN</span>
-                            <span class="form-value"></span>
+                            <span class="form-value" th:text="${username}">NIDN</span>
                         </div>
                         <div class="form-group">
-                            <span class="form-label">JURUSAN</span>
-                            <span class="form-value"></span>
+                            <span class="form-label">Departemen</span>
+                            <span class="form-value" th:text="${departemen}">departemen</span>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <span class="form-label">EMAIL</span>
-                            <span class="form-value"></span>
+                            <span class="form-value" th:text="${email}">Email</span>
                         </div>
-                        <div class="form-group">
-                            <span class="form-label">SPESIALISASI</span>
-                            <span class="form-value"></span>
-                        </div>
+                        
                     </div>
                 </div>
 
@@ -375,7 +358,6 @@
                             <div class="form-input-container">
                                 <input type="password" class="form-input" name="password" placeholder="Masukkan password baru">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -386,7 +368,6 @@
                             <div class="form-input-container">
                                 <input type="password" class="form-input" name="confirmPassword" placeholder="Konfirmasi password">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -395,9 +376,8 @@
                         <div class="form-group editable-field">
                             <label class="form-label">TANGGAL LAHIR</label>
                             <div class="form-input-container">
-                                <input type="date" class="form-input" name="birthDate" >
+                                <input type="date" class="form-input" name="birthDate" th:value="${birthDate}">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -406,9 +386,8 @@
                         <div class="form-group editable-field">
                             <label class="form-label">TEMPAT LAHIR</label>
                             <div class="form-input-container">
-                                <input type="text" class="form-input" name="birthPlace" placeholder="Masukkan tempat lahir">
+                                <input type="text" class="form-input" name="birthPlace" th:value="${birthPlace}" placeholder="Masukkan tempat lahir">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -419,11 +398,11 @@
                             <div class="form-input-container">
                                 <select class="form-input" name="gender">
                                     <option value="">Pilih jenis kelamin</option>
-                                    <option value="L">Laki-laki</option>
-                                    <option value="P">Perempuan</option>
+
+                                    <option value="Laki-laki" th:selected="${gender == 'Laki-laki'}">Laki-laki</option>
+                                    <option value="Perempuan" th:selected="${gender == 'Perempuan'}">Perempuan</option>
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -433,16 +412,15 @@
                             <label class="form-label">AGAMA</label>
                             <div class="form-input-container">
                                 <select class="form-input" name="religion">
-                                    <option value="">Pilih agama</option>
-                                    <option value="Islam">Islam</option>
-                                    <option value="Kristen">Kristen</option>
-                                    <option value="Katolik">Katolik</option>
-                                    <option value="Hindu">Hindu</option>
-                                    <option value="Buddha">Buddha</option>
-                                    <option value="Konghucu">Konghucu</option>
+                                    <option value="">Pilih Agama</option>
+                                    <option value="Islam" th:selected="${religion == 'Islam'}">Islam</option>
+                                    <option value="Kristen" th:selected="${religion == 'Kristen'}">Kristen</option>
+                                    <option value="Katolik" th:selected="${religion == 'Katolik'}">Katolik</option>
+                                    <option value="Hindu" th:selected="${religion == 'Hindu'}">Hindu</option>
+                                    <option value="Buddha" th:selected="${religion == 'Buddha'}">Buddha</option>
+                                    <option value="Konghucu" th:selected="${religion == 'Konghucu'}">Konghucu</option>
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
                             </div>
                         </div>
                     </div>
@@ -451,20 +429,11 @@
                         <div class="form-group editable-field">
                             <label class="form-label">ALAMAT</label>
                             <div class="form-input-container">
-                                <input type="text" class="form-input" name="address"  placeholder="Masukkan alamat lengkap">
+                                <input type="text" class="form-input" name="address" th:value="${address}" placeholder="Masukkan alamat lengkap">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group editable-field">
-                            <label class="form-label">NO. IDENTITAS</label>
-                            <div class="form-input-container">
-                                <input type="text" class="form-input" name="idNumber"  placeholder="Masukkan nomor KTP/identitas">
-                                <i class="fa-solid fa-pencil edit-icon"></i>
                                 <div class="resize-handle"></div>
+
                             </div>
                         </div>
                     </div>
@@ -474,24 +443,41 @@
                             <label class="form-label">JENIS IDENTITAS</label>
                             <div class="form-input-container">
                                 <select class="form-input" name="idType">
-                                    <option value="">Pilih jenis identitas</option>
-                                    <option value="KTP">KTP</option>
-                                    <option value="Paspor">Paspor</option>
-                                    <option value="SIM">SIM</option>
+                                    <option value="">Pilih Jenis Identitas</option>
+                                    <option value="KTP" th:selected="${idType == 'KTP'}">KTP</option>
+                                    <option value="SIM" th:selected="${idType == 'SIM'}">SIM</option>
+                                    <option value="Paspor" th:selected="${idType == 'Paspor'}">Paspor</option>
                                 </select>
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="form-row">
+                        <div class="form-group editable-field">
+                            <label class="form-label">NOMOR IDENTITAS</label>
+                            <div class="form-input-container">
+                                <input type="text" class="form-input" name="idNumber" th:value="${idNumber}" placeholder="Masukkan nomor identitas">
+                                <i class="fa-solid fa-pencil edit-icon"></i>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group editable-field">
-                            <label class="form-label">NO. TELEPON</label>
+                            <label class="form-label">NOMOR TELEPON</label>
                             <div class="form-input-container">
-                                <input type="tel" class="form-input" name="phone" placeholder="Masukkan nomor telepon">
+                                <input type="tel" class="form-input" name="phone" th:value="${phone}" placeholder="Masukkan nomor telepon">
                                 <i class="fa-solid fa-pencil edit-icon"></i>
-                                <div class="resize-handle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group editable-field">
+                            <label class="form-label">PEMINATAN KARIR</label>
+                            <div class="form-input-container">
+                                <input type="text" class="form-input" name="careerGoal" th:value="${careerGoal}" placeholder="Masukkan peminatan karir anda">
+                                <i class="fa-solid fa-pencil edit-icon"></i>
                             </div>
                         </div>
                     </div>
@@ -500,6 +486,11 @@
                 <button type="submit" class="save-btn">
                     <i class="fa-solid fa-floppy-disk"></i>
                     Simpan
+                </button>
+
+                <button type="button" class="logout-btn" style="flex: 1;" onclick="window.location.href='/logout'">
+                        <span><i class="fa-solid fa-sign-out-alt"></i></span>
+                        Logout
                 </button>
             </form>
         </div>

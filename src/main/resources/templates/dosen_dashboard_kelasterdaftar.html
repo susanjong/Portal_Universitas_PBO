@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelas Terdaftar - Mahasiswa</title>
+    <title>Kelas Terdaftar - Dosen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -354,6 +354,19 @@
             color: #666;
         }
 
+        .no-data-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .no-data-icon {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
         /* Loading animation */
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -361,6 +374,15 @@
         }
 
         .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
@@ -423,34 +445,81 @@
             </a>
         </div>
 
-        <div class="main-content">
-            <div class="table-section">
-                <h2 class="table-title">Daftar Kelas yang Terdaftar</h2>
-                <div id="tableContainer">
+       <div class="main-content">
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="notification success show" id="successNotification">
+                <i class="fa-solid fa-circle-check notification-icon"></i>
+                <div class="notification-content">
+                    <div class="notification-title">Berhasil!</div>
+                    <div class="notification-message" th:text="${successMessage}"></div>
+                </div>
+                <button class="close-btn" onclick="closeNotification(this)">&times;</button>
+            </div>
+            
+            <div th:if="${errorMessage}" class="notification error show" id="errorNotification">
+                <i class="fa-solid fa-circle-xmark notification-icon"></i>
+                <div class="notification-content">
+                    <div class="notification-title">Gagal!</div>
+                    <div class="notification-message" th:text="${errorMessage}"></div>
+                </div>
+                <button class="close-btn" onclick="closeNotification(this)">&times;</button>
+            </div>
+
+            <div style="margin: 0 20px 20px 20px;">
+                <div class="table-section">
+                    <h2 class="table-title">Daftar Kelas yang Diampu</h2>
                     <table class="class-table">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Kode</th>
                                 <th>Mata Kuliah</th>
+                                <th>Semester</th>
                                 <th>Kelas</th>
                                 <th>SKS</th>
                                 <th>Ruangan</th>
                                 <th>Jadwal</th>
-                                <th>Dosen</th>
+                                <th>Jumlah Mahasiswa</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="classTableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
+                        <tbody>
+                            <!-- Data dari backend menggunakan Thymeleaf -->
+                            <tr th:if="${teachingClasses != null and !teachingClasses.empty}" 
+                                th:each="kelas, iterStat : ${teachingClasses}">
+                                <td th:text="${iterStat.count}">1</td>
+                                <td th:text="${kelas.mataKuliah.kodeMk}">ILK101</td>
+                                <td th:text="${kelas.mataKuliah.namaMk}">Algoritma dan Pemrograman</td>
+                                <td th:text="${kelas.mataKuliah.semester}">1</td>
+                                <td th:text="${kelas.kelas}">A</td>
+                                <td th:text="${kelas.mataKuliah.sks}">3</td>
+                                <td th:text="${kelas.ruangan}">Lab Kom 1</td>
+                                <td th:text="${kelas.jadwal}">Senin 08:00-10:30</td>
+                                <td th:text="${enrollmentService.getEnrollmentCount(kelas.id)}">25</td>
+                                <td>
+                                    <button class="delete-btn"
+                                            th:attr="data-kode-mk=${kelas.mataKuliah?.kodeMk},
+                                                    data-kelas=${kelas.kelas},
+                                                    data-nama-mk=${kelas.mataKuliah?.namaMk}"
+                                            onclick="handleDelete(this)">
+                                        <i class="fa-solid fa-minus"></i>
+                                        <span>Batal Mengajar</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <!-- Tampilkan pesan jika tidak ada data -->
+                            <tr th:if="${teachingClasses == null or teachingClasses.empty}" class="no-data-row">
+                                <td colspan="10" class="no-data-message">
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <i class="fa-solid fa-chalkboard-teacher no-data-icon"></i>
+                                        <strong>Belum ada kelas yang diampu</strong>
+                                        <p style="margin-top: 8px; color: #888;">Silakan daftar kelas terlebih dahulu di menu "Daftar Kelas"</p>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
-                </div>
-
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <i class="fa-solid fa-book-open"></i>
-                    <h3>Belum Ada Kelas Terdaftar</h3>
-                    <p>Anda belum mendaftar untuk kelas apapun. Silakan daftar kelas terlebih dahulu.</p>
                 </div>
             </div>
         </div>
@@ -459,10 +528,10 @@
     <!-- Confirmation Modal -->
     <div id="confirmationModal" class="modal">
         <div class="modal-content">
-            <h3 id="modalTitle">Konfirmasi Hapus Kelas</h3>
-            <p id="modalMessage">Apakah Anda yakin ingin menghapus kelas ini dari daftar terdaftar?</p>
+            <h3 id="modalTitle">Konfirmasi Batal Mengajar</h3>
+            <p id="modalMessage">Apakah Anda yakin ingin berhenti mengajar kelas ini?</p>
             <div class="modal-buttons">
-                <button id="confirmBtn" class="modal-btn danger">Ya, Hapus</button>
+                <button id="confirmBtn" class="modal-btn danger">Ya, Batal Mengajar</button>
                 <button id="cancelBtn" class="modal-btn cancel">Batal</button>
             </div>
         </div>
@@ -470,75 +539,7 @@
 
     <script>
 
-        // Sample data for registered classes
-        let registeredClasses = [
-            {
-                id: 1,
-                code: 'ILK1001',
-                name: 'Dasar Pemrograman',
-                semester: 1,
-                class: 'A',
-                sks: 3,
-                room: 'D-102',
-                schedule: 'Kamis, 13:50 - 16:20',
-                lecturer: 'Drs. Clarissa Hakim, S.Kom, M.sc'
-            },
-            {
-                id: 2,
-                code: 'ILK1002',
-                name: 'Algoritma dan Struktur Data',
-                semester: 2,
-                class: 'A',
-                sks: 3,
-                room: 'D-103',
-                schedule: 'Selasa, 08:00 - 10:30',
-                lecturer: 'Dr. Ahmad Susanto, M.Kom'
-            },
-            {
-                id: 3,
-                code: 'ILK1003',
-                name: 'Basis Data',
-                semester: 3,
-                class: 'B',
-                sks: 3,
-                room: 'D-201',
-                schedule: 'Rabu, 10:00 - 12:30',
-                lecturer: 'Prof. Siti Nurhaliza, Ph.D'
-            },
-            {
-                id: 4,
-                code: 'ILK1004',
-                name: 'Pemrograman Web',
-                semester: 4,
-                class: 'A',
-                sks: 3,
-                room: 'D-104',
-                schedule: 'Jumat, 09:00 - 11:30',
-                lecturer: 'Dr. Andi Pratama, M.T'
-            },
-            {
-                id: 5,
-                code: 'ILK1005',
-                name: 'Sistem Operasi',
-                semester: 5,
-                class: 'A',
-                sks: 3,
-                room: 'D-105',
-                schedule: 'Senin, 14:00 - 16:30',
-                lecturer: 'Dr. Budi Setiawan, M.Kom'
-            },
-            {
-                id: 6,
-                code: 'ILK1006',
-                name: 'Jaringan Komputer',
-                semester: 5,
-                class: 'B',
-                sks: 3,
-                room: 'D-106',
-                schedule: 'Selasa, 13:00 - 15:30',
-                lecturer: 'Prof. Dr. Sari Indah, M.T'
-            }
-        ];
+        let currentDeleteData = null;
 
         // Enhanced notification system
         function showNotification(title, message, type = 'success', duration = 5000) {
@@ -575,7 +576,9 @@
             // Auto-hide notification
             if (duration > 0) {
                 setTimeout(() => {
-                    closeNotification(notification.querySelector('.close-btn'));
+                    if (notification.parentElement) {
+                        closeNotification(notification.querySelector('.close-btn'));
+                    }
                 }, duration);
             }
 
@@ -592,191 +595,186 @@
             }, 400);
         }
 
-        // Modal functions
-        function showModal(title, message, onConfirm) {
-            const modal = document.getElementById('confirmationModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-            const confirmBtn = document.getElementById('confirmBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
+        // Handle delete button click
+        function handleDelete(button) {
+            const kodeMatKul = button.getAttribute('data-kode-mk');
+            const kelas = button.getAttribute('data-kelas');
+            const namaMk = button.getAttribute('data-nama-mk');
 
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            modal.style.display = 'block';
+            console.log('Delete data:', { kodeMatKul, kelas, namaMk }); // Debug log
 
-            // Remove existing event listeners
-            const newConfirmBtn = confirmBtn.cloneNode(true);
-            const newCancelBtn = cancelBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-
-            // Add new event listeners
-            newConfirmBtn.onclick = () => {
-                modal.style.display = 'none';
-                onConfirm();
-            };
-
-            newCancelBtn.onclick = () => {
-                modal.style.display = 'none';
-            };
-
-            // Close modal when clicking outside
-            window.onclick = (event) => {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            };
-        }
-
-        // Enhanced delete function - langsung proses tanpa delay
-        function deleteClass(classId, courseCode, courseName) {
-            // Find the button and show loading state
-            const deleteButton = document.querySelector(`[onclick*="confirmDelete(${classId}"]`);
-            const originalButtonContent = deleteButton.innerHTML;
-            
-            deleteButton.innerHTML = '<i class="fa-solid fa-spinner loading"></i> Menghapus...';
-            deleteButton.disabled = true;
-
-            // Simulasi proses dengan delay minimal untuk UX yang lebih baik
-            setTimeout(() => {
-                try {
-                    // Remove from array (simulate successful deletion)
-                    registeredClasses = registeredClasses.filter(cls => cls.id !== classId);
-                    
-                    // Update UI
-                    renderTable();
-                    updateStats();
-                    
-                    // Show success notification immediately
-                    showNotification(
-                        'Berhasil Dihapus!',
-                        `Kelas ${courseCode} - ${courseName} telah berhasil dihapus dari daftar terdaftar.`,
-                        'success',
-                        4000
-                    );
-
-                } catch (error) {
-                    // Restore button state since deletion failed
-                    deleteButton.innerHTML = originalButtonContent;
-                    deleteButton.disabled = false;
-                    
-                    // Show error notification
-                    showNotification(
-                        'Gagal Menghapus!',
-                        `Tidak dapat menghapus kelas ${courseCode} - ${courseName}. Silakan coba lagi.`,
-                        'error',
-                        6000
-                    );
-
-                    console.error('Delete operation failed:', error);
-                }
-            }, 300); // Delay minimal 300ms untuk menunjukkan loading state
-        }
-
-        // Render table
-        function renderTable() {
-            const tableBody = document.getElementById('classTableBody');
-            const tableContainer = document.getElementById('tableContainer');
-            const emptyState = document.getElementById('emptyState');
-
-            if (registeredClasses.length === 0) {
-                tableContainer.style.display = 'none';
-                emptyState.style.display = 'block';
+            if (!kodeMatKul || !kelas) {
+                showNotification('Error', 'Data kelas tidak lengkap!', 'error');
                 return;
             }
 
-            tableContainer.style.display = 'block';
-            emptyState.style.display = 'none';
-            tableBody.innerHTML = '';
+            // Store delete data for confirmation
+            currentDeleteData = {
+                kodeMatKul: kodeMatKul,
+                kelas: kelas,
+                namaMk: namaMk,
+                button: button
+            };
 
-            // Sort classes by semester
-            const sortedClasses = [...registeredClasses].sort((a, b) => a.semester - b.semester);
-
-            sortedClasses.forEach((cls, index) => {
-                const row = document.createElement('tr');
-                
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td><strong>${cls.code}</strong></td>
-                    <td>${cls.name}</td>
-                    <td>${cls.class}</td>
-                    <td>${cls.sks}</td>
-                    <td>${cls.room}</td>
-                    <td>${cls.schedule}</td>
-                    <td>${cls.lecturer}</td>
-                    <td>
-                        <button class="delete-btn" onclick="confirmDelete(${cls.id}, '${cls.code}', '${cls.name}')">
-                            <i class="fa-solid fa-trash"></i>
-                            Hapus
-                        </button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
+            // Show confirmation modal
+            showConfirmationModal(kodeMatKul, kelas, namaMk);
         }
 
-        // Confirm delete
-        function confirmDelete(classId, courseCode, courseName) {
-            showModal(
-                'Konfirmasi Hapus Kelas',
-                `Apakah Anda yakin ingin menghapus kelas ${courseCode} - ${courseName} dari daftar terdaftar? Tindakan ini tidak dapat dibatalkan.`,
-                () => deleteClass(classId, courseCode, courseName)
-            );
+        // Show confirmation modal
+        function showConfirmationModal(kodeMatKul, kelas, namaMk) {
+            const modal = document.getElementById('confirmationModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+
+            modalTitle.textContent = 'Konfirmasi Batal Mengajar';
+            modalMessage.innerHTML = `
+                Apakah Anda yakin ingin berhenti mengajar kelas:<br>
+                <strong>${kodeMatKul} - ${kelas}</strong><br>
+                <em>${namaMk}</em><br><br>
+                Tindakan ini akan membuat kelas tersebut kembali tersedia untuk dosen lain.
+            `;
+
+            modal.style.display = 'block';
         }
 
-        // Update statistics
-        function updateStats() {
-            const totalClasses = registeredClasses.length;
-            const totalSKS = registeredClasses.reduce((sum, cls) => sum + cls.sks, 0);
+        // Confirm deletion
+        function confirmDelete() {
+            if (!currentDeleteData) return;
+
+            const { kodeMatKul, kelas, namaMk, button } = currentDeleteData;
             
-            // Update elements if they exist
-            const totalClassesElement = document.getElementById('totalClasses');
-            const totalSKSElement = document.getElementById('totalSKS');
+            console.log('Confirming delete with:', { kodeMatKul, kelas }); // Debug log
             
-            if (totalClassesElement) totalClassesElement.textContent = totalClasses;
-            if (totalSKSElement) totalSKSElement.textContent = totalSKS;
+            // Show loading state
+            button.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>Memproses...</span>
+            `;
+            button.disabled = true;
+
+            // Create form and submit - FIXED: Using correct dosen URL
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/dosen_dashboard_kelasterdaftar/unassign';
+
+            const kodeMatKulInput = document.createElement('input');
+            kodeMatKulInput.type = 'hidden';
+            kodeMatKulInput.name = 'kodeMatKul';
+            kodeMatKulInput.value = kodeMatKul;
+
+            const kelasInput = document.createElement('input');
+            kelasInput.type = 'hidden';
+            kelasInput.name = 'kelas';
+            kelasInput.value = kelas;
+
+            // Add CSRF token if available
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            if (csrfToken && csrfHeader) {
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_csrf';
+                csrfInput.value = csrfToken.getAttribute('content');
+                form.appendChild(csrfInput);
+            }
+
+            form.appendChild(kodeMatKulInput);
+            form.appendChild(kelasInput);
+            document.body.appendChild(form);
+            
+            console.log('Form action:', form.action); // Debug log
+            console.log('Form data:', { 
+                kodeMatKul: kodeMatKulInput.value, 
+                kelas: kelasInput.value 
+            }); // Debug log
+            
+            // Submit form
+            form.submit();
         }
 
-        // Initialize page
-        function initializePage() {
-            renderTable();
-            updateStats();
+        // Cancel deletion
+        function cancelDelete() {
+            const modal = document.getElementById('confirmationModal');
+            modal.style.display = 'none';
+            currentDeleteData = null;
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(event) {
-            // Close modal with Escape key
+        // Modal event listeners
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            document.getElementById('confirmationModal').style.display = 'none';
+            confirmDelete();
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', cancelDelete);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('confirmationModal');
+            if (event.target === modal) {
+                cancelDelete();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 const modal = document.getElementById('confirmationModal');
                 if (modal.style.display === 'block') {
-                    modal.style.display = 'none';
+                    cancelDelete();
                 }
                 
                 // Close all notifications
                 const notifications = document.querySelectorAll('.notification');
                 notifications.forEach(notification => {
-                    closeNotification(notification.querySelector('.close-btn'));
+                    const closeBtn = notification.querySelector('.close-btn');
+                    if (closeBtn) {
+                        closeNotification(closeBtn);
+                    }
                 });
             }
         });
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            initializePage();
+        // Auto-close server notifications after page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const notifications = document.querySelectorAll('.notification.show');
+            notifications.forEach(notification => {
+                setTimeout(() => {
+                    const closeBtn = notification.querySelector('.close-btn');
+                    if (closeBtn) {
+                        closeNotification(closeBtn);
+                    }
+                }, 5000);
+            });
         });
 
-        // Utility functions
-       
+        // Add hover effects for better UX
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(-2px)';
+                    }
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+        });
 
-        // Export functions for external use
-        window.portalUSU = {
-            registeredClasses,
-            deleteClass,
-            getTotalSKS,
-            getClassesBySemester,
-            hasConflictingSchedule,
-            showNotification
-        };
+        // Set active menu function
+        function setActiveMenu(element, menuId) {
+            // Remove active class from all sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            element.classList.add('active');
+        }
     </script>
 </body>
 </html>
