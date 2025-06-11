@@ -270,6 +270,12 @@
             background-color: #c82333;
         }
 
+        .departemen-section {
+        padding: 10px;
+        margin-bottom: 15px;
+        margin-left: 27px;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .form-row {
@@ -335,10 +341,10 @@
                             <span class="form-label">NIDN</span>
                             <span class="form-value" th:text="${username}">NIDN</span>
                         </div>
-                        <div class="form-group">
-                            <span class="form-label">Departemen</span>
-                            <span class="form-value" th:text="${departemen}">departemen</span>
-                        </div>
+                         <div class="form-group departemen-section">
+                                <span class="form-label">Departemen</span>
+                                <span class="form-value" th:text="${departemen}">departemen</span>
+                            </div>
                     </div>
 
                     <div class="form-row">
